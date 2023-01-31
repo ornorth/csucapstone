@@ -9,7 +9,8 @@
  */
 
 class GameObject {
-    private:
+    public:
+        std::string obj_name;
         Shape obj_shape;
         Color obj_color;
         int dim_x;
@@ -18,8 +19,11 @@ class GameObject {
         int pos_y;
         uint32_t obj_flags;
     public:
-        GameObject(Shape obj_shape=Shape::SQUARE, Color obj_color = {0, 0, 0, 255},
-                   int dim_x = 10, int dim_y = 10, int pos_x = 0, int pos_y = 0);
+        GameObject(const std::string& obj_name,
+                   Shape obj_shape,
+                   const Color& obj_color,
+                   int dim_x, int dim_y,
+                   int pos_x, int pos_y);
 
 };
 

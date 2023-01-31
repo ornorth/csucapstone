@@ -14,7 +14,6 @@ struct Color {
 };
 
 enum Shape {
-    SQUARE,
     RECTANGLE,
     CIRCLE,
     TRIANGLE,

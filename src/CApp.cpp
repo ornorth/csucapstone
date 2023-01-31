@@ -3,12 +3,39 @@
 #include <chrono>
 #include "CApp.h"
 
+int p_x = 100;
+int p_y = 100;
+
 CApp::CApp(int window_width, int window_height, int r, int g, int b, int a)
          : Main_Window(nullptr), Renderer(nullptr), running(true),
            window_width(window_width), window_height(window_height),
            bg_color({r, g, b, a})
 { }
 
+/////////////////////////////////////////////////////////////////////////////
+/////// Game Objects
+/////////////////////////////////////////////////////////////////////////////
+
+bool CApp::addGameObject(const std::string& obj_name, Shape obj_shape, const Color& obj_color, int dim_x, int dim_y, int pos_x, int pos_y)
+{
+    obj_list.push_back(GameObject(obj_name, obj_shape, obj_color, dim_x, dim_y, pos_x, pos_y));
+    return true;
+}
+bool CApp::addGameObject(const GameObject& go)
+{
+    obj_list.push_back(go);
+    return true;
+}
+
+
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+/////// Primary Loop
+/////////////////////////////////////////////////////////////////////////////
 int CApp::Execute()
 {
     if (OnInit() == false)
@@ -63,24 +90,6 @@ void CApp::OnEvent(SDL_Event& event)
         {
             running = false;
         }
-        /*
-        else if (event.key.keysym.sym == SDLK_LEFT)
-        {
-            if (p.x >= 30) p.x -= 15;
-        }
-        else if (event.key.keysym.sym == SDLK_RIGHT)
-        {
-            if (p.x <= 610) p.x += 15;
-        }
-        else if (event.key.keysym.sym == SDLK_UP)
-        {
-            if (p.y >= 30) p.y -= 15;
-        }
-        else if (event.key.keysym.sym == SDLK_DOWN)
-        {
-            if (p.y <= 450) p.y += 15;
-        }
-        */
     }
 }
 
@@ -95,17 +104,42 @@ void CApp::OnRender()
     SDL_SetRenderDrawColor(Renderer, bg_color.r, bg_color.g, bg_color.b, bg_color.a);
     SDL_RenderClear(Renderer);
 
-    /*
-    // Render the Player
-    SDL_SetRenderDrawColor(Renderer, p.color.r, p.color.g, p.color.b, p.color.a);
-    for (int y = (p.length/2) * -1; y < (p.length/2); y++)
+    // Render Game Objects
+    for (unsigned curObj = 0; curObj < obj_list.size(); curObj++)
     {
-        for (int x = (p.length/2) * -1; x < (p.length/2); x++)
+        Color c = obj_list[curObj].obj_color;
+        SDL_SetRenderDrawColor(Renderer, c.r, c.b, c.g, c.a);
+        switch(obj_list[curObj].obj_shape)
         {
-            SDL_RenderDrawPoint(Renderer, p.x+x, p.y+y);
+            case Shape::RECTANGLE:
+                for (int i = (obj_list[curObj].dim_x / 2) * -1; i < obj_list[curObj].dim_x / 2; i++)
+                {
+                    for (int j = (obj_list[curObj].dim_y / 2) * -1; j < obj_list[curObj].dim_y / 2; j++)
+                    {
+                        SDL_RenderDrawPoint(Renderer, obj_list[curObj].pos_x+i, obj_list[curObj].pos_y+j);
+                    }
+                }
+                break;
+            case Shape::CIRCLE:
+                break;
+            case Shape::TRIANGLE:
+                break;
+            default:
+                std::cerr << "DEFAULT TAKEN ON 'Shape' SWITCH\n";
+                exit(1);
         }
     }
-    */
+/*
+    // Render the Player
+    SDL_SetRenderDrawColor(Renderer, 255, 0, 0, 255);
+    for (int y = 50 * -1; y < 50; y++)
+    {
+        for (int x = 50 * -1; x < 50; x++)
+        {
+            SDL_RenderDrawPoint(Renderer, p_x+x, p_y+y);
+        }
+    }
+*/
     SDL_RenderPresent(Renderer);
 }
 

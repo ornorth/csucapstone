@@ -1,13 +1,14 @@
 //g++ -std=c++17 src\*.cpp -ISDL2\include -LSDL2\lib -Wall -lmingw32 -lSDL2main -lSDL2 -o main
 
 #include <iostream>
-//#include "SDL2/SDL.h"
 #include "CApp.h"
 
 
 int main(int argc, char* argv[])
 {
-    CApp app(1080, 720, 73, 14, 135, 255);
+    CApp app(1080, 720, 73, 213, 52, 255);
+    app.addGameObject("obj1");
+    app.addGameObject("obj2", Shape::RECTANGLE, {165, 13, 2, 200}, 30, 70, 350, 400);
     return app.Execute();
 }
 
