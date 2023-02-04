@@ -35,7 +35,8 @@ class CApp {
                            Shape obj_shape=Shape::RECTANGLE,
                            const Color& obj_color = {255, 0, 0, 255},
                            int dim_x = 50, int dim_y = 50,
-                           int pos_x = 100, int pos_y = 100);
+                           int pos_x = 100, int pos_y = 100,
+                           int angle = 0);
         bool addGameObject(const GameObject& go);
 
     private:

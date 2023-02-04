@@ -1,11 +1,10 @@
 #include <ctime>
 #include <ratio>
 #include <chrono>
-#include <cmath>
+//#include <cmath>
 #include "CApp.h"
+#include "SDLHelper.h"
 
-int p_x = 100;
-int p_y = 100;
 
 CApp::CApp(int window_width, int window_height, int r, int g, int b, int a)
          : Main_Window(nullptr), Renderer(nullptr), running(true),
@@ -17,9 +16,9 @@ CApp::CApp(int window_width, int window_height, int r, int g, int b, int a)
 /////// Game Objects
 /////////////////////////////////////////////////////////////////////////////
 
-bool CApp::addGameObject(const std::string& obj_name, Shape obj_shape, const Color& obj_color, int dim_x, int dim_y, int pos_x, int pos_y)
+bool CApp::addGameObject(const std::string& obj_name, Shape obj_shape, const Color& obj_color, int dim_x, int dim_y, int pos_x, int pos_y, int angle)
 {
-    obj_list.push_back(GameObject(obj_name, obj_shape, obj_color, dim_x, dim_y, pos_x, pos_y));
+    obj_list.push_back(GameObject(obj_name, obj_shape, obj_color, dim_x, dim_y, pos_x, pos_y, angle));
     return true;
 }
 bool CApp::addGameObject(const GameObject& go)
@@ -96,6 +95,11 @@ void CApp::OnEvent(SDL_Event& event)
 
 void CApp::OnLoop()
 {
+    for (unsigned i = 0; i < obj_list.size(); ++i)
+    {
+        if (obj_list[i].obj_name[0] != 'l')
+            obj_list[i].angle++;
+    }
 }
 
 void CApp::OnRender()
@@ -117,12 +121,12 @@ void CApp::OnRender()
                 int c_dim_y = obj_list[curObj].dim_y;
                 int c_pos_x = obj_list[curObj].pos_x;
                 int c_pos_y = obj_list[curObj].pos_y;
-                //dim_x = width, dim_y = height
+                int angle = obj_list[curObj].angle;
                 for (int i = (c_dim_x / 2) * -1; i < c_dim_x / 2; i++)
                 {
                     for (int j = (c_dim_y / 2) * -1; j < c_dim_y / 2; j++)
                     {
-                        SDL_RenderDrawPoint(Renderer, c_pos_x+i, c_pos_y+j);
+                        drawPixel(Renderer, c_pos_x, c_pos_y, i, j, c_dim_x/2, c_dim_y/2, angle);
                     }
                 }
                 break;
@@ -135,6 +139,7 @@ void CApp::OnRender()
                 int c_dim_y = obj_list[curObj].dim_y / 2;
                 int c_pos_x = obj_list[curObj].pos_x;
                 int c_pos_y = obj_list[curObj].pos_y;
+                int angle = obj_list[curObj].angle;
 
                 // Be careful of overflow here
                 long hh = c_dim_y*c_dim_y;
@@ -146,7 +151,8 @@ void CApp::OnRender()
                 // Horizontal line - origin
                 for (int x = -c_dim_x; x <= c_dim_x; ++x)
                 {
-                    SDL_RenderDrawPoint(Renderer, c_pos_x+x, c_pos_y);
+                    //SDL_RenderDrawPoint(Renderer, c_pos_x+x, c_pos_y);
+                    drawPixel(Renderer, c_pos_x, c_pos_y, x, 0, c_dim_x/2, c_dim_y/2, angle);
                 }
 
                 // Draw semicircles above and below the origin
@@ -169,8 +175,10 @@ void CApp::OnRender()
                     // draw within the discovered bounds
                     for (int x = -x0; x <= x0; ++x)
                     {
-                        SDL_RenderDrawPoint(Renderer, c_pos_x+x, c_pos_y+y);
-                        SDL_RenderDrawPoint(Renderer, c_pos_x+x, c_pos_y-y);
+                        drawPixel(Renderer, c_pos_x, c_pos_y, x, y, c_dim_x/2, c_dim_y/2, angle);
+                        drawPixel(Renderer, c_pos_x, c_pos_y, x, -y, c_dim_x/2, c_dim_y/2, angle);
+                        //SDL_RenderDrawPoint(Renderer, c_pos_x+x, c_pos_y+y);
+                        //SDL_RenderDrawPoint(Renderer, c_pos_x+x, c_pos_y-y);
                     }
                 }
                 break;
@@ -181,25 +189,21 @@ void CApp::OnRender()
                 int c_dim_y = obj_list[curObj].dim_y;
                 int c_pos_x = obj_list[curObj].pos_x;
                 int c_pos_y = obj_list[curObj].pos_y;
+                int angle = obj_list[curObj].angle;
 
-                // FIX: aspect ratio is fucked up
                 double aspectRatio = (double)c_dim_x / c_dim_y;
-                //std::cout << "ratio=" << aspectRatio << std::endl;
 
                 double x_width = c_dim_x;
 
                 for (int y = 0; y <= c_dim_y; ++y)
                 {
-                    //std::cout << x_width << std::endl;
                     for (int x = (x_width/2) * -1; x <= (x_width/2); ++x)
                     {
-                        SDL_RenderDrawPoint(Renderer, (int)c_pos_x+x, (int)c_pos_y-y);
+                        drawPixel(Renderer, c_pos_x, c_pos_y, x, y, c_dim_x/2, c_dim_y/2, angle);
+                        //SDL_RenderDrawPoint(Renderer, (int)c_pos_x+x, (int)c_pos_y-y);
                     }
                     x_width -= aspectRatio;
                 }
-                //std::cout << "\n\n\n";
-
-
                 break;
             }
             default:

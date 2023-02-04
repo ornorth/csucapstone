@@ -4,11 +4,12 @@ GameObject::GameObject(const std::string& obj_name,
                        Shape obj_shape,
                        const Color& obj_color,
                        int dim_x, int dim_y,
-                       int pos_x, int pos_y)
+                       int pos_x, int pos_y,
+                       int angle)
                      : obj_name(obj_name),
                        obj_shape(obj_shape),
                        obj_color(obj_color),
                        dim_x(dim_x), dim_y(dim_y),
                        pos_x(pos_x), pos_y(pos_y),
-                       obj_flags(0)
+                       angle(angle), obj_flags(0)
 { }

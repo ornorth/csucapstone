@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "Structs.h"
+#include "SDLHelper.h"
 
 /* The basic outline of a game object
  * Can be inherited by more specific objects
@@ -17,13 +18,16 @@ class GameObject {
         int dim_y;
         int pos_x;
         int pos_y;
+        int angle;
         uint32_t obj_flags;
     public:
         GameObject(const std::string& obj_name,
                    Shape obj_shape,
                    const Color& obj_color,
                    int dim_x, int dim_y,
-                   int pos_x, int pos_y);
+                   int pos_x, int pos_y,
+                   int angle);
+        void drawObject();
 
 };
 
