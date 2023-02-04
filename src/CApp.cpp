@@ -1,6 +1,7 @@
 #include <ctime>
 #include <ratio>
 #include <chrono>
+#include <cmath>
 #include "CApp.h"
 
 int p_x = 100;
@@ -95,7 +96,6 @@ void CApp::OnEvent(SDL_Event& event)
 
 void CApp::OnLoop()
 {
-
 }
 
 void CApp::OnRender()
@@ -108,38 +108,107 @@ void CApp::OnRender()
     for (unsigned curObj = 0; curObj < obj_list.size(); curObj++)
     {
         Color c = obj_list[curObj].obj_color;
-        SDL_SetRenderDrawColor(Renderer, c.r, c.b, c.g, c.a);
+        SDL_SetRenderDrawColor(Renderer, c.r, c.g, c.b, c.a);
         switch(obj_list[curObj].obj_shape)
-        {
+        {       
             case Shape::RECTANGLE:
-                for (int i = (obj_list[curObj].dim_x / 2) * -1; i < obj_list[curObj].dim_x / 2; i++)
+            {
+                int c_dim_x = obj_list[curObj].dim_x;
+                int c_dim_y = obj_list[curObj].dim_y;
+                int c_pos_x = obj_list[curObj].pos_x;
+                int c_pos_y = obj_list[curObj].pos_y;
+                //dim_x = width, dim_y = height
+                for (int i = (c_dim_x / 2) * -1; i < c_dim_x / 2; i++)
                 {
-                    for (int j = (obj_list[curObj].dim_y / 2) * -1; j < obj_list[curObj].dim_y / 2; j++)
+                    for (int j = (c_dim_y / 2) * -1; j < c_dim_y / 2; j++)
                     {
-                        SDL_RenderDrawPoint(Renderer, obj_list[curObj].pos_x+i, obj_list[curObj].pos_y+j);
+                        SDL_RenderDrawPoint(Renderer, c_pos_x+i, c_pos_y+j);
                     }
                 }
                 break;
+            }
             case Shape::CIRCLE:
+            {
+                // Method for drawing ellipses pulled from here:
+                //https://stackoverflow.com/questions/10322341/simple-algorithm-for-drawing-filled-ellipse-in-c-c
+                int c_dim_x = obj_list[curObj].dim_x / 2;
+                int c_dim_y = obj_list[curObj].dim_y / 2;
+                int c_pos_x = obj_list[curObj].pos_x;
+                int c_pos_y = obj_list[curObj].pos_y;
+
+                // Be careful of overflow here
+                long hh = c_dim_y*c_dim_y;
+                long ww = c_dim_x*c_dim_x;
+                long hhww = hh*ww;
+                int x0 = c_dim_x;
+                int dx = 0;
+
+                // Horizontal line - origin
+                for (int x = -c_dim_x; x <= c_dim_x; ++x)
+                {
+                    SDL_RenderDrawPoint(Renderer, c_pos_x+x, c_pos_y);
+                }
+
+                // Draw semicircles above and below the origin
+                for (int y = 1; y <= c_dim_y; ++y)
+                {
+                    // using 'dx', we limit the number of squares we have to test
+                    // because as we approach the apex (away from the horizontal diameter),
+                    // the amount by which each line shortens either increases or stays the same
+
+                    // find the outer edge
+                    int x1 = x0 - (dx - 1);
+                    for ( ; x1 > 0; --x1)
+                    {
+                        if (x1*x1*hh + y*y*ww <= hhww) break;
+                    }
+                    // update dx
+                    dx = x0 - x1;
+                    x0 = x1;
+
+                    // draw within the discovered bounds
+                    for (int x = -x0; x <= x0; ++x)
+                    {
+                        SDL_RenderDrawPoint(Renderer, c_pos_x+x, c_pos_y+y);
+                        SDL_RenderDrawPoint(Renderer, c_pos_x+x, c_pos_y-y);
+                    }
+                }
                 break;
+            }
             case Shape::TRIANGLE:
+            {
+                int c_dim_x = obj_list[curObj].dim_x;
+                int c_dim_y = obj_list[curObj].dim_y;
+                int c_pos_x = obj_list[curObj].pos_x;
+                int c_pos_y = obj_list[curObj].pos_y;
+
+                // FIX: aspect ratio is fucked up
+                double aspectRatio = (double)c_dim_x / c_dim_y;
+                //std::cout << "ratio=" << aspectRatio << std::endl;
+
+                double x_width = c_dim_x;
+
+                for (int y = 0; y <= c_dim_y; ++y)
+                {
+                    //std::cout << x_width << std::endl;
+                    for (int x = (x_width/2) * -1; x <= (x_width/2); ++x)
+                    {
+                        SDL_RenderDrawPoint(Renderer, (int)c_pos_x+x, (int)c_pos_y-y);
+                    }
+                    x_width -= aspectRatio;
+                }
+                //std::cout << "\n\n\n";
+
+
                 break;
+            }
             default:
+            {
                 std::cerr << "DEFAULT TAKEN ON 'Shape' SWITCH\n";
                 exit(1);
+            }
         }
     }
-/*
-    // Render the Player
-    SDL_SetRenderDrawColor(Renderer, 255, 0, 0, 255);
-    for (int y = 50 * -1; y < 50; y++)
-    {
-        for (int x = 50 * -1; x < 50; x++)
-        {
-            SDL_RenderDrawPoint(Renderer, p_x+x, p_y+y);
-        }
-    }
-*/
     SDL_RenderPresent(Renderer);
 }
 

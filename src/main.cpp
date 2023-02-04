@@ -7,8 +7,52 @@
 int main(int argc, char* argv[])
 {
     CApp app(1080, 720, 73, 213, 52, 255);
-    app.addGameObject("obj1");
-    app.addGameObject("obj2", Shape::RECTANGLE, {165, 13, 2, 200}, 30, 70, 350, 400);
+    app.addGameObject("obj1", Shape::TRIANGLE, {0, 13, 200, 255}, 300, 200, 400, 400);
+    app.addGameObject("obj1", Shape::TRIANGLE, {0, 13, 200, 255}, 12, 90, 100, 100);
+    app.addGameObject("obj1", Shape::TRIANGLE, {0, 13, 200, 255}, 120, 22, 300, 200);
+    //app.addGameObject("referenceX", Shape::RECTANGLE, {255, 0, 0, 255}, 300, 10, 300, 310);
+    //app.addGameObject("referenceX", Shape::RECTANGLE, {255, 0, 0, 255}, 10, 300, 470, 150);
+
+    // GRID for testing: vertical lines
+    app.addGameObject("long1",  Shape::RECTANGLE, {0, 0, 0, 255}, 3, 800, 50,   360);
+    app.addGameObject("long2",  Shape::RECTANGLE, {0, 0, 0, 255}, 3, 800, 100,  360);
+    app.addGameObject("long3",  Shape::RECTANGLE, {0, 0, 0, 255}, 3, 800, 150,  360);
+    app.addGameObject("long4",  Shape::RECTANGLE, {0, 0, 0, 255}, 3, 800, 200,  360);
+    app.addGameObject("long5",  Shape::RECTANGLE, {0, 0, 0, 255}, 3, 800, 250,  360);
+    app.addGameObject("long6",  Shape::RECTANGLE, {0, 0, 0, 255}, 3, 800, 300,  360);
+    app.addGameObject("long7",  Shape::RECTANGLE, {0, 0, 0, 255}, 3, 800, 350,  360);
+    app.addGameObject("long8",  Shape::RECTANGLE, {0, 0, 0, 255}, 3, 800, 400,  360);
+    app.addGameObject("long9",  Shape::RECTANGLE, {0, 0, 0, 255}, 3, 800, 450,  360);
+    app.addGameObject("long10", Shape::RECTANGLE, {0, 0, 0, 255}, 3, 800, 500,  360);
+    app.addGameObject("long11", Shape::RECTANGLE, {0, 0, 0, 255}, 3, 800, 550,  360);
+    app.addGameObject("long12", Shape::RECTANGLE, {0, 0, 0, 255}, 3, 800, 600,  360);
+    app.addGameObject("long13", Shape::RECTANGLE, {0, 0, 0, 255}, 3, 800, 650,  360);
+    app.addGameObject("long14", Shape::RECTANGLE, {0, 0, 0, 255}, 3, 800, 700,  360);
+    app.addGameObject("long15", Shape::RECTANGLE, {0, 0, 0, 255}, 3, 800, 750,  360);
+    app.addGameObject("long16", Shape::RECTANGLE, {0, 0, 0, 255}, 3, 800, 800,  360);
+    app.addGameObject("long17", Shape::RECTANGLE, {0, 0, 0, 255}, 3, 800, 850,  360);
+    app.addGameObject("long18", Shape::RECTANGLE, {0, 0, 0, 255}, 3, 800, 900,  360);
+    app.addGameObject("long19", Shape::RECTANGLE, {0, 0, 0, 255}, 3, 800, 950,  360);
+    app.addGameObject("long20", Shape::RECTANGLE, {0, 0, 0, 255}, 3, 800, 1000, 360);
+    app.addGameObject("long21", Shape::RECTANGLE, {0, 0, 0, 255}, 3, 800, 1050, 360);
+
+    // GRID for testing: horizontal lines
+    app.addGameObject("lat1",  Shape::RECTANGLE, {0, 0, 0, 255}, 1100, 3, 540, 50);
+    app.addGameObject("lat2",  Shape::RECTANGLE, {0, 0, 0, 255}, 1100, 3, 540, 100);
+    app.addGameObject("lat3",  Shape::RECTANGLE, {0, 0, 0, 255}, 1100, 3, 540, 150);
+    app.addGameObject("lat4",  Shape::RECTANGLE, {0, 0, 0, 255}, 1100, 3, 540, 200);
+    app.addGameObject("lat5",  Shape::RECTANGLE, {0, 0, 0, 255}, 1100, 3, 540, 250);
+    app.addGameObject("lat6",  Shape::RECTANGLE, {0, 0, 0, 255}, 1100, 3, 540, 300);
+    app.addGameObject("lat7",  Shape::RECTANGLE, {0, 0, 0, 255}, 1100, 3, 540, 350);
+    app.addGameObject("lat8",  Shape::RECTANGLE, {0, 0, 0, 255}, 1100, 3, 540, 400);
+    app.addGameObject("lat9",  Shape::RECTANGLE, {0, 0, 0, 255}, 1100, 3, 540, 450);
+    app.addGameObject("lat10",  Shape::RECTANGLE, {0, 0, 0, 255}, 1100, 3, 540, 500);
+    app.addGameObject("lat11",  Shape::RECTANGLE, {0, 0, 0, 255}, 1100, 3, 540, 550);
+    app.addGameObject("lat12",  Shape::RECTANGLE, {0, 0, 0, 255}, 1100, 3, 540, 600);
+    app.addGameObject("lat13",  Shape::RECTANGLE, {0, 0, 0, 255}, 1100, 3, 540, 650);
+    app.addGameObject("lat14",  Shape::RECTANGLE, {0, 0, 0, 255}, 1100, 3, 540, 700);
+
+
     return app.Execute();
 }
 
