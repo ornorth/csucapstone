@@ -1,9 +1,6 @@
-#include <ctime>
 #include <ratio>
 #include <chrono>
-//#include <cmath>
 #include "CApp.h"
-#include "SDLHelper.h"
 
 
 CApp::CApp(int window_width, int window_height, int r, int g, int b, int a)
@@ -119,14 +116,12 @@ void CApp::OnRender()
             {
                 int c_dim_x = obj_list[curObj].dim_x;
                 int c_dim_y = obj_list[curObj].dim_y;
-                int c_pos_x = obj_list[curObj].pos_x;
-                int c_pos_y = obj_list[curObj].pos_y;
-                int angle = obj_list[curObj].angle;
-                for (int i = (c_dim_x / 2) * -1; i < c_dim_x / 2; i++)
+
+                for (int x = (c_dim_x / 2) * -1; x < c_dim_x / 2; x++)
                 {
-                    for (int j = (c_dim_y / 2) * -1; j < c_dim_y / 2; j++)
+                    for (int y = (c_dim_y / 2) * -1; y < c_dim_y / 2; y++)
                     {
-                        drawPixel(Renderer, c_pos_x, c_pos_y, i, j, c_dim_x/2, c_dim_y/2, angle);
+                        obj_list[curObj].drawPixel(Renderer, x, y);
                     }
                 }
                 break;
@@ -137,9 +132,6 @@ void CApp::OnRender()
                 //https://stackoverflow.com/questions/10322341/simple-algorithm-for-drawing-filled-ellipse-in-c-c
                 int c_dim_x = obj_list[curObj].dim_x / 2;
                 int c_dim_y = obj_list[curObj].dim_y / 2;
-                int c_pos_x = obj_list[curObj].pos_x;
-                int c_pos_y = obj_list[curObj].pos_y;
-                int angle = obj_list[curObj].angle;
 
                 // Be careful of overflow here
                 long hh = c_dim_y*c_dim_y;
@@ -152,7 +144,7 @@ void CApp::OnRender()
                 for (int x = -c_dim_x; x <= c_dim_x; ++x)
                 {
                     //SDL_RenderDrawPoint(Renderer, c_pos_x+x, c_pos_y);
-                    drawPixel(Renderer, c_pos_x, c_pos_y, x, 0, c_dim_x/2, c_dim_y/2, angle);
+                    obj_list[curObj].drawPixel(Renderer, x, 0);
                 }
 
                 // Draw semicircles above and below the origin
@@ -175,10 +167,8 @@ void CApp::OnRender()
                     // draw within the discovered bounds
                     for (int x = -x0; x <= x0; ++x)
                     {
-                        drawPixel(Renderer, c_pos_x, c_pos_y, x, y, c_dim_x/2, c_dim_y/2, angle);
-                        drawPixel(Renderer, c_pos_x, c_pos_y, x, -y, c_dim_x/2, c_dim_y/2, angle);
-                        //SDL_RenderDrawPoint(Renderer, c_pos_x+x, c_pos_y+y);
-                        //SDL_RenderDrawPoint(Renderer, c_pos_x+x, c_pos_y-y);
+                        obj_list[curObj].drawPixel(Renderer, x, y);
+                        obj_list[curObj].drawPixel(Renderer, x, -y);
                     }
                 }
                 break;
@@ -187,9 +177,6 @@ void CApp::OnRender()
             {
                 int c_dim_x = obj_list[curObj].dim_x;
                 int c_dim_y = obj_list[curObj].dim_y;
-                int c_pos_x = obj_list[curObj].pos_x;
-                int c_pos_y = obj_list[curObj].pos_y;
-                int angle = obj_list[curObj].angle;
 
                 double aspectRatio = (double)c_dim_x / c_dim_y;
 
@@ -199,7 +186,7 @@ void CApp::OnRender()
                 {
                     for (int x = (x_width/2) * -1; x <= (x_width/2); ++x)
                     {
-                        drawPixel(Renderer, c_pos_x, c_pos_y, x, y, c_dim_x/2, c_dim_y/2, angle);
+                        obj_list[curObj].drawPixel(Renderer, x, y);
                         //SDL_RenderDrawPoint(Renderer, (int)c_pos_x+x, (int)c_pos_y-y);
                     }
                     x_width -= aspectRatio;

@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include "Structs.h"
-#include "SDLHelper.h"
 
 /* The basic outline of a game object
  * Can be inherited by more specific objects
@@ -27,7 +26,7 @@ class GameObject {
                    int dim_x, int dim_y,
                    int pos_x, int pos_y,
                    int angle);
-        void drawObject();
+        void drawPixel(SDL_Renderer *Renderer, int x, int y);
 
 };
 
