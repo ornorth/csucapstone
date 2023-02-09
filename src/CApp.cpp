@@ -13,22 +13,80 @@ CApp::CApp(int window_width, int window_height, int r, int g, int b, int a)
 /////// Game Objects
 /////////////////////////////////////////////////////////////////////////////
 
-bool CApp::addGameObject(const std::string& obj_name, Shape obj_shape, const Color& obj_color, int dim_x, int dim_y, int pos_x, int pos_y, int angle)
+bool CApp::addGameObject(const std::string& name, Shape shape, const Color& color,
+                         int dim_x, int dim_y, int pos_x, int pos_y, double angle)
 {
-    obj_list.push_back(GameObject(obj_name, obj_shape, obj_color, dim_x, dim_y, pos_x, pos_y, angle));
+    for (unsigned i = 0; i < obj_list.size(); ++i)
+    {
+        // Currently this just quietly fails
+        // Could keep it like that, or maybe throw an error?
+        if (obj_list[i].getName() == name) return false;
+    }
+    obj_list.push_back(GameObject(name, shape, color, dim_x, dim_y, pos_x, pos_y, angle));
     return true;
 }
-bool CApp::addGameObject(const GameObject& go)
+bool CApp::addGameObject(const GameObject& g_obj)
 {
-    obj_list.push_back(go);
+    obj_list.push_back(g_obj);
     return true;
 }
 
+GameObject& CApp::getGameObject(const std::string& name)
+{
+    for (unsigned i = 0; i < obj_list.size(); ++i)
+    {
+        if (obj_list[i].getName() == name)
+            return obj_list[i];
+    }
+    throw "Specified object not found";
+}
 
+bool CApp::setObjectValue(const std::string& obj_name, ObjectAttribute attribute, double var1, double var2)
+{
+    GameObject* GOptr = nullptr;
+    for (unsigned i = 0; i < obj_list.size(); ++i)
+    {
+        if (obj_list[i].getName() == obj_name)
+        {
+            GOptr = &obj_list[i];
+            break;
+        }
+    }
+    if (!GOptr) return false;
 
-
-
-
+    switch(attribute)
+    {
+        case ObjectAttribute::SIZE:
+            GOptr->dim_x = var1;
+            GOptr->dim_y = var2;
+            break;
+        case ObjectAttribute::ANGLE:
+            GOptr->angle = var1;
+            break;
+        case ObjectAttribute::POSITION:
+            GOptr->pos_x = var1;
+            GOptr->pos_y = var2;
+            break;
+        case ObjectAttribute::VELOCITY:
+            GOptr->vel_x = var1;
+            GOptr->vel_y = var2;
+            break;
+        case ObjectAttribute::ACCELERATION:
+            GOptr->acc_x = var1;
+            GOptr->acc_y = var2;
+            break;
+        case ObjectAttribute::ANG_VELOCITY:
+            GOptr->vel_ang = var1;
+            break;
+        case ObjectAttribute::ANG_ACCELERATION:
+            GOptr->acc_ang = var1;
+            break;
+        default:
+            std::cerr << "DEFAULT TAKEN ON 'ObjectAttribute' SWITCH\n";
+            exit(1);
+    }
+    return true;
+}
 
 /////////////////////////////////////////////////////////////////////////////
 /////// Primary Loop
@@ -94,8 +152,17 @@ void CApp::OnLoop()
 {
     for (unsigned i = 0; i < obj_list.size(); ++i)
     {
-        if (obj_list[i].obj_name[0] != 'l')
-            obj_list[i].angle++;
+        GameObject* GOptr = &obj_list[i];
+        if (GOptr->checkFlag(ObjectFlag::STATIC)) continue;
+        
+        GOptr->vel_x += GOptr->acc_x;
+        GOptr->pos_x += GOptr->vel_x;
+
+        GOptr->vel_y += GOptr->acc_y;
+        GOptr->pos_y += GOptr->vel_y;
+
+        GOptr->vel_ang += GOptr->acc_ang;
+        GOptr->angle += GOptr->vel_ang;
     }
 }
 
@@ -108,9 +175,9 @@ void CApp::OnRender()
     // Render Game Objects
     for (unsigned curObj = 0; curObj < obj_list.size(); curObj++)
     {
-        Color c = obj_list[curObj].obj_color;
+        Color c = obj_list[curObj].color;
         SDL_SetRenderDrawColor(Renderer, c.r, c.g, c.b, c.a);
-        switch(obj_list[curObj].obj_shape)
+        switch(obj_list[curObj].getShape())
         {       
             case Shape::RECTANGLE:
             {
@@ -142,10 +209,7 @@ void CApp::OnRender()
 
                 // Horizontal line - origin
                 for (int x = -c_dim_x; x <= c_dim_x; ++x)
-                {
-                    //SDL_RenderDrawPoint(Renderer, c_pos_x+x, c_pos_y);
                     obj_list[curObj].drawPixel(Renderer, x, 0);
-                }
 
                 // Draw semicircles above and below the origin
                 for (int y = 1; y <= c_dim_y; ++y)
@@ -157,9 +221,8 @@ void CApp::OnRender()
                     // find the outer edge
                     int x1 = x0 - (dx - 1);
                     for ( ; x1 > 0; --x1)
-                    {
                         if (x1*x1*hh + y*y*ww <= hhww) break;
-                    }
+                    
                     // update dx
                     dx = x0 - x1;
                     x0 = x1;
@@ -177,9 +240,7 @@ void CApp::OnRender()
             {
                 int c_dim_x = obj_list[curObj].dim_x;
                 int c_dim_y = obj_list[curObj].dim_y;
-
                 double aspectRatio = (double)c_dim_x / c_dim_y;
-
                 double x_width = c_dim_x;
 
                 for (int y = 0; y <= c_dim_y; ++y)

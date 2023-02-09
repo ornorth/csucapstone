@@ -3,19 +3,20 @@
 #include <iostream>
 #include "CApp.h"
 
-#define GRID_ACTIVE 0
+#define GRID_ACTIVE 1
 
 int main(int argc, char* argv[])
 {
     CApp app(1080, 720, 73, 213, 52, 255);
     app.addGameObject("rct1", Shape::RECTANGLE, {0, 13, 200, 255}, 50, 50, 100, 100, 0);
+    app.setObjectValue("rct1", ObjectAttribute::ACCELERATION, .3, .1);
+    /*
     app.addGameObject("rct2", Shape::RECTANGLE, {0, 13, 200, 255}, 50, 50, 200, 200, 30);
-    app.addGameObject("cir1", Shape::CIRCLE, {255, 0, 0, 5}, 60, 100, 700, 500);
-    app.addGameObject("cir2", Shape::CIRCLE, {0, 0, 255, 75}, 50, 90, 500, 300, 113);
+    app.addGameObject("cir1", Shape::CIRCLE, {255, 0, 0, 5}, 60, 100, 700, 500, 90);
+    app.addGameObject("cir2", Shape::CIRCLE, {0, 0, 255, 75}, 50, 90, 500, 300, 125);
     app.addGameObject("tri1", Shape::TRIANGLE, {255, 0, 0, 255}, 90, 150, 300, 500, 180);
-    app.addGameObject("tri1", Shape::TRIANGLE, {0, 0, 255, 255}, 170, 92, 800, 300, 90);
-    //app.addGameObject("referenceX", Shape::RECTANGLE, {255, 0, 0, 255}, 300, 10, 300, 310);
-    //app.addGameObject("referenceX", Shape::RECTANGLE, {255, 0, 0, 255}, 10, 300, 470, 150);
+    app.addGameObject("tri2", Shape::TRIANGLE, {0, 0, 255, 255}, 170, 92, 800, 300, 270);
+    */
 
     // GRID for testing purposes
     if (GRID_ACTIVE)
