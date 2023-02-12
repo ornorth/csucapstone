@@ -36,18 +36,30 @@ class CApp {
                            int dim_x = 50, int dim_y = 50,
                            int pos_x = 100, int pos_y = 100,
                            double angle = 0);
-        bool addGameObject(const GameObject& g_obj);
-        GameObject& getGameObject(const std::string& name);
 
         // Update Game Object attributes directly
         bool setObjectValue(const std::string& obj_name, ObjectAttribute attribute, double var1, double var2=0);
 
+        // EVENTS
+        bool addEvent(const std::string& obj_name, GameEvent event, GameAction action, std::string name);
+        bool addEvent(const std::string& obj_name, GameEvent event, GameAction action, double value);
+        bool addEvent(const std::string& obj_name, GameEvent event, GameAction action, std::string name, double value);
+
     private:
+        int getGameObject(const std::string& name);
+
+        void runGeneralEvents(GameObject* GOptr);
+        
         bool OnInit();
         void OnEvent(SDL_Event& event);
         void OnLoop();
         void OnRender();
         void OnCleanup();
 };
+
+// void addEvent(GameObject, event, action)
+
+
+
 
 #endif

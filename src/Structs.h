@@ -66,11 +66,27 @@ enum ObjectFlag {
  *  (31) 1073741824 - 
  */
 
+enum GameEvent {
+    BORDERCOLLISION,
+};
 
-struct KeyEvent {
-    SDL_KeyCode key;
-    GameObject& target;
-    //action
+enum GameAction {
+    SETVAR,         // set a variable
+                    //  - variable name
+                    //  - new value to set
+    INCVAR,         // increment a variable
+                    //  - variable name
+                    //  - value by which to increment
+    TOGGLE,         // toggle a flag
+                    //  - name of the flag
+    BOUNCE,         // reverse velocity, as if the object "bounced" off a surface
+                    //  - variance (shift the velocity by a random amount within the given variance)
+};
+
+struct ActionList {
+    GameAction type;
+    std::string id;
+    double value;
 };
 
 #endif

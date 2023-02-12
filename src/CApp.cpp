@@ -13,79 +13,164 @@ CApp::CApp(int window_width, int window_height, int r, int g, int b, int a)
 /////// Game Objects
 /////////////////////////////////////////////////////////////////////////////
 
-bool CApp::addGameObject(const std::string& name, Shape shape, const Color& color,
-                         int dim_x, int dim_y, int pos_x, int pos_y, double angle)
-{
-    for (unsigned i = 0; i < obj_list.size(); ++i)
-    {
-        // Currently this just quietly fails
-        // Could keep it like that, or maybe throw an error?
-        if (obj_list[i].getName() == name) return false;
-    }
-    obj_list.push_back(GameObject(name, shape, color, dim_x, dim_y, pos_x, pos_y, angle));
-    return true;
-}
-bool CApp::addGameObject(const GameObject& g_obj)
-{
-    obj_list.push_back(g_obj);
-    return true;
-}
-
-GameObject& CApp::getGameObject(const std::string& name)
+// Helper function
+int CApp::getGameObject(const std::string& name)
 {
     for (unsigned i = 0; i < obj_list.size(); ++i)
     {
         if (obj_list[i].getName() == name)
-            return obj_list[i];
+            return i;
     }
-    throw "Specified object not found";
+    return -1;
+}
+
+bool CApp::addGameObject(const std::string& name, Shape shape, const Color& color,
+                         int dim_x, int dim_y, int pos_x, int pos_y, double angle)
+{
+    if (getGameObject(name) != -1) return false;
+    obj_list.push_back(GameObject(name, shape, color, dim_x, dim_y, pos_x, pos_y, angle));
+    return true;
 }
 
 bool CApp::setObjectValue(const std::string& obj_name, ObjectAttribute attribute, double var1, double var2)
 {
-    GameObject* GOptr = nullptr;
-    for (unsigned i = 0; i < obj_list.size(); ++i)
-    {
-        if (obj_list[i].getName() == obj_name)
-        {
-            GOptr = &obj_list[i];
-            break;
-        }
-    }
-    if (!GOptr) return false;
+    int idx = getGameObject(obj_name);
+    if (idx == -1) return false;
 
     switch(attribute)
     {
         case ObjectAttribute::SIZE:
-            GOptr->dim_x = var1;
-            GOptr->dim_y = var2;
+            obj_list[idx].dim_x = var1;
+            obj_list[idx].dim_y = var2;
             break;
         case ObjectAttribute::ANGLE:
-            GOptr->angle = var1;
+            obj_list[idx].angle = var1;
             break;
         case ObjectAttribute::POSITION:
-            GOptr->pos_x = var1;
-            GOptr->pos_y = var2;
+            obj_list[idx].pos_x = var1;
+            obj_list[idx].pos_y = var2;
             break;
         case ObjectAttribute::VELOCITY:
-            GOptr->vel_x = var1;
-            GOptr->vel_y = var2;
+            obj_list[idx].vel_x = var1;
+            obj_list[idx].vel_y = var2;
             break;
         case ObjectAttribute::ACCELERATION:
-            GOptr->acc_x = var1;
-            GOptr->acc_y = var2;
+            obj_list[idx].acc_x = var1;
+            obj_list[idx].acc_y = var2;
             break;
         case ObjectAttribute::ANG_VELOCITY:
-            GOptr->vel_ang = var1;
+            obj_list[idx].vel_ang = var1;
             break;
         case ObjectAttribute::ANG_ACCELERATION:
-            GOptr->acc_ang = var1;
+            obj_list[idx].acc_ang = var1;
             break;
         default:
             std::cerr << "DEFAULT TAKEN ON 'ObjectAttribute' SWITCH\n";
             exit(1);
     }
     return true;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+///////  Events
+/////////////////////////////////////////////////////////////////////////////
+bool CApp::addEvent(const std::string& obj_name, GameEvent event, GameAction action, std::string name)
+{
+    int idx = getGameObject(obj_name);
+    if (idx == -1) return false;
+
+    obj_list[idx].addEvent(event, action, name);
+    return true;
+}
+bool CApp::addEvent(const std::string& obj_name, GameEvent event, GameAction action, double value)
+{
+    int idx = getGameObject(obj_name);
+    if (idx == -1) return false;
+
+    obj_list[idx].addEvent(event, action, value);
+    return true;
+}
+bool CApp::addEvent(const std::string& obj_name, GameEvent event, GameAction action, std::string name, double value)
+{
+    int idx = getGameObject(obj_name);
+    if (idx == -1) return false;
+
+    obj_list[idx].addEvent(event, action, name, value);
+    return true;
+}
+
+void CApp::runGeneralEvents(GameObject* GOptr)
+{
+    for (auto& it: GOptr->event_list)
+    {
+        // Step 1: check if the event has occurred
+        bool main_flag = false;
+        bool flag2 = false;
+        bool flag3 = false;
+        switch(it.first)
+        {
+            case GameEvent::BORDERCOLLISION:
+            {
+                // GARBAGE VERSION: FIX LATER
+                if (GOptr->pos_x + (GOptr->dim_x/2) >= window_width)
+                {
+                    main_flag = true;
+                    flag2 = true;
+                }
+                if (GOptr->pos_x - (GOptr->dim_x/2) <= 0)
+                {
+                    main_flag = true;
+                    flag2 = true;
+                }
+                if (GOptr->pos_y + (GOptr->dim_y/2) >= window_height)
+                {
+                    main_flag = true;
+                    flag3 = true;
+                }
+                if (GOptr->pos_y - (GOptr->dim_y/2) <= 0)
+                {
+                    main_flag = true;
+                    flag3 = true;
+                }
+                break;
+            }
+            default:
+            {
+                std::cerr << "DEFAULT TAKEN ON 'Shape' SWITCH\n";
+                exit(1);
+            }
+        }
+
+        // Step 2: take the actions listed
+        for (unsigned idx = 0; main_flag && idx < it.second.size(); ++idx)
+        {
+            switch(it.second[idx].type)
+            {
+                case GameAction::BOUNCE:
+                {
+                    if (flag2) GOptr->vel_x *= -1;
+                    if (flag3) GOptr->vel_y *= -1;
+
+                    if (flag2)
+                    {
+                        GOptr->vel_x += it.second[idx].value;
+                        GOptr->vel_y -= it.second[idx].value;
+                    }
+                    if (flag3)
+                    {
+                        GOptr->vel_x -= it.second[idx].value;
+                        GOptr->vel_y += it.second[idx].value;
+                    }
+                    break;
+                }
+                default:
+                {
+                    std::cerr << "DEFAULT TAKEN ON 'Shape' SWITCH\n";
+                    exit(1);
+                }
+            }
+        }
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -141,6 +226,11 @@ void CApp::OnEvent(SDL_Event& event)
 {
     if (event.type == SDL_KEYDOWN)
     {
+        /*
+        for key_event in key_event_list:
+            if event.key.keysym.sym == key_event.key:
+                take_action(key_event.game_object, key_event.action)
+        */
         if (event.key.keysym.sym == SDLK_ESCAPE)
         {
             running = false;
@@ -152,9 +242,14 @@ void CApp::OnLoop()
 {
     for (unsigned i = 0; i < obj_list.size(); ++i)
     {
+        // Skip object if STATIC flag is set
         GameObject* GOptr = &obj_list[i];
         if (GOptr->checkFlag(ObjectFlag::STATIC)) continue;
+
+        // Check event list
+        runGeneralEvents(GOptr);
         
+        // Update position and velocity
         GOptr->vel_x += GOptr->acc_x;
         GOptr->pos_x += GOptr->vel_x;
 
@@ -163,6 +258,7 @@ void CApp::OnLoop()
 
         GOptr->vel_ang += GOptr->acc_ang;
         GOptr->angle += GOptr->vel_ang;
+        while (GOptr->angle >= 360) GOptr->angle -= 360;
     }
 }
 
@@ -246,10 +342,7 @@ void CApp::OnRender()
                 for (int y = 0; y <= c_dim_y; ++y)
                 {
                     for (int x = (x_width/2) * -1; x <= (x_width/2); ++x)
-                    {
                         obj_list[curObj].drawPixel(Renderer, x, y);
-                        //SDL_RenderDrawPoint(Renderer, (int)c_pos_x+x, (int)c_pos_y-y);
-                    }
                     x_width -= aspectRatio;
                 }
                 break;
