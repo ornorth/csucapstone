@@ -4,10 +4,10 @@
 #include "CApp.h"
 
 
-CApp::CApp(int window_width, int window_height, int r, int g, int b, int a)
+CApp::CApp(int window_width, int window_height, const Color& color)
          : Main_Window(nullptr), Renderer(nullptr), running(true),
            window_width(window_width), window_height(window_height),
-           bg_color({r, g, b, a})
+           bg_color(color)
 {
     srand(time(NULL));
 }
@@ -82,15 +82,15 @@ bool CApp::addEvent(const std::string& obj_name, GameEvent event, GameAction act
     int idx = getGameObject(obj_name);
     if (idx == -1) return false;
 
-    obj_list[idx].addEvent(event, action);
+    obj_list[idx].addEvent(event, action, "NULL", 0.0);
     return true;
 }
-bool CApp::addEvent(const std::string& obj_name, GameEvent event, GameAction action, std::string name)
+bool CApp::addEvent(const std::string& obj_name, GameEvent event, GameAction action, const std::string& name)
 {
     int idx = getGameObject(obj_name);
     if (idx == -1) return false;
 
-    obj_list[idx].addEvent(event, action, name);
+    obj_list[idx].addEvent(event, action, name, 0.0);
     return true;
 }
 bool CApp::addEvent(const std::string& obj_name, GameEvent event, GameAction action, double value)
@@ -98,10 +98,10 @@ bool CApp::addEvent(const std::string& obj_name, GameEvent event, GameAction act
     int idx = getGameObject(obj_name);
     if (idx == -1) return false;
 
-    obj_list[idx].addEvent(event, action, value);
+    obj_list[idx].addEvent(event, action, "NULL", value);
     return true;
 }
-bool CApp::addEvent(const std::string& obj_name, GameEvent event, GameAction action, std::string name, double value)
+bool CApp::addEvent(const std::string& obj_name, GameEvent event, GameAction action, const std::string& name, double value)
 {
     int idx = getGameObject(obj_name);
     if (idx == -1) return false;

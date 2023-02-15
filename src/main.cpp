@@ -7,9 +7,11 @@
 
 int main(int argc, char* argv[])
 {
-    CApp app(1080, 720, 73, 213, 52, 255);
-    app.addGameObject("rct1", Shape::RECTANGLE, {0, 13, 200, 255}, 100, 100, 200, 130, 0);
+    CApp app(1080, 720, {73, 213, 52, 255});
+
+    app.addGameObject("rct1", Shape::RECTANGLE, {0, 13, 200, 255}, 100, 100, 200, 130, 100);
     app.setObjectValue("rct1", ObjectAttribute::VELOCITY, 11, 8);
+    app.setObjectValue("rct1", ObjectAttribute::ANG_VELOCITY, 7);
     app.addEvent("rct1", GameEvent::X_BORDERCOLLISION, GameAction::BOUNCE_X);
     app.addEvent("rct1", GameEvent::Y_BORDERCOLLISION, GameAction::BOUNCE_Y);
 
@@ -33,7 +35,7 @@ int main(int argc, char* argv[])
     // app.addGameObject("cir1", Shape::CIRCLE, {255, 0, 0, 5}, 60, 100, 700, 500, 90);
     // app.setObjectValue("cir1", ObjectAttribute::ANG_VELOCITY, 2);
 
-    // app.addGameObject("cir2", Shape::CIRCLE, {0, 0, 255, 75}, 300, 300, 500, 300, 125);
+    // app.addGameObject("cir2", Shape::CIRCLE, {0, 0, 255, 75}, 100, 100, 500, 300, 125);
     // app.setObjectValue("cir2", ObjectAttribute::ANG_VELOCITY, -2);
 
     // app.addGameObject("tri1", Shape::TRIANGLE, {255, 0, 0, 255}, 90, 150, 300, 500, 180);

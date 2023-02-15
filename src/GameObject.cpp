@@ -52,18 +52,6 @@ bool GameObject::checkFlag(ObjectFlag flag)
     return flags & flag;
 }
 
-void GameObject::addEvent(GameEvent event, GameAction action)
-{
-    event_list[event].push_back({action, "NULL", 0});
-}
-void GameObject::addEvent(GameEvent event, GameAction action, const std::string& name)
-{
-    event_list[event].push_back({action, name, 0});
-}
-void GameObject::addEvent(GameEvent event, GameAction action, double value)
-{
-    event_list[event].push_back({action, "NULL", value});
-}
 void GameObject::addEvent(GameEvent event, GameAction action, const std::string& name, double value)
 {
     event_list[event].push_back({action, name, value});

@@ -27,7 +27,7 @@ class CApp {
         Color bg_color;
 
     public:
-        CApp(int window_width, int window_height, int r = 255, int g = 255, int b = 255, int a = 255);
+        CApp(int window_width, int window_height, const Color& color);
         int Execute();
 
         bool addGameObject(const std::string& name,
@@ -42,9 +42,9 @@ class CApp {
 
         // EVENTS
         bool addEvent(const std::string& obj_name, GameEvent event, GameAction action);
-        bool addEvent(const std::string& obj_name, GameEvent event, GameAction action, std::string name);
+        bool addEvent(const std::string& obj_name, GameEvent event, GameAction action, const std::string& name);
         bool addEvent(const std::string& obj_name, GameEvent event, GameAction action, double value);
-        bool addEvent(const std::string& obj_name, GameEvent event, GameAction action, std::string name, double value);
+        bool addEvent(const std::string& obj_name, GameEvent event, GameAction action, const std::string& name, double value);
 
     private:
         int getGameObject(const std::string& name);

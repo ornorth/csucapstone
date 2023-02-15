@@ -60,9 +60,6 @@ class GameObject {
         //std::unordered_map<string, std::vector<ActionList>> collision_event_list;
         //std::unordered_map<SDL_Keypress, std::vector<ActionList>> key_event_list;
 
-        void addEvent(GameEvent event, GameAction action);
-        void addEvent(GameEvent event, GameAction action, const std::string& name);
-        void addEvent(GameEvent event, GameAction action, double value);
         void addEvent(GameEvent event, GameAction action, const std::string& name, double value);
         //void addCollisionEvent()
         //void addKeyEvent()
