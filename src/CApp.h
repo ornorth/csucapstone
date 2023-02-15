@@ -41,6 +41,7 @@ class CApp {
         bool setObjectValue(const std::string& obj_name, ObjectAttribute attribute, double var1, double var2=0);
 
         // EVENTS
+        bool addEvent(const std::string& obj_name, GameEvent event, GameAction action);
         bool addEvent(const std::string& obj_name, GameEvent event, GameAction action, std::string name);
         bool addEvent(const std::string& obj_name, GameEvent event, GameAction action, double value);
         bool addEvent(const std::string& obj_name, GameEvent event, GameAction action, std::string name, double value);

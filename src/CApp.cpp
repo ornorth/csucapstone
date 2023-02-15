@@ -1,5 +1,6 @@
 #include <ratio>
 #include <chrono>
+#include <random>
 #include "CApp.h"
 
 
@@ -7,7 +8,9 @@ CApp::CApp(int window_width, int window_height, int r, int g, int b, int a)
          : Main_Window(nullptr), Renderer(nullptr), running(true),
            window_width(window_width), window_height(window_height),
            bg_color({r, g, b, a})
-{ }
+{
+    srand(time(NULL));
+}
 
 /////////////////////////////////////////////////////////////////////////////
 /////// Game Objects
@@ -74,6 +77,14 @@ bool CApp::setObjectValue(const std::string& obj_name, ObjectAttribute attribute
 /////////////////////////////////////////////////////////////////////////////
 ///////  Events
 /////////////////////////////////////////////////////////////////////////////
+bool CApp::addEvent(const std::string& obj_name, GameEvent event, GameAction action)
+{
+    int idx = getGameObject(obj_name);
+    if (idx == -1) return false;
+
+    obj_list[idx].addEvent(event, action);
+    return true;
+}
 bool CApp::addEvent(const std::string& obj_name, GameEvent event, GameAction action, std::string name)
 {
     int idx = getGameObject(obj_name);
@@ -104,34 +115,25 @@ void CApp::runGeneralEvents(GameObject* GOptr)
     for (auto& it: GOptr->event_list)
     {
         // Step 1: check if the event has occurred
-        bool main_flag = false;
-        bool flag2 = false;
-        bool flag3 = false;
+        bool flag = false;
         switch(it.first)
         {
-            case GameEvent::BORDERCOLLISION:
+            case GameEvent::X_BORDERCOLLISION:
             {
                 // GARBAGE VERSION: FIX LATER
                 if (GOptr->pos_x + (GOptr->dim_x/2) >= window_width)
-                {
-                    main_flag = true;
-                    flag2 = true;
-                }
+                    flag = true;
                 if (GOptr->pos_x - (GOptr->dim_x/2) <= 0)
-                {
-                    main_flag = true;
-                    flag2 = true;
-                }
+                    flag = true;
+                break;
+            }
+            case GameEvent::Y_BORDERCOLLISION:
+            {
+                // GARBAGE VERSION: FIX LATER
                 if (GOptr->pos_y + (GOptr->dim_y/2) >= window_height)
-                {
-                    main_flag = true;
-                    flag3 = true;
-                }
+                    flag = true;
                 if (GOptr->pos_y - (GOptr->dim_y/2) <= 0)
-                {
-                    main_flag = true;
-                    flag3 = true;
-                }
+                    flag = true;
                 break;
             }
             default:
@@ -142,25 +144,20 @@ void CApp::runGeneralEvents(GameObject* GOptr)
         }
 
         // Step 2: take the actions listed
-        for (unsigned idx = 0; main_flag && idx < it.second.size(); ++idx)
+        for (unsigned idx = 0; flag && idx < it.second.size(); ++idx)
         {
             switch(it.second[idx].type)
             {
-                case GameAction::BOUNCE:
+                case GameAction::BOUNCE_X:
                 {
-                    if (flag2) GOptr->vel_x *= -1;
-                    if (flag3) GOptr->vel_y *= -1;
-
-                    if (flag2)
-                    {
-                        GOptr->vel_x += it.second[idx].value;
-                        GOptr->vel_y -= it.second[idx].value;
-                    }
-                    if (flag3)
-                    {
-                        GOptr->vel_x -= it.second[idx].value;
-                        GOptr->vel_y += it.second[idx].value;
-                    }
+                    // Swap the velocity
+                    GOptr->vel_x *= -1;
+                    break;
+                }
+                case GameAction::BOUNCE_Y:
+                {
+                    // Swap the velocity
+                    GOptr->vel_y *= -1;
                     break;
                 }
                 default:

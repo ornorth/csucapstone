@@ -67,7 +67,8 @@ enum ObjectFlag {
  */
 
 enum GameEvent {
-    BORDERCOLLISION,
+    X_BORDERCOLLISION,
+    Y_BORDERCOLLISION,
 };
 
 enum GameAction {
@@ -79,8 +80,8 @@ enum GameAction {
                     //  - value by which to increment
     TOGGLE,         // toggle a flag
                     //  - name of the flag
-    BOUNCE,         // reverse velocity, as if the object "bounced" off a surface
-                    //  - variance (shift the velocity by a random amount within the given variance)
+    BOUNCE_X,       // reverse X velocity, as if the object "bounced" off a surface
+    BOUNCE_Y,       // reverse Y velocity, as if the object "bounced" off a surface
 };
 
 struct ActionList {
