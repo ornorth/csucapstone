@@ -27,6 +27,38 @@ int CApp::getGameObject(const std::string& name)
     return -1;
 }
 
+double* CApp::getObjectAttribute(GameObject* GOptr, ObjectAttribute attribute)
+{    
+    switch(attribute)
+    {
+        case ObjectAttribute::WIDTH:
+            return &GOptr->dim_x;
+        case ObjectAttribute::HEIGHT:
+            return &GOptr->dim_y;
+        case ObjectAttribute::ANGLE:
+            return &GOptr->angle;
+        case ObjectAttribute::X_POSITION:
+            return &GOptr->pos_x;
+        case ObjectAttribute::Y_POSITION:
+            return &GOptr->pos_y;
+        case ObjectAttribute::X_VELOCITY:
+            return &GOptr->vel_x;
+        case ObjectAttribute::Y_VELOCITY:
+            return &GOptr->vel_y;
+        case ObjectAttribute::X_ACCELERATION:
+            return &GOptr->acc_x;
+        case ObjectAttribute::Y_ACCELERATION:
+            return &GOptr->acc_y;
+        case ObjectAttribute::ANG_VELOCITY:
+            return &GOptr->vel_ang;
+        case ObjectAttribute::ANG_ACCELERATION:
+            return &GOptr->acc_ang;
+        default:
+            std::cerr << "DEFAULT TAKEN ON 'ObjectAttribute' SWITCH\n";
+            exit(1);
+    }
+}
+
 bool CApp::addGameObject(const std::string& name, Shape shape, const Color& color,
                          int dim_x, int dim_y, int pos_x, int pos_y, double angle)
 {
@@ -35,42 +67,13 @@ bool CApp::addGameObject(const std::string& name, Shape shape, const Color& colo
     return true;
 }
 
-bool CApp::setObjectValue(const std::string& obj_name, ObjectAttribute attribute, double var1, double var2)
+bool CApp::setObjectValue(const std::string& obj_name, ObjectAttribute attribute, double value)
 {
     int idx = getGameObject(obj_name);
     if (idx == -1) return false;
+    
+    *(getObjectAttribute(&obj_list[idx], attribute)) = value;
 
-    switch(attribute)
-    {
-        case ObjectAttribute::SIZE:
-            obj_list[idx].dim_x = var1;
-            obj_list[idx].dim_y = var2;
-            break;
-        case ObjectAttribute::ANGLE:
-            obj_list[idx].angle = var1;
-            break;
-        case ObjectAttribute::POSITION:
-            obj_list[idx].pos_x = var1;
-            obj_list[idx].pos_y = var2;
-            break;
-        case ObjectAttribute::VELOCITY:
-            obj_list[idx].vel_x = var1;
-            obj_list[idx].vel_y = var2;
-            break;
-        case ObjectAttribute::ACCELERATION:
-            obj_list[idx].acc_x = var1;
-            obj_list[idx].acc_y = var2;
-            break;
-        case ObjectAttribute::ANG_VELOCITY:
-            obj_list[idx].vel_ang = var1;
-            break;
-        case ObjectAttribute::ANG_ACCELERATION:
-            obj_list[idx].acc_ang = var1;
-            break;
-        default:
-            std::cerr << "DEFAULT TAKEN ON 'ObjectAttribute' SWITCH\n";
-            exit(1);
-    }
     return true;
 }
 
@@ -107,6 +110,14 @@ bool CApp::addEvent(const std::string& obj_name, GameEvent event, GameAction act
     if (idx == -1) return false;
 
     obj_list[idx].addEvent(event, action, name, value);
+    return true;
+}
+bool CApp::addEvent(const std::string& obj_name, GameEvent event, GameAction action, ObjectAttribute att, double value)
+{
+    int idx = getGameObject(obj_name);
+    if (idx == -1) return false;
+
+    obj_list[idx].addEvent(event, action, att, value);
     return true;
 }
 
@@ -160,6 +171,24 @@ void CApp::runGeneralEvents(GameObject* GOptr)
                     GOptr->vel_y *= -1;
                     break;
                 }
+                case GameAction::SETVAR:
+                {
+                    double* att_ptr = (double*)getObjectAttribute(GOptr, it.second[idx].attribute);
+                    *att_ptr = it.second[idx].value;
+                    break;
+                }
+                case GameAction::INCVAR:
+                {
+                    double* att_ptr = (double*)getObjectAttribute(GOptr, it.second[idx].attribute);
+                    *att_ptr += it.second[idx].value;
+                    break;
+                }
+                case GameAction::SCALEVAR:
+                {
+                    double* att_ptr = (double*)getObjectAttribute(GOptr, it.second[idx].attribute);
+                    *att_ptr *= it.second[idx].value;
+                    break;
+                }
                 default:
                 {
                     std::cerr << "DEFAULT TAKEN ON 'Shape' SWITCH\n";
@@ -196,6 +225,7 @@ int CApp::Execute()
              std::chrono::duration_cast<std::chrono::duration<double>>(t2-t1).count() < (1.0/30.0);
              t2 = std::chrono::steady_clock::now())
         {}
+        std::cout << "FPS: " << 1.0 / std::chrono::duration_cast<std::chrono::duration<double>>(t2-t1).count() << std::endl;
     }
     OnCleanup();
     return 0;
@@ -254,6 +284,7 @@ void CApp::OnLoop()
         GOptr->pos_y += GOptr->vel_y;
 
         GOptr->vel_ang += GOptr->acc_ang;
+        //if (GOptr->vel_ang >= 360) GOptr->vel_ang -= 360;
         GOptr->angle += GOptr->vel_ang;
         while (GOptr->angle >= 360) GOptr->angle -= 360;
     }
@@ -333,6 +364,7 @@ void CApp::OnRender()
             {
                 int c_dim_x = obj_list[curObj].dim_x;
                 int c_dim_y = obj_list[curObj].dim_y;
+
                 double aspectRatio = (double)c_dim_x / c_dim_y;
                 double x_width = c_dim_x;
 

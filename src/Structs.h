@@ -20,11 +20,15 @@ enum Shape {
 };
 
 enum ObjectAttribute {
-    SIZE,
+    WIDTH,
+    HEIGHT,
     ANGLE,
-    POSITION,
-    VELOCITY,
-    ACCELERATION,
+    X_POSITION,
+    Y_POSITION,
+    X_VELOCITY,
+    Y_VELOCITY,
+    X_ACCELERATION,
+    Y_ACCELERATION,
     ANG_VELOCITY,
     ANG_ACCELERATION,
 };
@@ -74,10 +78,13 @@ enum GameEvent {
 enum GameAction {
     SETVAR,         // set a variable
                     //  - variable name
-                    //  - new value to set
+                    //  - new value to set: name = var
     INCVAR,         // increment a variable
                     //  - variable name
-                    //  - value by which to increment
+                    //  - value by which to increment: name += var
+    SCALEVAR,       // scale a variable
+                    //  - variable name
+                    //  - value by which to scale: name *= var
     TOGGLE,         // toggle a flag
                     //  - name of the flag
     BOUNCE_X,       // reverse X velocity, as if the object "bounced" off a surface
@@ -88,6 +95,7 @@ struct ActionList {
     GameAction type;
     std::string id;
     double value;
+    ObjectAttribute attribute;
 };
 
 #endif

@@ -4,6 +4,8 @@
 #include <iostream>
 #include <vector>
 #include <unordered_map>
+#include <utility>
+#include <set>
 #include "Structs.h"
 
 /* The basic outline of a game object
@@ -18,10 +20,10 @@ class GameObject {
         Color color;
 
         // Position
-        int dim_x;
-        int dim_y;
-        int pos_x;
-        int pos_y;
+        double dim_x;
+        double dim_y;
+        double pos_x;
+        double pos_y;
         double angle;
 
         // Movement
@@ -61,6 +63,7 @@ class GameObject {
         //std::unordered_map<SDL_Keypress, std::vector<ActionList>> key_event_list;
 
         void addEvent(GameEvent event, GameAction action, const std::string& name, double value);
+        void addEvent(GameEvent event, GameAction action, ObjectAttribute att, double value);
         //void addCollisionEvent()
         //void addKeyEvent()
 

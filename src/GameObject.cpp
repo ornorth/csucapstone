@@ -23,18 +23,20 @@ void GameObject::drawPixel(SDL_Renderer *Renderer, int x, int y)
     int convX = pos_x + (x*std::cos(convAngle)) - (y*std::sin(convAngle));
     int convY = pos_y + (x*std::sin(convAngle)) + (y*std::cos(convAngle));
 
-    SDL_RenderDrawPoint(Renderer, convX, convY);
-    if ((int)angle % 90 != 0)
-    {
-        if (x < dim_x/2 + 1)
-            SDL_RenderDrawPoint(Renderer, convX + 1, convY    );
-        if (x > dim_x/2 * -1)
-            SDL_RenderDrawPoint(Renderer, convX - 1, convY    );
-        if (y < dim_y/2 + 1)
-            SDL_RenderDrawPoint(Renderer, convX,     convY + 1);
-        if (y > dim_y/2 * -1)
-            SDL_RenderDrawPoint(Renderer, convX,     convY - 1);
-    }
+    SDL_Point points[5];
+    int count = 0;
+    
+    points[count++] = {convX, convY};
+    if (x < dim_x/2 + 1)
+        points[count++] = {convX + 1, convY};
+    if (x > dim_x/2 * -1)
+        points[count++] = {convX - 1, convY};
+    if (y < dim_y/2 + 1)
+        points[count++] = {convX, convY + 1};
+    if (y > dim_y/2 * -1)
+        points[count++] = {convX, convY - 1};
+    
+    SDL_RenderDrawPoints(Renderer, points, count);
 }
 
 void GameObject::setFlag(ObjectFlag flag)
@@ -55,4 +57,9 @@ bool GameObject::checkFlag(ObjectFlag flag)
 void GameObject::addEvent(GameEvent event, GameAction action, const std::string& name, double value)
 {
     event_list[event].push_back({action, name, value});
+}
+
+void GameObject::addEvent(GameEvent event, GameAction action, ObjectAttribute att, double value)
+{
+    event_list[event].push_back({action, "NULL", value, att});
 }

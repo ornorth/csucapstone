@@ -9,23 +9,37 @@ int main(int argc, char* argv[])
 {
     CApp app(1080, 720, {73, 213, 52, 255});
 
-    app.addGameObject("rct1", Shape::RECTANGLE, {0, 13, 200, 255}, 100, 100, 200, 130, 100);
-    app.setObjectValue("rct1", ObjectAttribute::VELOCITY, 11, 8);
-    app.setObjectValue("rct1", ObjectAttribute::ANG_VELOCITY, 7);
+    // Complicated rectangle
+    app.addGameObject("rct1", Shape::RECTANGLE, {0, 13, 200, 255}, 100, 100, 300, 300, 100);
+    app.setObjectValue("rct1", ObjectAttribute::X_VELOCITY, 15);
+    app.setObjectValue("rct1", ObjectAttribute::Y_VELOCITY, 8);
+
     app.addEvent("rct1", GameEvent::X_BORDERCOLLISION, GameAction::BOUNCE_X);
+    app.addEvent("rct1", GameEvent::X_BORDERCOLLISION, GameAction::SETVAR, ObjectAttribute::ANG_ACCELERATION, 0.5);
+    app.addEvent("rct1", GameEvent::X_BORDERCOLLISION, GameAction::INCVAR, ObjectAttribute::HEIGHT, 5);
+    app.addEvent("rct1", GameEvent::X_BORDERCOLLISION, GameAction::SCALEVAR, ObjectAttribute::X_VELOCITY, 1.05);
+    app.addEvent("rct1", GameEvent::X_BORDERCOLLISION, GameAction::SCALEVAR, ObjectAttribute::Y_VELOCITY, 1.05);
+
     app.addEvent("rct1", GameEvent::Y_BORDERCOLLISION, GameAction::BOUNCE_Y);
+    app.addEvent("rct1", GameEvent::Y_BORDERCOLLISION, GameAction::SETVAR, ObjectAttribute::ANG_ACCELERATION, -0.5);
+    app.addEvent("rct1", GameEvent::Y_BORDERCOLLISION, GameAction::INCVAR, ObjectAttribute::WIDTH, 5);
+    app.addEvent("rct1", GameEvent::Y_BORDERCOLLISION, GameAction::SCALEVAR, ObjectAttribute::X_VELOCITY, 0.95);
+    app.addEvent("rct1", GameEvent::Y_BORDERCOLLISION, GameAction::SCALEVAR, ObjectAttribute::Y_VELOCITY, 0.95);
 
-    app.addGameObject("cir1", Shape::CIRCLE, {255, 0, 0, 5}, 60, 100, 700, 500, 90);
-    app.setObjectValue("cir1", ObjectAttribute::VELOCITY, 7, -5);
-    app.addEvent("cir1", GameEvent::X_BORDERCOLLISION, GameAction::BOUNCE_X);
-    app.addEvent("cir1", GameEvent::Y_BORDERCOLLISION, GameAction::BOUNCE_Y);
+    // app.addGameObject("cir1", Shape::CIRCLE, {255, 0, 0, 5}, 60, 100, 700, 500, 90);
+    // app.setObjectValue("cir1", ObjectAttribute::X_VELOCITY, 7);
+    // app.setObjectValue("cir1", ObjectAttribute::Y_VELOCITY, -5);
+    // app.addEvent("cir1", GameEvent::X_BORDERCOLLISION, GameAction::BOUNCE_X);
+    // app.addEvent("cir1", GameEvent::Y_BORDERCOLLISION, GameAction::BOUNCE_Y);
 
-    app.addGameObject("tri1", Shape::TRIANGLE, {255, 0, 0, 255}, 90, 150, 300, 500, 180);
-    app.setObjectValue("tri1", ObjectAttribute::VELOCITY, 14, -1);
-    app.addEvent("tri1", GameEvent::X_BORDERCOLLISION, GameAction::BOUNCE_X);
-    app.addEvent("tri1", GameEvent::Y_BORDERCOLLISION, GameAction::BOUNCE_Y);
+    // app.addGameObject("tri1", Shape::TRIANGLE, {255, 0, 0, 255}, 90, 150, 300, 500, 180);
+    // app.setObjectValue("tri1", ObjectAttribute::X_VELOCITY, 14);
+    // app.setObjectValue("tri1", ObjectAttribute::Y_VELOCITY, -1);
+    // app.addEvent("tri1", GameEvent::X_BORDERCOLLISION, GameAction::BOUNCE_X);
+    // app.addEvent("tri1", GameEvent::Y_BORDERCOLLISION, GameAction::BOUNCE_Y);
 
-    // Spinny bois
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+
     // app.addGameObject("rct1", Shape::RECTANGLE, {0, 13, 200, 255}, 100, 100, 200, 130, 70);
     // app.setObjectValue("rct1", ObjectAttribute::ANG_VELOCITY, 2);
     

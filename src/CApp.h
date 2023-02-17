@@ -38,16 +38,18 @@ class CApp {
                            double angle = 0);
 
         // Update Game Object attributes directly
-        bool setObjectValue(const std::string& obj_name, ObjectAttribute attribute, double var1, double var2=0);
+        bool setObjectValue(const std::string& obj_name, ObjectAttribute attribute, double value);
 
         // EVENTS
         bool addEvent(const std::string& obj_name, GameEvent event, GameAction action);
         bool addEvent(const std::string& obj_name, GameEvent event, GameAction action, const std::string& name);
         bool addEvent(const std::string& obj_name, GameEvent event, GameAction action, double value);
         bool addEvent(const std::string& obj_name, GameEvent event, GameAction action, const std::string& name, double value);
+        bool addEvent(const std::string& obj_name, GameEvent event, GameAction action, ObjectAttribute att, double value);
 
     private:
         int getGameObject(const std::string& name);
+        double* getObjectAttribute(GameObject* GOptr, ObjectAttribute attribute);
 
         void runGeneralEvents(GameObject* GOptr);
         
