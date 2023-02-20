@@ -89,7 +89,7 @@ bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameActi
     int idx = getGameObject(obj_name);
     if (idx == -1) return false;
 
-    obj_list[idx].addEvent(event, action, "NULL", 0.0);
+    obj_list[idx].addEvent({event}, action, "NULL", 0.0);
     return true;
 }
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, const std::string& name)
@@ -97,7 +97,7 @@ bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameActi
     int idx = getGameObject(obj_name);
     if (idx == -1) return false;
 
-    obj_list[idx].addEvent(event, action, name, 0.0);
+    obj_list[idx].addEvent({event}, action, name, 0.0);
     return true;
 }
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, double value)
@@ -105,7 +105,7 @@ bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameActi
     int idx = getGameObject(obj_name);
     if (idx == -1) return false;
 
-    obj_list[idx].addEvent(event, action, "NULL", value);
+    obj_list[idx].addEvent({event}, action, "NULL", value);
     return true;
 }
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, const std::string& name, double value)
@@ -113,7 +113,7 @@ bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameActi
     int idx = getGameObject(obj_name);
     if (idx == -1) return false;
 
-    obj_list[idx].addEvent(event, action, name, value);
+    obj_list[idx].addEvent({event}, action, name, value);
     return true;
 }
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, ObjectAttribute att, double value)
@@ -121,7 +121,48 @@ bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameActi
     int idx = getGameObject(obj_name);
     if (idx == -1) return false;
 
-    obj_list[idx].addEvent(event, action, att, value);
+    obj_list[idx].addEvent({event}, action, att, value);
+    return true;
+}
+
+bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action)
+{
+    int idx = getGameObject(obj_name);
+    if (idx == -1) return false;
+
+    obj_list[idx].addEvent({event, effector_att, effector_value}, action, "NULL", 0.0);
+    return true;
+}
+bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, const std::string& name)
+{
+    int idx = getGameObject(obj_name);
+    if (idx == -1) return false;
+
+    obj_list[idx].addEvent({event, effector_att, effector_value}, action, name, 0.0);
+    return true;
+}
+bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, double value)
+{
+    int idx = getGameObject(obj_name);
+    if (idx == -1) return false;
+
+    obj_list[idx].addEvent({event, effector_att, effector_value}, action, "NULL", value);
+    return true;
+}
+bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, const std::string& name, double value)
+{
+    int idx = getGameObject(obj_name);
+    if (idx == -1) return false;
+
+    obj_list[idx].addEvent({event, effector_att, effector_value}, action, name, value);
+    return true;
+}
+bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, ObjectAttribute att, double value)
+{
+    int idx = getGameObject(obj_name);
+    if (idx == -1) return false;
+
+    obj_list[idx].addEvent({event, effector_att, effector_value}, action, att, value);
     return true;
 }
 
@@ -247,9 +288,8 @@ void CApp::checkObjectEvents(GameObject* GOptr)
 {
     for (auto& it: GOptr->event_list)
     {
-        // Step 1: check if the event has occurred
         bool flag = false;
-        switch(it.first)
+        switch(it.first.event)
         {
             case GameEvent::X_BORDERCOLLISION:
             {
@@ -289,6 +329,24 @@ void CApp::checkObjectEvents(GameObject* GOptr)
                     GOptr->setFlag(ObjectFlag::Y_BORDER_COLLIDED);
                 break;
             }
+            case GameEvent::OBJ_VAR_EQUALS:
+            {
+                double* att_ptr = (double*)getObjectAttribute(GOptr, it.first.attribute);
+                flag = (*att_ptr) == it.first.value;
+                break;
+            }
+            case GameEvent::OBJ_VAR_IS_LESS:
+            {
+                double* att_ptr = (double*)getObjectAttribute(GOptr, it.first.attribute);
+                flag = (*att_ptr) < it.first.value;
+                break;
+            }
+            case GameEvent::OBJ_VAR_IS_GREATER:
+            {
+                double* att_ptr = (double*)getObjectAttribute(GOptr, it.first.attribute);
+                flag = (*att_ptr) > it.first.value;
+                break;
+            }
             default:
             {
                 std::cerr << "DEFAULT TAKEN ON 'Shape' SWITCH\n";
@@ -301,7 +359,7 @@ void CApp::checkObjectEvents(GameObject* GOptr)
 }
 void CApp::runObjectEvent(GameObject* GOptr, std::vector<ActionList>& events)
 {
-    // Step 2: take the actions listed
+    std::cout << "------" << std::endl;
     for (unsigned idx = 0; idx < events.size(); ++idx)
     {
         switch(events[idx].type)
@@ -326,6 +384,7 @@ void CApp::runObjectEvent(GameObject* GOptr, std::vector<ActionList>& events)
             case GameAction::SETVAR:
             {
                 double* att_ptr = (double*)getObjectAttribute(GOptr, events[idx].attribute);
+                std::cout << events[idx].attribute << ": " << *att_ptr << "->" << events[idx].value << std::endl;
                 *att_ptr = events[idx].value;
                 break;
             }
@@ -1410,6 +1469,8 @@ void CApp::OnLoop()
         //if (GOptr->vel_ang >= 360) GOptr->vel_ang -= 360;
         GOptr->angle += GOptr->vel_ang;
         while (GOptr->angle >= 360) GOptr->angle -= 360;
+
+        //std::cout << "ACC= [" << GOptr->acc_x << "," << GOptr->acc_y << "] | VEL = [" << GOptr->vel_x << "," << GOptr->vel_y << "]\n";
     }
 }
 

@@ -54,6 +54,12 @@ class CApp {
         bool addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, const std::string& name, double value);
         bool addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, ObjectAttribute att, double value);
 
+        bool addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action);
+        bool addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, const std::string& name);
+        bool addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, double value);
+        bool addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, const std::string& name, double value);
+        bool addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, ObjectAttribute att, double value);
+
         bool addKeyEvent(KeyCode key, KeyPressType type, GameAction action); // for generic events: quit, pause(?)
         bool addKeyEvent(const std::string& obj_name, KeyCode key, KeyPressType type, GameAction action);
         bool addKeyEvent(const std::string& obj_name, KeyCode key, KeyPressType type, GameAction action, const std::string& name);

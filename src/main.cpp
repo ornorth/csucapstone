@@ -17,25 +17,43 @@ int main(int argc, char* argv[])
 
     // Object Events
     // app.addObjectEvent("rct1", GameEvent::X_BORDERCOLLISION, GameAction::BOUNCE_X);
-    // app.addObjectEvent("rct1", GameEvent::X_BORDERCOLLISION, GameAction::SETVAR, ObjectAttribute::ANG_ACCELERATION, 0.5);
-    // app.addObjectEvent("rct1", GameEvent::X_BORDERCOLLISION, GameAction::INCVAR, ObjectAttribute::HEIGHT, 20);
+    // app.addObjectEvent("rct1", GameEvent::X_BORDERCOLLISION, GameAction::SETVAR,   ObjectAttribute::ANG_ACCELERATION, 0.5);
+    // app.addObjectEvent("rct1", GameEvent::X_BORDERCOLLISION, GameAction::INCVAR,   ObjectAttribute::HEIGHT, 20);
     // app.addObjectEvent("rct1", GameEvent::X_BORDERCOLLISION, GameAction::SCALEVAR, ObjectAttribute::X_VELOCITY, 1.05);
     // app.addObjectEvent("rct1", GameEvent::X_BORDERCOLLISION, GameAction::SCALEVAR, ObjectAttribute::Y_VELOCITY, 1.05);
 
     // app.addObjectEvent("rct1", GameEvent::Y_BORDERCOLLISION, GameAction::BOUNCE_Y);
-    // app.addObjectEvent("rct1", GameEvent::Y_BORDERCOLLISION, GameAction::SETVAR, ObjectAttribute::ANG_ACCELERATION, -0.5);
-    // app.addObjectEvent("rct1", GameEvent::Y_BORDERCOLLISION, GameAction::INCVAR, ObjectAttribute::WIDTH, 20);
+    // app.addObjectEvent("rct1", GameEvent::Y_BORDERCOLLISION, GameAction::SETVAR,   ObjectAttribute::ANG_ACCELERATION, -0.5);
+    // app.addObjectEvent("rct1", GameEvent::Y_BORDERCOLLISION, GameAction::INCVAR,   ObjectAttribute::WIDTH, 20);
     // app.addObjectEvent("rct1", GameEvent::Y_BORDERCOLLISION, GameAction::SCALEVAR, ObjectAttribute::X_VELOCITY, 0.95);
     // app.addObjectEvent("rct1", GameEvent::Y_BORDERCOLLISION, GameAction::SCALEVAR, ObjectAttribute::Y_VELOCITY, 0.95);
 
-    // Keyboard Events
-    app.addKeyEvent("rct1", KeyCode::A, KeyPressType::HELD, GameAction::INCVAR, ObjectAttribute::X_POSITION, -15);
-    app.addKeyEvent("rct1", KeyCode::D, KeyPressType::HELD, GameAction::INCVAR, ObjectAttribute::X_POSITION, 15);
-    app.addKeyEvent("rct1", KeyCode::W, KeyPressType::HELD, GameAction::INCVAR, ObjectAttribute::Y_POSITION, -15);
-    app.addKeyEvent("rct1", KeyCode::S, KeyPressType::HELD, GameAction::INCVAR, ObjectAttribute::Y_POSITION, 15);
+    // Keyboard Events v1
+    // app.addKeyEvent("rct1", KeyCode::A, KeyPressType::HELD, GameAction::INCVAR, ObjectAttribute::X_POSITION, -15);
+    // app.addKeyEvent("rct1", KeyCode::D, KeyPressType::HELD, GameAction::INCVAR, ObjectAttribute::X_POSITION,  15);
+    // app.addKeyEvent("rct1", KeyCode::W, KeyPressType::HELD, GameAction::INCVAR, ObjectAttribute::Y_POSITION, -15);
+    // app.addKeyEvent("rct1", KeyCode::S, KeyPressType::HELD, GameAction::INCVAR, ObjectAttribute::Y_POSITION,  15);
 
-    app.addKeyEvent("rct1", KeyCode::SPACE, KeyPressType::DOWN, GameAction::SETVAR, ObjectAttribute::ANG_ACCELERATION, 1);
-    app.addKeyEvent("rct1", KeyCode::SPACE, KeyPressType::UP, GameAction::SETVAR, ObjectAttribute::ANG_ACCELERATION, -1);
+    // app.addKeyEvent("rct1", KeyCode::SPACE, KeyPressType::DOWN, GameAction::SETVAR, ObjectAttribute::ANG_ACCELERATION,  1);
+    // app.addKeyEvent("rct1", KeyCode::SPACE, KeyPressType::UP,   GameAction::SETVAR, ObjectAttribute::ANG_ACCELERATION, -1);
+
+    // Keyboard Events v2
+    app.addKeyEvent("rct1", KeyCode::A, KeyPressType::DOWN, GameAction::SETVAR, ObjectAttribute::X_ACCELERATION, -1);
+    app.addKeyEvent("rct1", KeyCode::D, KeyPressType::DOWN, GameAction::SETVAR, ObjectAttribute::X_ACCELERATION,  1);
+    app.addKeyEvent("rct1", KeyCode::W, KeyPressType::DOWN, GameAction::SETVAR, ObjectAttribute::Y_ACCELERATION, -1);
+    app.addKeyEvent("rct1", KeyCode::S, KeyPressType::DOWN, GameAction::SETVAR, ObjectAttribute::Y_ACCELERATION,  1);
+
+    app.addObjectEvent("rct1", GameEvent::OBJ_VAR_IS_GREATER, ObjectAttribute::X_VELOCITY,  14, GameAction::SETVAR, ObjectAttribute::X_ACCELERATION,  0);
+    app.addObjectEvent("rct1", GameEvent::OBJ_VAR_IS_GREATER, ObjectAttribute::X_VELOCITY,  14, GameAction::SETVAR, ObjectAttribute::X_VELOCITY,     14);
+
+    app.addObjectEvent("rct1", GameEvent::OBJ_VAR_IS_LESS,    ObjectAttribute::X_VELOCITY, -14, GameAction::SETVAR, ObjectAttribute::X_ACCELERATION, 0);
+    app.addObjectEvent("rct1", GameEvent::OBJ_VAR_IS_LESS,    ObjectAttribute::X_VELOCITY, -14, GameAction::SETVAR, ObjectAttribute::X_VELOCITY,   -14);
+
+    app.addObjectEvent("rct1", GameEvent::OBJ_VAR_IS_GREATER, ObjectAttribute::Y_VELOCITY,  14, GameAction::SETVAR, ObjectAttribute::Y_ACCELERATION, 0);
+    app.addObjectEvent("rct1", GameEvent::OBJ_VAR_IS_GREATER, ObjectAttribute::Y_VELOCITY,  14, GameAction::SETVAR, ObjectAttribute::Y_VELOCITY,    14);
+
+    app.addObjectEvent("rct1", GameEvent::OBJ_VAR_IS_LESS,    ObjectAttribute::Y_VELOCITY, -14, GameAction::SETVAR, ObjectAttribute::Y_ACCELERATION, 0);
+    app.addObjectEvent("rct1", GameEvent::OBJ_VAR_IS_LESS,    ObjectAttribute::Y_VELOCITY, -14, GameAction::SETVAR, ObjectAttribute::Y_VELOCITY,   -14);
 
     // GRID for testing purposes
     if (GRID_ACTIVE)

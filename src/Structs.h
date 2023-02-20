@@ -63,6 +63,9 @@ enum ObjectFlag {
 enum GameEvent {
     X_BORDERCOLLISION,
     Y_BORDERCOLLISION,
+    OBJ_VAR_EQUALS,
+    OBJ_VAR_IS_LESS,
+    OBJ_VAR_IS_GREATER,
 };
 
 enum KeyCode {
@@ -153,6 +156,37 @@ enum GameAction {
     BOUNCE_X,       // reverse X velocity, as if the object "bounced" off a surface
     BOUNCE_Y,       // reverse Y velocity, as if the object "bounced" off a surface
 };
+
+struct EventList {
+    GameEvent event;
+    ObjectAttribute attribute;
+    double value;
+
+    bool operator==(const EventList& e) const {
+        return (e.event == event) && (e.attribute == attribute) && (e.value == value);
+    }
+    bool operator<(const EventList& e) const {
+        if (event < e.event) return true;
+        if (attribute < e.attribute) return true;
+        return (value < e.value);
+    }
+};
+struct EventListCompare {
+    bool operator() (const EventList& lhs, const EventList& rhs) const
+    {
+        return lhs < rhs;
+    }
+};
+// template <>
+// struct std::hash<EventList>
+// {
+//     std::size_t operator()(const EventList& e) const
+//     {
+//         return ((std::hash<int>()(e.event)
+//                     ^ (std::hash<int>()(e.attribute) << 1)) >> 1)
+//                     ^ (std::hash<double>()(e.value) << 1);
+//     }
+// };
 
 struct ActionList {
     GameAction type;

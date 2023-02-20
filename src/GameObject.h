@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <unordered_map>
+#include <map>
 #include "Structs.h"
 
 /* The basic outline of a game object
@@ -56,11 +57,11 @@ class GameObject {
         void clearFlag(ObjectFlag flag);
         bool checkFlag(ObjectFlag flag);
 
-        std::unordered_map<GameEvent, std::vector<ActionList>> event_list;
+        std::map<EventList, std::vector<ActionList>, EventListCompare> event_list;
         //std::unordered_map<string, std::vector<ActionList>> collision_event_list;
 
-        void addEvent(GameEvent event, GameAction action, const std::string& name, double value);
-        void addEvent(GameEvent event, GameAction action, ObjectAttribute att, double value);
+        void addEvent(EventList event, GameAction action, const std::string& name, double value);
+        void addEvent(EventList event, GameAction action, ObjectAttribute att, double value);
 
         //void addCollisionEvent()
 
