@@ -27,13 +27,13 @@ void GameObject::drawPixel(SDL_Renderer *Renderer, int x, int y)
     int count = 0;
     
     points[count++] = {convX, convY};
-    if (x < dim_x/2 + 1)
+    if (x < dim_x/2      - 1)
         points[count++] = {convX + 1, convY};
-    if (x > dim_x/2 * -1)
+    if (x > dim_x/2 * -1 + 1)
         points[count++] = {convX - 1, convY};
-    if (y < dim_y/2 + 1)
+    if (y < dim_y/2      - 1)
         points[count++] = {convX, convY + 1};
-    if (y > dim_y/2 * -1)
+    if (y > dim_y/2 * -1 + 1)
         points[count++] = {convX, convY - 1};
     
     SDL_RenderDrawPoints(Renderer, points, count);
@@ -46,7 +46,8 @@ void GameObject::setFlag(ObjectFlag flag)
 
 void GameObject::clearFlag(ObjectFlag flag)
 {
-    flags = flags & (0xFFFFFFFF-flag);
+    //flags -= flag;
+    flags = flags & (0xFFFF-flag);
 }
 
 bool GameObject::checkFlag(ObjectFlag flag)

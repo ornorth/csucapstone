@@ -1,62 +1,41 @@
 //g++ -std=c++17 src\*.cpp -ISDL2\include -LSDL2\lib -Wall -lmingw32 -lSDL2main -lSDL2 -o main
 
 #include <iostream>
+#include <random>
 #include "CApp.h"
 
 #define GRID_ACTIVE 0
 
 int main(int argc, char* argv[])
 {
-    CApp app(1080, 720, {73, 213, 52, 255});
+    CApp app(1080, 720, {255, 255, 255, 255});
 
     // Complicated rectangle
-    app.addGameObject("rct1", Shape::RECTANGLE, {0, 13, 200, 255}, 100, 100, 300, 300, 100);
-    app.setObjectValue("rct1", ObjectAttribute::X_VELOCITY, 15);
-    app.setObjectValue("rct1", ObjectAttribute::Y_VELOCITY, 8);
+    app.addGameObject("rct1", Shape::TRIANGLE, {0, 13, 200, 255}, 100, 100, rand()%800 + 100, rand()%600 + 100, 100);
+    // app.setObjectValue("rct1", ObjectAttribute::X_VELOCITY, rand()%20 + 1);
+    // app.setObjectValue("rct1", ObjectAttribute::Y_VELOCITY, rand()%20 + 1);
 
-    app.addEvent("rct1", GameEvent::X_BORDERCOLLISION, GameAction::BOUNCE_X);
-    app.addEvent("rct1", GameEvent::X_BORDERCOLLISION, GameAction::SETVAR, ObjectAttribute::ANG_ACCELERATION, 0.5);
-    app.addEvent("rct1", GameEvent::X_BORDERCOLLISION, GameAction::INCVAR, ObjectAttribute::HEIGHT, 5);
-    app.addEvent("rct1", GameEvent::X_BORDERCOLLISION, GameAction::SCALEVAR, ObjectAttribute::X_VELOCITY, 1.05);
-    app.addEvent("rct1", GameEvent::X_BORDERCOLLISION, GameAction::SCALEVAR, ObjectAttribute::Y_VELOCITY, 1.05);
+    // Object Events
+    // app.addObjectEvent("rct1", GameEvent::X_BORDERCOLLISION, GameAction::BOUNCE_X);
+    // app.addObjectEvent("rct1", GameEvent::X_BORDERCOLLISION, GameAction::SETVAR, ObjectAttribute::ANG_ACCELERATION, 0.5);
+    // app.addObjectEvent("rct1", GameEvent::X_BORDERCOLLISION, GameAction::INCVAR, ObjectAttribute::HEIGHT, 20);
+    // app.addObjectEvent("rct1", GameEvent::X_BORDERCOLLISION, GameAction::SCALEVAR, ObjectAttribute::X_VELOCITY, 1.05);
+    // app.addObjectEvent("rct1", GameEvent::X_BORDERCOLLISION, GameAction::SCALEVAR, ObjectAttribute::Y_VELOCITY, 1.05);
 
-    app.addEvent("rct1", GameEvent::Y_BORDERCOLLISION, GameAction::BOUNCE_Y);
-    app.addEvent("rct1", GameEvent::Y_BORDERCOLLISION, GameAction::SETVAR, ObjectAttribute::ANG_ACCELERATION, -0.5);
-    app.addEvent("rct1", GameEvent::Y_BORDERCOLLISION, GameAction::INCVAR, ObjectAttribute::WIDTH, 5);
-    app.addEvent("rct1", GameEvent::Y_BORDERCOLLISION, GameAction::SCALEVAR, ObjectAttribute::X_VELOCITY, 0.95);
-    app.addEvent("rct1", GameEvent::Y_BORDERCOLLISION, GameAction::SCALEVAR, ObjectAttribute::Y_VELOCITY, 0.95);
+    // app.addObjectEvent("rct1", GameEvent::Y_BORDERCOLLISION, GameAction::BOUNCE_Y);
+    // app.addObjectEvent("rct1", GameEvent::Y_BORDERCOLLISION, GameAction::SETVAR, ObjectAttribute::ANG_ACCELERATION, -0.5);
+    // app.addObjectEvent("rct1", GameEvent::Y_BORDERCOLLISION, GameAction::INCVAR, ObjectAttribute::WIDTH, 20);
+    // app.addObjectEvent("rct1", GameEvent::Y_BORDERCOLLISION, GameAction::SCALEVAR, ObjectAttribute::X_VELOCITY, 0.95);
+    // app.addObjectEvent("rct1", GameEvent::Y_BORDERCOLLISION, GameAction::SCALEVAR, ObjectAttribute::Y_VELOCITY, 0.95);
 
-    // app.addGameObject("cir1", Shape::CIRCLE, {255, 0, 0, 5}, 60, 100, 700, 500, 90);
-    // app.setObjectValue("cir1", ObjectAttribute::X_VELOCITY, 7);
-    // app.setObjectValue("cir1", ObjectAttribute::Y_VELOCITY, -5);
-    // app.addEvent("cir1", GameEvent::X_BORDERCOLLISION, GameAction::BOUNCE_X);
-    // app.addEvent("cir1", GameEvent::Y_BORDERCOLLISION, GameAction::BOUNCE_Y);
+    // Keyboard Events
+    app.addKeyEvent("rct1", KeyCode::A, KeyPressType::HELD, GameAction::INCVAR, ObjectAttribute::X_POSITION, -15);
+    app.addKeyEvent("rct1", KeyCode::D, KeyPressType::HELD, GameAction::INCVAR, ObjectAttribute::X_POSITION, 15);
+    app.addKeyEvent("rct1", KeyCode::W, KeyPressType::HELD, GameAction::INCVAR, ObjectAttribute::Y_POSITION, -15);
+    app.addKeyEvent("rct1", KeyCode::S, KeyPressType::HELD, GameAction::INCVAR, ObjectAttribute::Y_POSITION, 15);
 
-    // app.addGameObject("tri1", Shape::TRIANGLE, {255, 0, 0, 255}, 90, 150, 300, 500, 180);
-    // app.setObjectValue("tri1", ObjectAttribute::X_VELOCITY, 14);
-    // app.setObjectValue("tri1", ObjectAttribute::Y_VELOCITY, -1);
-    // app.addEvent("tri1", GameEvent::X_BORDERCOLLISION, GameAction::BOUNCE_X);
-    // app.addEvent("tri1", GameEvent::Y_BORDERCOLLISION, GameAction::BOUNCE_Y);
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////
-
-    // app.addGameObject("rct1", Shape::RECTANGLE, {0, 13, 200, 255}, 100, 100, 200, 130, 70);
-    // app.setObjectValue("rct1", ObjectAttribute::ANG_VELOCITY, 2);
-    
-    // app.addGameObject("rct2", Shape::RECTANGLE, {0, 13, 200, 255}, 50, 100, 200, 325, 30);
-    // app.setObjectValue("rct2", ObjectAttribute::ANG_VELOCITY, -2);
-
-    // app.addGameObject("cir1", Shape::CIRCLE, {255, 0, 0, 5}, 60, 100, 700, 500, 90);
-    // app.setObjectValue("cir1", ObjectAttribute::ANG_VELOCITY, 2);
-
-    // app.addGameObject("cir2", Shape::CIRCLE, {0, 0, 255, 75}, 100, 100, 500, 300, 125);
-    // app.setObjectValue("cir2", ObjectAttribute::ANG_VELOCITY, -2);
-
-    // app.addGameObject("tri1", Shape::TRIANGLE, {255, 0, 0, 255}, 90, 150, 300, 500, 180);
-    // app.setObjectValue("tri1", ObjectAttribute::ANG_VELOCITY, 2);
-
-    // app.addGameObject("tri2", Shape::TRIANGLE, {0, 0, 255, 255}, 170, 92, 800, 300, 270);
-    // app.setObjectValue("tri2", ObjectAttribute::ANG_VELOCITY, -2);
+    app.addKeyEvent("rct1", KeyCode::SPACE, KeyPressType::DOWN, GameAction::SETVAR, ObjectAttribute::ANG_ACCELERATION, 1);
+    app.addKeyEvent("rct1", KeyCode::SPACE, KeyPressType::UP, GameAction::SETVAR, ObjectAttribute::ANG_ACCELERATION, -1);
 
     // GRID for testing purposes
     if (GRID_ACTIVE)
@@ -102,7 +81,8 @@ int main(int argc, char* argv[])
     }
 
 
-    return app.Execute();
+    app.addKeyEvent(KeyCode::ESCAPE, KeyPressType::DOWN, GameAction::QUIT);
+    return app.Execute("Dynamic Window Name Here");
 }
 
 

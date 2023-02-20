@@ -34,7 +34,12 @@ enum ObjectAttribute {
 };
 
 enum ObjectFlag {
-    STATIC = 1, // Update loop ignores this game object
+    // User-relevant flags
+    STATIC = 1,                 // Update loop ignores this game object
+
+    // Internal use flags
+    X_BORDER_COLLIDED = 256,    // Object collided with the X border on the previous frame
+    Y_BORDER_COLLIDED = 512,    // Object collided with the Y border on the previous frame
 };
 /*  flags
  *  (1)  1          - 
@@ -53,29 +58,87 @@ enum ObjectFlag {
  *  (14) 8192       - 
  *  (15) 16384      - 
  *  (16) 32768      - 
- *  (17) 65536      - 
- *  (18) 131072     - 
- *  (19) 262144     - 
- *  (20) 524288     - 
- *  (21) 1048576    - 
- *  (22) 2097152    - 
- *  (23) 4194304    - 
- *  (24) 8388608    - 
- *  (25) 16777216   - 
- *  (26) 33554432   - 
- *  (27) 67108864   - 
- *  (28) 134217728  - 
- *  (29) 268435456  - 
- *  (30) 536870912  - 
- *  (31) 1073741824 - 
- */
+*/ 
 
 enum GameEvent {
     X_BORDERCOLLISION,
     Y_BORDERCOLLISION,
 };
 
+enum KeyCode {
+    A,
+    B,
+    C,
+    D,
+    E,
+    F,
+    G,
+    H,
+    I,
+    J,
+    K,
+    L,
+    M,
+    N,
+    O,
+    P,
+    Q,
+    R,
+    S,
+    T,
+    U,
+    V,
+    W,
+    X,
+    Y,
+    Z,
+    ONE,
+    TWO,
+    THREE,
+    FOUR,
+    FIVE,
+    SIX,
+    SEVEN,
+    EIGHT,
+    NINE,
+    ZERO,
+    ESCAPE,
+    TAB,
+    CAPS,
+    BACKTICK, //SDLK_BACKQUOTE
+    MINUS,
+    EQUALS,
+    BACKSPACE,
+    LBRACKET,
+    RBRACKET,
+    FSLASH,
+    BSLASH,
+    SEMICOLON,
+    QUOTE,
+    RETURN,
+    COMMA,
+    PERIOD,
+    UPARROW,
+    DOWNARROW,
+    LEFTARROW,
+    RIGHTARROW,
+    SPACE,          //IMPORTANT: Ensure SPACE is final in list (being used to determine size of enum)
+};
+
+enum KeyPressType {
+    DOWN,
+    UP,
+    HELD,
+    // SHIFT,
+    // ALT,
+    // CTRL,
+};
+
 enum GameAction {
+    // Metagame Actions
+    QUIT,
+
+    // Object Actions
     SETVAR,         // set a variable
                     //  - variable name
                     //  - new value to set: name = var
@@ -93,6 +156,14 @@ enum GameAction {
 
 struct ActionList {
     GameAction type;
+    std::string id;
+    double value;
+    ObjectAttribute attribute;
+};
+
+struct KeyActionList {
+    GameAction type;
+    GameObject* object;
     std::string id;
     double value;
     ObjectAttribute attribute;

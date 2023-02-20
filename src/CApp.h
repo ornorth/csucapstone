@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <unordered_map>
 #include <SDL2/SDL.h>
 #include "Structs.h"
 #include "GameObject.h"
@@ -23,12 +24,18 @@ class CApp {
         int window_height;
         std::vector<GameObject> obj_list;
 
+        std::unordered_map<KeyCode, std::vector<KeyActionList>> keydown_events;
+        std::unordered_map<KeyCode, std::vector<KeyActionList>> keyup_events;
+        std::unordered_map<KeyCode, std::vector<KeyActionList>> keyheld_events;
+        //index using enum KeyCode: true=pressed, false=not
+        bool keyStates[KeyCode::SPACE+1];
+
         // Colors
         Color bg_color;
 
     public:
         CApp(int window_width, int window_height, const Color& color);
-        int Execute();
+        int Execute(const std::string& window_name);
 
         bool addGameObject(const std::string& name,
                            Shape shape=Shape::RECTANGLE,
@@ -41,19 +48,28 @@ class CApp {
         bool setObjectValue(const std::string& obj_name, ObjectAttribute attribute, double value);
 
         // EVENTS
-        bool addEvent(const std::string& obj_name, GameEvent event, GameAction action);
-        bool addEvent(const std::string& obj_name, GameEvent event, GameAction action, const std::string& name);
-        bool addEvent(const std::string& obj_name, GameEvent event, GameAction action, double value);
-        bool addEvent(const std::string& obj_name, GameEvent event, GameAction action, const std::string& name, double value);
-        bool addEvent(const std::string& obj_name, GameEvent event, GameAction action, ObjectAttribute att, double value);
+        bool addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action);
+        bool addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, const std::string& name);
+        bool addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, double value);
+        bool addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, const std::string& name, double value);
+        bool addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, ObjectAttribute att, double value);
+
+        bool addKeyEvent(KeyCode key, KeyPressType type, GameAction action); // for generic events: quit, pause(?)
+        bool addKeyEvent(const std::string& obj_name, KeyCode key, KeyPressType type, GameAction action);
+        bool addKeyEvent(const std::string& obj_name, KeyCode key, KeyPressType type, GameAction action, const std::string& name);
+        bool addKeyEvent(const std::string& obj_name, KeyCode key, KeyPressType type, GameAction action, double value);
+        bool addKeyEvent(const std::string& obj_name, KeyCode key, KeyPressType type, GameAction action, const std::string& name, double value);
+        bool addKeyEvent(const std::string& obj_name, KeyCode key, KeyPressType type, GameAction action, ObjectAttribute att, double value);
 
     private:
         int getGameObject(const std::string& name);
         double* getObjectAttribute(GameObject* GOptr, ObjectAttribute attribute);
 
-        void runGeneralEvents(GameObject* GOptr);
+        void checkObjectEvents(GameObject* GOptr);
+        void runObjectEvent(GameObject* GOptr, std::vector<ActionList>& events);
+        void runKeyEvent(std::vector<KeyActionList>& events);
         
-        bool OnInit();
+        bool OnInit(const std::string& window_name);
         void OnEvent(SDL_Event& event);
         void OnLoop();
         void OnRender();
