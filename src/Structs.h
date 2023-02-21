@@ -2,6 +2,7 @@
 #define STRUCTS_H
 
 #include "SDL2/SDL.h"
+#include <string>
 //#include "GameObject.h"
 class GameObject;
 
@@ -197,7 +198,7 @@ struct ActionList {
 
 struct KeyActionList {
     GameAction type;
-    GameObject* object;
+    std::string object_name;
     std::string id;
     double value;
     ObjectAttribute attribute;

@@ -171,7 +171,7 @@ bool CApp::addKeyEvent(KeyCode key, KeyPressType type, GameAction action)
     switch(type)
     {
         case KeyPressType::DOWN:
-            keydown_events[key].push_back({action, nullptr, "NULL", 0.0, ObjectAttribute::WIDTH});
+            keydown_events[key].push_back({action, "NULL", "NULL", 0.0, ObjectAttribute::WIDTH});
             break;
         case KeyPressType::UP:
             keyup_events[key].push_back({action, nullptr, "NULL", 0.0, ObjectAttribute::WIDTH});
@@ -186,18 +186,17 @@ bool CApp::addKeyEvent(const std::string& obj_name, KeyCode key, KeyPressType ty
 {
     int idx = getGameObject(obj_name);
     if (idx == -1) return false;
-    GameObject* GOptr = &obj_list[idx];
 
     switch(type)
     {
         case KeyPressType::DOWN:
-            keydown_events[key].push_back({action, GOptr, "NULL", 0.0, ObjectAttribute::WIDTH});
+            keydown_events[key].push_back({action, obj_name, "NULL", 0.0, ObjectAttribute::WIDTH});
             break;
         case KeyPressType::UP:
-            keyup_events[key].push_back({action, GOptr, "NULL", 0.0, ObjectAttribute::WIDTH});
+            keyup_events[key].push_back({action, obj_name, "NULL", 0.0, ObjectAttribute::WIDTH});
             break;
         case KeyPressType::HELD:
-            keyheld_events[key].push_back({action, GOptr, "NULL", 0.0, ObjectAttribute::WIDTH});
+            keyheld_events[key].push_back({action, obj_name, "NULL", 0.0, ObjectAttribute::WIDTH});
             break;
     }
     return true;
@@ -206,18 +205,17 @@ bool CApp::addKeyEvent(const std::string& obj_name, KeyCode key, KeyPressType ty
 {
     int idx = getGameObject(obj_name);
     if (idx == -1) return false;
-    GameObject* GOptr = &obj_list[idx];
 
     switch(type)
     {
         case KeyPressType::DOWN:
-            keydown_events[key].push_back({action, GOptr, name, 0.0, ObjectAttribute::WIDTH});
+            keydown_events[key].push_back({action, obj_name, name, 0.0, ObjectAttribute::WIDTH});
             break;
         case KeyPressType::UP:
-            keyup_events[key].push_back({action, GOptr, name, 0.0, ObjectAttribute::WIDTH});
+            keyup_events[key].push_back({action, obj_name, name, 0.0, ObjectAttribute::WIDTH});
             break;
         case KeyPressType::HELD:
-            keyheld_events[key].push_back({action, GOptr, name, 0.0, ObjectAttribute::WIDTH});
+            keyheld_events[key].push_back({action, obj_name, name, 0.0, ObjectAttribute::WIDTH});
             break;
     }
     return true;
@@ -226,18 +224,17 @@ bool CApp::addKeyEvent(const std::string& obj_name, KeyCode key, KeyPressType ty
 {
     int idx = getGameObject(obj_name);
     if (idx == -1) return false;
-    GameObject* GOptr = &obj_list[idx];
 
     switch(type)
     {
         case KeyPressType::DOWN:
-            keydown_events[key].push_back({action, GOptr, "NULL", value, ObjectAttribute::WIDTH});
+            keydown_events[key].push_back({action, obj_name, "NULL", value, ObjectAttribute::WIDTH});
             break;
         case KeyPressType::UP:
-            keyup_events[key].push_back({action, GOptr, "NULL", value, ObjectAttribute::WIDTH});
+            keyup_events[key].push_back({action, obj_name, "NULL", value, ObjectAttribute::WIDTH});
             break;
         case KeyPressType::HELD:
-            keyheld_events[key].push_back({action, GOptr, "NULL", value, ObjectAttribute::WIDTH});
+            keyheld_events[key].push_back({action, obj_name, "NULL", value, ObjectAttribute::WIDTH});
             break;
     }
     return true;
@@ -246,18 +243,17 @@ bool CApp::addKeyEvent(const std::string& obj_name, KeyCode key, KeyPressType ty
 {
     int idx = getGameObject(obj_name);
     if (idx == -1) return false;
-    GameObject* GOptr = &obj_list[idx];
 
     switch(type)
     {
         case KeyPressType::DOWN:
-            keydown_events[key].push_back({action, GOptr, name, value, ObjectAttribute::WIDTH});
+            keydown_events[key].push_back({action, obj_name, name, value, ObjectAttribute::WIDTH});
             break;
         case KeyPressType::UP:
-            keyup_events[key].push_back({action, GOptr, name, value, ObjectAttribute::WIDTH});
+            keyup_events[key].push_back({action, obj_name, name, value, ObjectAttribute::WIDTH});
             break;
         case KeyPressType::HELD:
-            keyheld_events[key].push_back({action, GOptr, name, value, ObjectAttribute::WIDTH});
+            keyheld_events[key].push_back({action, obj_name, name, value, ObjectAttribute::WIDTH});
             break;
     }
     return true;
@@ -266,18 +262,17 @@ bool CApp::addKeyEvent(const std::string& obj_name, KeyCode key, KeyPressType ty
 {
     int idx = getGameObject(obj_name);
     if (idx == -1) return false;
-    GameObject* GOptr = &obj_list[idx];
 
     switch(type)
     {
         case KeyPressType::DOWN:
-            keydown_events[key].push_back({action, GOptr, "NULL", value, att});
+            keydown_events[key].push_back({action, obj_name, "NULL", value, att});
             break;
         case KeyPressType::UP:
-            keyup_events[key].push_back({action, GOptr, "NULL", value, att});
+            keyup_events[key].push_back({action, obj_name, "NULL", value, att});
             break;
         case KeyPressType::HELD:
-            keyheld_events[key].push_back({action, GOptr, "NULL", value, att});
+            keyheld_events[key].push_back({action, obj_name, "NULL", value, att});
             break;
     }
     return true;
@@ -359,7 +354,6 @@ void CApp::checkObjectEvents(GameObject* GOptr)
 }
 void CApp::runObjectEvent(GameObject* GOptr, std::vector<ActionList>& events)
 {
-    std::cout << "------" << std::endl;
     for (unsigned idx = 0; idx < events.size(); ++idx)
     {
         switch(events[idx].type)
@@ -384,7 +378,6 @@ void CApp::runObjectEvent(GameObject* GOptr, std::vector<ActionList>& events)
             case GameAction::SETVAR:
             {
                 double* att_ptr = (double*)getObjectAttribute(GOptr, events[idx].attribute);
-                std::cout << events[idx].attribute << ": " << *att_ptr << "->" << events[idx].value << std::endl;
                 *att_ptr = events[idx].value;
                 break;
             }
@@ -414,6 +407,12 @@ void CApp::runKeyEvent(std::vector<KeyActionList>& events)
     for (unsigned idx = 0; idx < events.size(); ++idx)
     {
         KeyActionList* action = &events[idx];
+
+        // Get pointer to object if relevant
+        int obj_idx = getGameObject(events[idx].object_name);
+        GameObject* GOptr = nullptr;
+        if (obj_idx != -1) GOptr = &obj_list[obj_idx];
+
         switch(action->type)
         {
             case GameAction::QUIT:
@@ -424,30 +423,30 @@ void CApp::runKeyEvent(std::vector<KeyActionList>& events)
             case GameAction::BOUNCE_X:
             {
                 // Swap the velocity
-                action->object->vel_x *= -1;
+                GOptr->vel_x *= -1;
                 break;
             }
             case GameAction::BOUNCE_Y:
             {
                 // Swap the velocity
-                action->object->vel_y *= -1;
+                GOptr->vel_y *= -1;
                 break;
             }
             case GameAction::SETVAR:
             {
-                double* att_ptr = (double*)getObjectAttribute(action->object, events[idx].attribute);
+                double* att_ptr = (double*)getObjectAttribute(GOptr, events[idx].attribute);
                 *att_ptr = events[idx].value;
                 break;
             }
             case GameAction::INCVAR:
             {
-                double* att_ptr = (double*)getObjectAttribute(action->object, events[idx].attribute);
+                double* att_ptr = (double*)getObjectAttribute(GOptr, events[idx].attribute);
                 *att_ptr += events[idx].value;
                 break;
             }
             case GameAction::SCALEVAR:
             {
-                double* att_ptr = (double*)getObjectAttribute(action->object, events[idx].attribute);
+                double* att_ptr = (double*)getObjectAttribute(GOptr, events[idx].attribute);
                 *att_ptr *= events[idx].value;
                 break;
             }
@@ -1469,8 +1468,6 @@ void CApp::OnLoop()
         //if (GOptr->vel_ang >= 360) GOptr->vel_ang -= 360;
         GOptr->angle += GOptr->vel_ang;
         while (GOptr->angle >= 360) GOptr->angle -= 360;
-
-        //std::cout << "ACC= [" << GOptr->acc_x << "," << GOptr->acc_y << "] | VEL = [" << GOptr->vel_x << "," << GOptr->vel_y << "]\n";
     }
 }
 
