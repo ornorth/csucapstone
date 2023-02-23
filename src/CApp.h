@@ -28,7 +28,7 @@ class CApp {
         std::unordered_map<KeyCode, std::vector<KeyActionList>> keyup_events;
         std::unordered_map<KeyCode, std::vector<KeyActionList>> keyheld_events;
         //index using enum KeyCode: true=pressed, false=not
-        bool keyStates[KeyCode::SPACE+1];
+        bool keyStates[KeyCode::MAX_KEYCODE];
 
         // Colors
         Color bg_color;
@@ -76,7 +76,7 @@ class CApp {
         void runKeyEvent(std::vector<KeyActionList>& events);
         
         bool OnInit(const std::string& window_name);
-        void OnEvent(SDL_Event& event);
+        void OnEvent();
         void OnLoop();
         void OnRender();
         void OnCleanup();
