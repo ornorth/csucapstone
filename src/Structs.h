@@ -32,6 +32,10 @@ enum ObjectAttribute {
     Y_ACCELERATION,
     ANG_VELOCITY,
     ANG_ACCELERATION,
+
+    USER_DOUBLE_1,
+    USER_DOUBLE_2,
+    USER_DOUBLE_3,
 };
 
 enum ObjectFlag {
@@ -178,6 +182,19 @@ struct EventListCompare {
     bool operator() (const EventList& lhs, const EventList& rhs) const
     {
         return lhs < rhs;
+    }
+};
+
+struct StrPairComp
+{
+    template<typename T>
+    bool operator()(const T &l, const T &r) const
+    {
+        if (l.first == r.first) {
+            return l.second > r.second;
+        }
+ 
+        return l.first < r.first;
     }
 };
 // template <>

@@ -34,6 +34,11 @@ class GameObject {
         double vel_ang;
         double acc_ang;
 
+        // User-Defined Variables
+        double user_double1;
+        double user_double2;
+        double user_double3;
+
     private:
         uint16_t flags; 
 
@@ -58,15 +63,13 @@ class GameObject {
         bool checkFlag(ObjectFlag flag);
 
         std::map<EventList, std::vector<ActionList>, EventListCompare> event_list;
-        //std::unordered_map<string, std::vector<ActionList>> collision_event_list;
 
         void addEvent(EventList event, GameAction action, const std::string& name, double value);
         void addEvent(EventList event, GameAction action, ObjectAttribute att, double value);
 
-        //void addCollisionEvent()
-
         void runEventList();
 
+        void getCorners(double* Xcorners, double* Ycorners);
 };
 
 

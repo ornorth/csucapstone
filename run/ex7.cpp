@@ -9,17 +9,23 @@ int main(int argc, char* argv[])
 
     app.addGameObject("Player", Shape::RECTANGLE, {200, 0, 150, 255}, 100, 100, 540, 360, 0);
 
-    app.addKeyEvent("Player", KeyCode::D, KeyPressType::HELD, GameAction::SETVAR, ObjectAttribute::X_ACCELERATION,  2);
-    app.addKeyEvent("Player", KeyCode::A, KeyPressType::HELD, GameAction::SETVAR, ObjectAttribute::X_ACCELERATION, -2);
-    app.addKeyEvent("Player", KeyCode::W, KeyPressType::HELD, GameAction::SETVAR, ObjectAttribute::Y_ACCELERATION, -2);
-    app.addKeyEvent("Player", KeyCode::S, KeyPressType::HELD, GameAction::SETVAR, ObjectAttribute::Y_ACCELERATION,  2);
+    app.addKeyEvent("Player", KeyCode::W, KeyPressType::DOWN, GameAction::INCVAR, ObjectAttribute::USER_DOUBLE_2, -1);
+    app.addKeyEvent("Player", KeyCode::W, KeyPressType::UP, GameAction::INCVAR, ObjectAttribute::USER_DOUBLE_2,  1);
+    app.addKeyEvent("Player", KeyCode::A, KeyPressType::DOWN, GameAction::INCVAR, ObjectAttribute::USER_DOUBLE_1, -1);
+    app.addKeyEvent("Player", KeyCode::A, KeyPressType::UP, GameAction::INCVAR, ObjectAttribute::USER_DOUBLE_1,  1);
+    app.addKeyEvent("Player", KeyCode::S, KeyPressType::DOWN, GameAction::INCVAR, ObjectAttribute::USER_DOUBLE_2,  1);
+    app.addKeyEvent("Player", KeyCode::S, KeyPressType::UP, GameAction::INCVAR, ObjectAttribute::USER_DOUBLE_2, -1);
+    app.addKeyEvent("Player", KeyCode::D, KeyPressType::DOWN, GameAction::INCVAR, ObjectAttribute::USER_DOUBLE_1,  1);
+    app.addKeyEvent("Player", KeyCode::D, KeyPressType::UP, GameAction::INCVAR, ObjectAttribute::USER_DOUBLE_1, -1);
 
+    app.addObjectEvent("Player", GameEvent::OBJ_VAR_IS_GREATER, ObjectAttribute::USER_DOUBLE_1, 0, GameAction::SETVAR, ObjectAttribute::X_VELOCITY,  7);
+    app.addObjectEvent("Player", GameEvent::OBJ_VAR_IS_LESS,    ObjectAttribute::USER_DOUBLE_1, 0, GameAction::SETVAR, ObjectAttribute::X_VELOCITY, -7);
+    app.addObjectEvent("Player", GameEvent::OBJ_VAR_EQUALS,     ObjectAttribute::USER_DOUBLE_1, 0, GameAction::SCALEVAR, ObjectAttribute::X_VELOCITY,  0.9);
 
-    app.addObjectEvent("Player", GameEvent::OBJ_VAR_IS_GREATER, ObjectAttribute::X_VELOCITY, 10, GameAction::SETVAR, ObjectAttribute::X_VELOCITY, 10);
-    app.addObjectEvent("Player", GameEvent::OBJ_VAR_IS_LESS, ObjectAttribute::X_VELOCITY, -10, GameAction::SETVAR, ObjectAttribute::X_VELOCITY, -10);
-    app.addObjectEvent("Player", GameEvent::OBJ_VAR_IS_LESS, ObjectAttribute::Y_VELOCITY, -10, GameAction::SETVAR, ObjectAttribute::Y_VELOCITY, -10);
-    app.addObjectEvent("Player", GameEvent::OBJ_VAR_IS_GREATER, ObjectAttribute::Y_VELOCITY, 10, GameAction::SETVAR, ObjectAttribute::Y_VELOCITY, 10);
+    app.addObjectEvent("Player", GameEvent::OBJ_VAR_IS_GREATER, ObjectAttribute::USER_DOUBLE_2, 0, GameAction::SETVAR, ObjectAttribute::Y_VELOCITY,  7);
+    app.addObjectEvent("Player", GameEvent::OBJ_VAR_IS_LESS,    ObjectAttribute::USER_DOUBLE_2, 0, GameAction::SETVAR, ObjectAttribute::Y_VELOCITY, -7);
+    app.addObjectEvent("Player", GameEvent::OBJ_VAR_EQUALS,     ObjectAttribute::USER_DOUBLE_2, 0, GameAction::SCALEVAR, ObjectAttribute::Y_VELOCITY,  0.9);
 
     app.addKeyEvent(KeyCode::ESCAPE, KeyPressType::DOWN, GameAction::QUIT);
-    return app.Execute("Milestone 5: Basic types of user input (Press, Release, Hold)");
+    return app.Execute("Milestone 7: Simple Demonstration of potential for complex motion");
 }
