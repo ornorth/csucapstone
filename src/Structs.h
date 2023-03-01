@@ -32,6 +32,7 @@ enum ObjectAttribute {
     Y_ACCELERATION,
     ANG_VELOCITY,
     ANG_ACCELERATION,
+    COLOR,
 
     USER_DOUBLE_1,
     USER_DOUBLE_2,
@@ -66,6 +67,7 @@ enum ObjectFlag {
 */ 
 
 enum GameEvent {
+    ALWAYS,
     X_BORDERCOLLISION,
     Y_BORDERCOLLISION,
     OBJ_VAR_EQUALS,
@@ -185,15 +187,24 @@ struct EventListCompare {
     }
 };
 
+struct StrPair {
+    std::string first;
+    std::string second;
+    bool consecutive_proof;
+};
 struct StrPairComp
 {
     template<typename T>
     bool operator()(const T &l, const T &r) const
     {
-        if (l.first == r.first) {
+        if (l.first == r.first)
+        {
+            if (l.second == r.second)
+            {
+                return (l.consecutive_proof && r.consecutive_proof) || (!l.consecutive_proof && !r.consecutive_proof);
+            }
             return l.second > r.second;
         }
- 
         return l.first < r.first;
     }
 };
@@ -213,14 +224,19 @@ struct ActionList {
     std::string id;
     double value;
     ObjectAttribute attribute;
+    Color color;
 };
 
+// Collision events also use this action list
+// This will likely have to be changed at some point
 struct KeyActionList {
     GameAction type;
     std::string object_name;
     std::string id;
     double value;
     ObjectAttribute attribute;
+    Color color;
+    bool ran_last_frame; // Used for Collision events to prevent multiple consecutive collisions
 };
 
 #endif

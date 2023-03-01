@@ -59,6 +59,10 @@ void GameObject::addEvent(EventList event, GameAction action, ObjectAttribute at
 {
     event_list[event].push_back({action, "NULL", value, att});
 }
+void GameObject::addEvent(EventList event, GameAction action, ObjectAttribute att, Color value)
+{
+    event_list[event].push_back({action, "NULL", 0.0, att, value});
+}
 
 void GameObject::getCorners(double* Xcorners, double* Ycorners)
 {

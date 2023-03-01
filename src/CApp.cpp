@@ -57,6 +57,9 @@ double* CApp::getObjectAttribute(GameObject* GOptr, ObjectAttribute attribute)
             return &GOptr->vel_ang;
         case ObjectAttribute::ANG_ACCELERATION:
             return &GOptr->acc_ang;
+        // Doesn't work like this
+        // case ObjectAttribute::COLOR:
+        //     return &GOptr->color;
         case ObjectAttribute::USER_DOUBLE_1:
             return &GOptr->user_double1;
         case ObjectAttribute::USER_DOUBLE_2:
@@ -130,6 +133,14 @@ bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameActi
     obj_list[idx].addEvent({event}, action, att, value);
     return true;
 }
+bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, ObjectAttribute att, Color value)
+{
+    int idx = getGameObject(obj_name);
+    if (idx == -1) return false;
+
+    obj_list[idx].addEvent({event}, action, att, value);
+    return true;
+}
 
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action)
 {
@@ -164,6 +175,14 @@ bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAt
     return true;
 }
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, ObjectAttribute att, double value)
+{
+    int idx = getGameObject(obj_name);
+    if (idx == -1) return false;
+
+    obj_list[idx].addEvent({event, effector_att, effector_value}, action, att, value);
+    return true;
+}
+bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, ObjectAttribute att, Color value)
 {
     int idx = getGameObject(obj_name);
     if (idx == -1) return false;
@@ -283,59 +302,80 @@ bool CApp::addKeyEvent(KeyCode key, KeyPressType type, GameAction action, const 
     }
     return true;
 }
-
-bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action)
+bool CApp::addKeyEvent(KeyCode key, KeyPressType type, GameAction action, const std::string& obj_name, ObjectAttribute att, Color value)
 {
-    int idx = getGameObject(obj_1), jdx = getGameObject(obj_2);
-    if (idx == -1 || jdx == -1) return false;
+    int idx = getGameObject(obj_name);
+    if (idx == -1) return false;
 
-    std::pair<std::string, std::string> colliders = std::make_pair(obj_1, obj_2);
-    collision_events[colliders].push_back({action, "NULL", "NULL", 0.0});
+    switch(type)
+    {
+        case KeyPressType::DOWN:
+            keydown_events[key].push_back({action, obj_name, "NULL", 0.0, att, value});
+            break;
+        case KeyPressType::UP:
+            keyup_events[key].push_back({action, obj_name, "NULL", 0.0, att, value});
+            break;
+        case KeyPressType::HELD:
+            keyheld_events[key].push_back({action, obj_name, "NULL", 0.0, att, value});
+            break;
+    }
     return true;
 }
-bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name)
+
+bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, bool consecutive_proof)
 {
     int idx = getGameObject(obj_1), jdx = getGameObject(obj_2);
     if (idx == -1 || jdx == -1) return false;
 
-    std::pair<std::string, std::string> colliders = std::make_pair(obj_1, obj_2);
-    collision_events[colliders].push_back({action, obj_name, "NULL", 0.0});
+    collision_events[{obj_1, obj_2, consecutive_proof}].push_back({action, "NULL", "NULL", 0.0, ObjectAttribute::WIDTH, {0, 0, 0, 0}, false});
     return true;
 }
-bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, const std::string& name)
+bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, bool consecutive_proof)
 {
-    int idx = getGameObject(obj_1), jdx = getGameObject(obj_2);
-    if (idx == -1 || jdx == -1) return false;
+    int idx = getGameObject(obj_1), jdx = getGameObject(obj_2), kdx = getGameObject(obj_name);
+    if (idx == -1 || jdx == -1 || kdx == -1) return false;
 
-    std::pair<std::string, std::string> colliders = std::make_pair(obj_1, obj_2);
-    collision_events[colliders].push_back({action, obj_name, name, 0.0});
+    collision_events[{obj_1, obj_2, consecutive_proof}].push_back({action, obj_name, "NULL", 0.0, ObjectAttribute::WIDTH, {0, 0, 0, 0}, false});
     return true;
 }
-bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, double value)
+bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, const std::string& name, bool consecutive_proof)
 {
-    int idx = getGameObject(obj_1), jdx = getGameObject(obj_2);
-    if (idx == -1 || jdx == -1) return false;
+    int idx = getGameObject(obj_1), jdx = getGameObject(obj_2), kdx = getGameObject(obj_name);
+    if (idx == -1 || jdx == -1 || kdx == -1) return false;
 
-    std::pair<std::string, std::string> colliders = std::make_pair(obj_1, obj_2);
-    collision_events[colliders].push_back({action, obj_name, "NULL", value});
+    collision_events[{obj_1, obj_2, consecutive_proof}].push_back({action, obj_name, name, 0.0, ObjectAttribute::WIDTH, {0, 0, 0, 0}, false});
     return true;
 }
-bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, const std::string& name, double value)
+bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, double value, bool consecutive_proof)
 {
-    int idx = getGameObject(obj_1), jdx = getGameObject(obj_2);
-    if (idx == -1 || jdx == -1) return false;
+    int idx = getGameObject(obj_1), jdx = getGameObject(obj_2), kdx = getGameObject(obj_name);
+    if (idx == -1 || jdx == -1 || kdx == -1) return false;
 
-    std::pair<std::string, std::string> colliders = std::make_pair(obj_1, obj_2);
-    collision_events[colliders].push_back({action, obj_name, name, value});
+    collision_events[{obj_1, obj_2, consecutive_proof}].push_back({action, obj_name, "NULL", value, ObjectAttribute::WIDTH, {0, 0, 0, 0}, false});
     return true;
 }
-bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, ObjectAttribute att, double value)
+bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, const std::string& name, double value, bool consecutive_proof)
 {
-    int idx = getGameObject(obj_1), jdx = getGameObject(obj_2);
-    if (idx == -1 || jdx == -1) return false;
+    int idx = getGameObject(obj_1), jdx = getGameObject(obj_2), kdx = getGameObject(obj_name);
+    if (idx == -1 || jdx == -1 || kdx == -1) return false;
 
-    std::pair<std::string, std::string> colliders = std::make_pair(obj_1, obj_2);
-    collision_events[colliders].push_back({action, obj_name, "NULL", value, att});
+    collision_events[{obj_1, obj_2, consecutive_proof}].push_back({action, obj_name, name, value, ObjectAttribute::WIDTH, {0, 0, 0, 0}, false});
+    return true;
+}
+bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, ObjectAttribute att, double value, bool consecutive_proof)
+{
+    int idx = getGameObject(obj_1), jdx = getGameObject(obj_2), kdx = getGameObject(obj_name);
+    if (idx == -1 || jdx == -1 || kdx == -1) return false;
+
+    collision_events[{obj_1, obj_2, consecutive_proof}].push_back({action, obj_name, "NULL", value, att, {0, 0, 0, 0}, false});
+    return true;
+}
+bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, ObjectAttribute att, Color value, bool consecutive_proof)
+{
+    int idx = getGameObject(obj_1), jdx = getGameObject(obj_2), kdx = getGameObject(obj_name);
+    if (idx == -1 || jdx == -1 || kdx == -1) return false;
+
+    collision_events[{obj_1, obj_2, consecutive_proof}].push_back({action, obj_name, "NULL", 0.0, att, value, false});
     return true;
 }
 
@@ -346,6 +386,11 @@ void CApp::checkObjectEvents(GameObject* GOptr)
         bool flag = false;
         switch(it.first.event)
         {
+            case GameEvent::ALWAYS:
+            {
+                flag = true;
+                break;
+            }
             case GameEvent::X_BORDERCOLLISION:
             {
                 // Check for collision on this frame
@@ -384,6 +429,8 @@ void CApp::checkObjectEvents(GameObject* GOptr)
                     GOptr->setFlag(ObjectFlag::Y_BORDER_COLLIDED);
                 break;
             }
+            // FIX: These do NOT work with Color attribute or any other non-double
+            // find a better solution than this
             case GameEvent::OBJ_VAR_EQUALS:
             {
                 double* att_ptr = (double*)getObjectAttribute(GOptr, it.first.attribute);
@@ -438,6 +485,11 @@ void CApp::runObjectEvent(GameObject* GOptr, std::vector<ActionList>& events)
             }
             case GameAction::SETVAR:
             {
+                if (events[idx].attribute == ObjectAttribute::COLOR)
+                {
+                    GOptr->color = events[idx].color;
+                    break;
+                }
                 double* att_ptr = (double*)getObjectAttribute(GOptr, events[idx].attribute);
                 *att_ptr = events[idx].value;
                 break;
@@ -462,7 +514,6 @@ void CApp::runObjectEvent(GameObject* GOptr, std::vector<ActionList>& events)
         }
     }
 }
-
 void CApp::runKeyEvents(std::vector<KeyActionList>& events)
 {
     // Step 2: take the actions listed
@@ -496,6 +547,80 @@ void CApp::runKeyEvents(std::vector<KeyActionList>& events)
             }
             case GameAction::SETVAR:
             {
+                if (events[idx].attribute == ObjectAttribute::COLOR)
+                {
+                    GOptr->color = events[idx].color;
+                    break;
+                }
+                double* att_ptr = (double*)getObjectAttribute(GOptr, events[idx].attribute);
+                *att_ptr = events[idx].value;
+                break;
+            }
+            case GameAction::INCVAR:
+            {
+                double* att_ptr = (double*)getObjectAttribute(GOptr, events[idx].attribute);
+                *att_ptr += events[idx].value;
+                break;
+            }
+            case GameAction::SCALEVAR:
+            {
+                double* att_ptr = (double*)getObjectAttribute(GOptr, events[idx].attribute);
+                *att_ptr *= events[idx].value;
+                break;
+            }
+            default:
+            {
+                std::cerr << "DEFAULT TAKEN ON 'Shape' SWITCH\n";
+                exit(1);
+            }
+        }
+    }
+}
+void CApp::runCollisionEvents(std::vector<KeyActionList>& events, bool consecutive_proof)
+{
+    // Step 2: take the actions listed
+    for (unsigned idx = 0; idx < events.size(); ++idx)
+    {
+        KeyActionList* action = &events[idx];
+        if (consecutive_proof && action->ran_last_frame)
+        {
+            //std::cout << "Skipping action on " << action->object_name << std::endl;
+            continue;
+        }
+        if (consecutive_proof)
+            action->ran_last_frame = true;
+        
+        // Get pointer to object if relevant
+        int obj_idx = getGameObject(events[idx].object_name);
+        GameObject* GOptr = nullptr;
+        if (obj_idx != -1) GOptr = &obj_list[obj_idx];
+
+        switch(action->type)
+        {
+            case GameAction::QUIT:
+            {
+                running = false;
+                break;
+            }
+            case GameAction::BOUNCE_X:
+            {
+                // Swap the velocity
+                GOptr->vel_x *= -1;
+                break;
+            }
+            case GameAction::BOUNCE_Y:
+            {
+                // Swap the velocity
+                GOptr->vel_y *= -1;
+                break;
+            }
+            case GameAction::SETVAR:
+            {
+                if (events[idx].attribute == ObjectAttribute::COLOR)
+                {
+                    GOptr->color = events[idx].color;
+                    break;
+                }
                 double* att_ptr = (double*)getObjectAttribute(GOptr, events[idx].attribute);
                 *att_ptr = events[idx].value;
                 break;
@@ -522,7 +647,7 @@ void CApp::runKeyEvents(std::vector<KeyActionList>& events)
 }
 
 // Initial pass at a working state, still has numerous problems
-bool CApp::collisionOccurred(const std::pair<std::string, std::string>& colliders)
+bool CApp::collisionOccurred(const StrPair& colliders)
 {
     //std::cout << "-------------" << std::endl;
     GameObject* obj1 = &obj_list[getGameObject(colliders.first)];
@@ -575,6 +700,10 @@ bool CApp::collisionOccurred(const std::pair<std::string, std::string>& collider
             }
         }
     }
+    // for (unsigned idx = 0; idx < collision_events[colliders].size(); ++idx)
+    // {
+    //     collision_events[colliders][idx].ran_last_frame = false;
+    // }
     return false;
 }
 
@@ -644,21 +773,21 @@ void CApp::OnEvent()
     }
 }
 
+/*  Open question on which order to do things
+ *  This function checks 3 things:
+ *   - Key Presses (but held only)
+ *   - Object Events
+ *   - Collision Events
+ *  The order in which these things are processed can matter. For instance:
+ *   - The ALWAYS event should run first, because it logically has a lower
+ *     precedence than other events and should be able to be overwritten
+ *  What makes logical sense to me is Object, then Collision, then Key
+ *  BUT this is weird because some key events are being handled in the OnEvent() function
+ * 
+ *  tl;dr Some sort of refectoring has to go on here, but I'm not sure exactly what yet
+ */
 void CApp::OnLoop()
 {
-    for (auto it : collision_events)
-    {
-        if (collisionOccurred(it.first))
-            runKeyEvents(it.second);
-    }
-    // Check held key event list
-    for (int i = 0; i < KeyCode::MAX_KEYCODE; ++i)
-    {
-        if (keyStates[i])
-        {
-            runKeyEvents(keyheld_events[(KeyCode)i]);
-        }
-    }
     for (unsigned i = 0; i < obj_list.size(); ++i)
     {
         // Skip object if STATIC flag is set
@@ -679,6 +808,22 @@ void CApp::OnLoop()
         //if (GOptr->vel_ang >= 360) GOptr->vel_ang -= 360;
         GOptr->angle += GOptr->vel_ang;
         while (GOptr->angle >= 360) GOptr->angle -= 360;
+    }
+    // Using auto here makes the object immutable. Use an iterator instead
+    for (std::map<StrPair, std::vector<KeyActionList>, StrPairComp>::iterator it = collision_events.begin(); it != collision_events.end(); ++it)
+    {
+        if (collisionOccurred(it->first))
+        {
+            runCollisionEvents(it->second, it->first.consecutive_proof);
+        }
+    }
+    // Check held key event list
+    for (int i = 0; i < KeyCode::MAX_KEYCODE; ++i)
+    {
+        if (keyStates[i])
+        {
+            runKeyEvents(keyheld_events[(KeyCode)i]);
+        }
     }
 }
 

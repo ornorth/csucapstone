@@ -66,6 +66,7 @@ class GameObject {
 
         void addEvent(EventList event, GameAction action, const std::string& name, double value);
         void addEvent(EventList event, GameAction action, ObjectAttribute att, double value);
+        void addEvent(EventList event, GameAction action, ObjectAttribute att, Color value);
 
         void runEventList();
 
