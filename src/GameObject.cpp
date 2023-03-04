@@ -18,7 +18,7 @@ GameObject::GameObject(const std::string& name, Shape shape, const Color& color,
 
 void GameObject::drawPixel(SDL_Renderer *Renderer, int x, int y)
 {
-    double convAngle = ((double)angle) * PI / 180.0;
+    double convAngle = angle * PI / 180.0;
     int convX = pos_x + (x*std::cos(convAngle)) - (y*std::sin(convAngle));
     int convY = pos_y + (x*std::sin(convAngle)) + (y*std::cos(convAngle));
 

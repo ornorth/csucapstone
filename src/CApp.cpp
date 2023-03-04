@@ -3,6 +3,7 @@
 #include <random>
 #include "CApp.h"
 
+#define PI 3.14159265
 
 CApp::CApp(int window_width, int window_height, const Color& color)
          : Main_Window(nullptr), Renderer(nullptr), running(true),
@@ -649,7 +650,8 @@ void CApp::runCollisionEvents(std::vector<KeyActionList>& events, bool consecuti
 // Initial pass at a working state, still has numerous problems
 bool CApp::collisionOccurred(const StrPair& colliders)
 {
-    //std::cout << "-------------" << std::endl;
+    // Attempt 1: Corner Method (slightly effective)
+    /*
     GameObject* obj1 = &obj_list[getGameObject(colliders.first)];
     double Xcorners1[4], Ycorners1[4];
     obj1->getCorners(Xcorners1, Ycorners1);
@@ -658,7 +660,6 @@ bool CApp::collisionOccurred(const StrPair& colliders)
     double Xcorners2[4], Ycorners2[4];
     obj2->getCorners(Xcorners2, Ycorners2);
 
-    //bool flag = false;
     // Corner of obj1 is touching obj2
     for (int i = 0; i < 4; ++i)
     {
@@ -669,41 +670,278 @@ bool CApp::collisionOccurred(const StrPair& colliders)
         for (int j = 0; j < 4; ++j)
         {
             int jPair = (j < 3 ? j+1 : 0);
-            // std::cout << "[" << Xcorners1[i]     << "," << Ycorners1[i]     << "] -> ["
-            //                  << Xcorners2[j]     << "," << Ycorners2[j]     << "] - ["
-            //                  << Xcorners2[jPair] << "," << Ycorners2[jPair] << "] : ";
             Xflag1 = Xflag1 || (Xcorners1[i] < Xcorners2[j] && Xcorners1[i] > Xcorners2[jPair])
                             || (Xcorners1[i] > Xcorners2[j] && Xcorners1[i] < Xcorners2[jPair]);
             Yflag1 = Yflag1 || (Ycorners1[i] < Ycorners2[j] && Ycorners1[i] > Ycorners2[jPair])
                             || (Ycorners1[i] > Ycorners2[j] && Ycorners1[i] < Ycorners2[jPair]);
-            // if (Xflag1) std::cout << "X";
-            // if (Yflag1) std::cout << "Y";
-            // //if (Xflag1 || Yflag1) std::cout << " : ";
-            // std::cout << std::endl;
-
-            // std::cout << "[" << Xcorners2[i]     << "," << Ycorners2[i]     << "] -> ["
-            //                  << Xcorners1[j]     << "," << Ycorners1[j]     << "] - ["
-            //                  << Xcorners1[jPair] << "," << Ycorners1[jPair] << "] : ";
+            
             Xflag2 = Xflag2 || (Xcorners2[i] < Xcorners1[j] && Xcorners2[i] > Xcorners1[jPair])
                             || (Xcorners2[i] > Xcorners1[j] && Xcorners2[i] < Xcorners1[jPair]);
             Yflag2 = Yflag2 || (Ycorners2[i] < Ycorners1[j] && Ycorners2[i] > Ycorners1[jPair])
                             || (Ycorners2[i] > Ycorners1[j] && Ycorners2[i] < Ycorners1[jPair]);
-            // if (Xflag2) std::cout << "X";
-            // if (Yflag2) std::cout << "Y";
-            // std::cout << std::endl;
-            // if (Xflag1 || Yflag1 || Xflag2 || Yflag2) std::cout << std::endl;
 
             if ((Xflag1 && Yflag1) || (Xflag2 && Yflag2))
-            {
-                //std::cout << "XY!" << std::endl;
-                return true;//flag = true;
-            }
+                return true;
         }
     }
-    // for (unsigned idx = 0; idx < collision_events[colliders].size(); ++idx)
-    // {
-    //     collision_events[colliders][idx].ran_last_frame = false;
-    // }
+    for (unsigned idx = 0; idx < collision_events[colliders].size(); ++idx)
+    {
+        collision_events[colliders][idx].ran_last_frame = false;
+    }
+    */
+
+    // Attempt 2: Edge Comparison
+    // explore this idea in the actual rendering phase
+    bool edges1[window_width][window_height];
+    bool edges2[window_width][window_height];
+    for (int i = 0; i < window_width; ++i)
+    {
+        for (int j = 0; j < window_height; ++j)
+        {
+            edges1[i][j] = false;
+            edges2[i][j] = false;
+        }
+    }
+    
+    GameObject* obj1 = &obj_list[getGameObject(colliders.first)];
+    switch(obj1->getShape())
+    {
+        case Shape::RECTANGLE:
+        {
+            double convAngle = obj1->angle * PI / 180.0;
+            int convX, convY;
+            
+            for (int x = (obj1->dim_x / 2) * -1; x < obj1->dim_x / 2; x++)
+            {
+                convX = obj1->pos_x + (x*std::cos(convAngle)) - ((obj1->dim_y/2-1)*std::sin(convAngle));
+                convY = obj1->pos_y + (x*std::sin(convAngle)) + ((obj1->dim_y/2-1)*std::cos(convAngle));
+                if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
+                    edges1[convX][convY] = true;
+
+                convX = obj1->pos_x + (x*std::cos(convAngle)) - (-(obj1->dim_y/2)*std::sin(convAngle));
+                convY = obj1->pos_y + (x*std::sin(convAngle)) + (-(obj1->dim_y/2)*std::cos(convAngle));
+                if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
+                    edges1[convX][convY] = true;
+            }
+            for (int y = (obj1->dim_y / 2) * -1; y < obj1->dim_y / 2; y++)
+            {
+                convX = obj1->pos_x + ((obj1->dim_x/2-1)*std::cos(convAngle)) - (y*std::sin(convAngle));
+                convY = obj1->pos_y + ((obj1->dim_x/2-1)*std::sin(convAngle)) + (y*std::cos(convAngle));
+                if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
+                    edges1[convX][convY] = true;
+
+                convX = obj1->pos_x + (-(obj1->dim_x/2)*std::cos(convAngle)) - (y*std::sin(convAngle));
+                convY = obj1->pos_y + (-(obj1->dim_x/2)*std::sin(convAngle)) + (y*std::cos(convAngle));
+                if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
+                    edges1[convX][convY] = true;
+            }
+            break;
+        }
+        case Shape::CIRCLE:
+        {
+            int c_dim_x = obj1->dim_x / 2;
+            int c_dim_y = obj1->dim_y / 2;
+
+            // Be careful of overflow here
+            long hh = c_dim_y*c_dim_y;
+            long ww = c_dim_x*c_dim_x;
+            long hhww = hh*ww;
+            int x0 = c_dim_x;
+            int dx = 0;
+            double convAngle = obj1->angle * PI / 180.0;
+
+            // Add points at [-c_dim_x, 0] and [c_dim_x, 0]
+            int convX = obj1->pos_x + (-c_dim_x*std::cos(convAngle));
+            int convY = obj1->pos_y + (-c_dim_x*std::sin(convAngle));
+            if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
+                edges1[convX][convY] = true;
+
+            convX = obj1->pos_x + (c_dim_x*std::cos(convAngle));
+            convY = obj1->pos_y + (c_dim_x*std::sin(convAngle));
+            if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
+                edges1[convX][convY] = true;
+
+            for (int y = 1; y <= c_dim_y; ++y)
+            {
+                int x1 = x0 - (dx - 1);
+                for ( ; x1 > 0; --x1)
+                    if (x1*x1*hh + y*y*ww <= hhww) break;
+                
+                dx = x0 - x1;
+                x0 = x1;
+
+                for (int x = -x0; x <= x0; ++x)
+                {
+                    convX = obj1->pos_x + (x*std::cos(convAngle)) - (y*std::sin(convAngle));
+                    convY = obj1->pos_y + (x*std::sin(convAngle)) + (y*std::cos(convAngle));
+                    if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
+                        edges1[convX][convY] = true;
+
+                    convX = obj1->pos_x + (x*std::cos(convAngle)) - (-y*std::sin(convAngle));
+                    convY = obj1->pos_y + (x*std::sin(convAngle)) + (-y*std::cos(convAngle));
+                    if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
+                        edges1[convX][convY] = true;
+                }
+            }
+            break;
+        }
+        case Shape::TRIANGLE:
+        {
+            int c_dim_x = obj1->dim_x;
+            int c_dim_y = obj1->dim_y;
+            double convAngle = obj1->angle * PI / 180.0;
+
+            double aspectRatio = (double)c_dim_x / c_dim_y;
+            double x_width = c_dim_x;
+
+            int convX, convY;
+            for (int y = (c_dim_y/2); y >= (c_dim_y/2) * -1; --y)
+            {
+                convX = obj1->pos_x + ((x_width/2*-1)*std::cos(convAngle)) - (y*std::sin(convAngle));
+                convY = obj1->pos_y + ((x_width/2*-1)*std::sin(convAngle)) + (y*std::cos(convAngle));
+                if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
+                    edges1[convX][convY] = true;
+
+                convX = obj1->pos_x + ((x_width/2)*std::cos(convAngle)) - (y*std::sin(convAngle));
+                convY = obj1->pos_y + ((x_width/2)*std::sin(convAngle)) + (y*std::cos(convAngle));
+                if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
+                    edges1[convX][convY] = true;
+                
+                x_width -= aspectRatio;
+            }
+            break;
+        }
+        default:
+        {
+            std::cerr << "YOU FOOL! YOU'VE DOOMED US ALL!!!\n";
+            exit(1);
+        }
+    }
+    
+    GameObject* obj2 = &obj_list[getGameObject(colliders.second)];
+    switch(obj2->getShape())
+    {
+        case Shape::RECTANGLE:
+        {
+            double convAngle = obj2->angle * PI / 180.0;
+            int convX, convY;
+            
+            for (int x = (obj2->dim_x / 2) * -1; x < obj2->dim_x / 2; x++)
+            {
+                convX = obj2->pos_x + (x*std::cos(convAngle)) - ((obj2->dim_y/2-1)*std::sin(convAngle));
+                convY = obj2->pos_y + (x*std::sin(convAngle)) + ((obj2->dim_y/2-1)*std::cos(convAngle));
+                if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
+                    edges2[convX][convY] = true;
+
+                convX = obj2->pos_x + (x*std::cos(convAngle)) - (-(obj2->dim_y/2-1)*std::sin(convAngle));
+                convY = obj2->pos_y + (x*std::sin(convAngle)) + (-(obj2->dim_y/2-1)*std::cos(convAngle));
+                if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
+                    edges2[convX][convY] = true;
+            }
+            for (int y = (obj2->dim_y / 2) * -1; y < obj2->dim_y / 2; y++)
+            {
+                convX = obj2->pos_x + ((obj2->dim_x/2)*std::cos(convAngle)) - (y*std::sin(convAngle));
+                convY = obj2->pos_y + ((obj2->dim_x/2)*std::sin(convAngle)) + (y*std::cos(convAngle));
+                if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
+                    edges2[convX][convY] = true;
+
+                convX = obj2->pos_x + (-(obj2->dim_x/2)*std::cos(convAngle)) - (y*std::sin(convAngle));
+                convY = obj2->pos_y + (-(obj2->dim_x/2)*std::sin(convAngle)) + (y*std::cos(convAngle));
+                if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
+                    edges2[convX][convY] = true;
+            }
+            break;
+        }
+        case Shape::CIRCLE:
+        {
+            int c_dim_x = obj2->dim_x / 2;
+            int c_dim_y = obj2->dim_y / 2;
+
+            // Be careful of overflow here
+            long hh = c_dim_y*c_dim_y;
+            long ww = c_dim_x*c_dim_x;
+            long hhww = hh*ww;
+            int x0 = c_dim_x;
+            int dx = 0;
+            double convAngle = obj2->angle * PI / 180.0;
+
+            // Add points at [-c_dim_x, 0] and [c_dim_x, 0]
+            int convX = obj2->pos_x + (-c_dim_x*std::cos(convAngle));
+            int convY = obj2->pos_y + (-c_dim_x*std::sin(convAngle));
+            if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
+                edges2[convX][convY] = true;
+
+            convX = obj2->pos_x + (c_dim_x*std::cos(convAngle));
+            convY = obj2->pos_y + (c_dim_x*std::sin(convAngle));
+            if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
+                edges2[convX][convY] = true;
+
+            for (int y = 1; y <= c_dim_y; ++y)
+            {
+                int x1 = x0 - (dx - 1);
+                for ( ; x1 > 0; --x1)
+                    if (x1*x1*hh + y*y*ww <= hhww) break;
+                
+                dx = x0 - x1;
+                x0 = x1;
+
+                for (int x = -x0; x <= x0; ++x)
+                {
+                    convX = obj2->pos_x + (x*std::cos(convAngle)) - (y*std::sin(convAngle));
+                    convY = obj2->pos_y + (x*std::sin(convAngle)) + (y*std::cos(convAngle));
+                    if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
+                        edges2[convX][convY] = true;
+
+                    convX = obj2->pos_x + (x*std::cos(convAngle)) - (-y*std::sin(convAngle));
+                    convY = obj2->pos_y + (x*std::sin(convAngle)) + (-y*std::cos(convAngle));
+                    if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
+                        edges2[convX][convY] = true;
+                }
+            }
+            break;
+        }
+        case Shape::TRIANGLE:
+        {
+            int c_dim_x = obj2->dim_x;
+            int c_dim_y = obj2->dim_y;
+            double convAngle = obj2->angle * PI / 180.0;
+
+            double aspectRatio = (double)c_dim_x / c_dim_y;
+            double x_width = c_dim_x;
+
+            int convX, convY;
+            for (int y = (c_dim_y/2); y >= (c_dim_y/2) * -1; --y)
+            {
+                convX = obj2->pos_x + ((x_width/2*-1)*std::cos(convAngle)) - (y*std::sin(convAngle));
+                convY = obj2->pos_y + ((x_width/2*-1)*std::sin(convAngle)) + (y*std::cos(convAngle));
+                if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
+                    edges2[convX][convY] = true;
+
+                convX = obj2->pos_x + ((x_width/2)*std::cos(convAngle)) - (y*std::sin(convAngle));
+                convY = obj2->pos_y + ((x_width/2)*std::sin(convAngle)) + (y*std::cos(convAngle));
+                if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
+                    edges2[convX][convY] = true;
+                
+                x_width -= aspectRatio;
+            }
+            break;
+        }
+        default:
+        {
+            std::cerr << "YOU FOOL! YOU'VE DOOMED US ALL!!!\n";
+            exit(1);
+        }
+    }
+
+    for (int i = 0; i < window_width; ++i)
+    {
+        for (int j = 0; j < window_height; ++j)
+        {
+            if (edges1[i][j] && edges2[i][j])
+                return true;
+        }
+    }
+
     return false;
 }
 
@@ -727,6 +965,7 @@ int CApp::Execute(const std::string& window_name)
 
         for (t2 = std::chrono::steady_clock::now();
              std::chrono::duration_cast<std::chrono::duration<double>>(t2-t1).count() < (1.0/30.0);
+             //std::chrono::duration_cast<std::chrono::duration<double>>(t2-t1).count() < 1.0;
              t2 = std::chrono::steady_clock::now())
         {}
         if (false)
