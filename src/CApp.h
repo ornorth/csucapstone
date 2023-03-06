@@ -93,6 +93,7 @@ class CApp {
         void runKeyEvents(std::vector<KeyActionList>& events);
 
         bool collisionOccurred(const StrPair& colliders);
+        void mapEdges(const std::string& obj_name, bool edgeMap[]);
         void runCollisionEvents(std::vector<KeyActionList>& events, bool consecutive_proof);
         
         bool OnInit(const std::string& window_name);
