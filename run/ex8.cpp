@@ -38,14 +38,14 @@ int main(int argc, char* argv[])
     app.addObjectEvent("obj2", GameEvent::ALWAYS, GameAction::SETVAR, ObjectAttribute::COLOR, {0, 0, 0, 255});
     app.addObjectEvent("obj3", GameEvent::ALWAYS, GameAction::SETVAR, ObjectAttribute::COLOR, {0, 0, 0, 255});
 
-    app.addCollisionEvent("obj1", "obj2", GameAction::SETVAR, "obj1", ObjectAttribute::COLOR, {255, 0, 0, 255}, false);
-    app.addCollisionEvent("obj1", "obj2", GameAction::SETVAR, "obj2", ObjectAttribute::COLOR, {255, 0, 0, 255}, false);    
+    app.addCollisionEvent("obj1", "obj2", GameAction::SETVAR, "obj1", ObjectAttribute::COLOR, {255, 0, 0, 255});
+    app.addCollisionEvent("obj1", "obj2", GameAction::SETVAR, "obj2", ObjectAttribute::COLOR, {255, 0, 0, 255});    
 
-    app.addCollisionEvent("obj1", "obj3", GameAction::SETVAR, "obj1", ObjectAttribute::COLOR, {255, 0, 0, 255}, false);
-    app.addCollisionEvent("obj1", "obj3", GameAction::SETVAR, "obj3", ObjectAttribute::COLOR, {255, 0, 0, 255}, false);    
+    app.addCollisionEvent("obj1", "obj3", GameAction::SETVAR, "obj1", ObjectAttribute::COLOR, {255, 0, 0, 255});
+    app.addCollisionEvent("obj1", "obj3", GameAction::SETVAR, "obj3", ObjectAttribute::COLOR, {255, 0, 0, 255});    
 
-    app.addCollisionEvent("obj2", "obj3", GameAction::SETVAR, "obj2", ObjectAttribute::COLOR, {255, 0, 0, 255}, false);
-    app.addCollisionEvent("obj2", "obj3", GameAction::SETVAR, "obj3", ObjectAttribute::COLOR, {255, 0, 0, 255}, false);    
+    app.addCollisionEvent("obj2", "obj3", GameAction::SETVAR, "obj2", ObjectAttribute::COLOR, {255, 0, 0, 255});
+    app.addCollisionEvent("obj2", "obj3", GameAction::SETVAR, "obj3", ObjectAttribute::COLOR, {255, 0, 0, 255});    
 
     app.addKeyEvent(KeyCode::ESCAPE, KeyPressType::DOWN, GameAction::QUIT);
     return app.Execute("Milestone 8: Collision Detection (Testing Environment)");

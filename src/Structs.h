@@ -190,7 +190,6 @@ struct EventListCompare {
 struct StrPair {
     std::string first;
     std::string second;
-    bool consecutive_proof;
 };
 struct StrPairComp
 {
@@ -198,13 +197,7 @@ struct StrPairComp
     bool operator()(const T &l, const T &r) const
     {
         if (l.first == r.first)
-        {
-            if (l.second == r.second)
-            {
-                return (l.consecutive_proof && r.consecutive_proof) || (!l.consecutive_proof && !r.consecutive_proof);
-            }
             return l.second > r.second;
-        }
         return l.first < r.first;
     }
 };

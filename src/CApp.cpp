@@ -323,60 +323,60 @@ bool CApp::addKeyEvent(KeyCode key, KeyPressType type, GameAction action, const 
     return true;
 }
 
-bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, bool consecutive_proof)
+bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action)
 {
     int idx = getGameObject(obj_1), jdx = getGameObject(obj_2);
     if (idx == -1 || jdx == -1) return false;
 
-    collision_events[{obj_1, obj_2, consecutive_proof}].push_back({action, "NULL", "NULL", 0.0, ObjectAttribute::WIDTH, {0, 0, 0, 0}, false});
+    collision_events[{obj_1, obj_2}].push_back({action, "NULL", "NULL", 0.0, ObjectAttribute::WIDTH, {0, 0, 0, 0}, false});
     return true;
 }
-bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, bool consecutive_proof)
+bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name)
 {
     int idx = getGameObject(obj_1), jdx = getGameObject(obj_2), kdx = getGameObject(obj_name);
     if (idx == -1 || jdx == -1 || kdx == -1) return false;
 
-    collision_events[{obj_1, obj_2, consecutive_proof}].push_back({action, obj_name, "NULL", 0.0, ObjectAttribute::WIDTH, {0, 0, 0, 0}, false});
+    collision_events[{obj_1, obj_2}].push_back({action, obj_name, "NULL", 0.0, ObjectAttribute::WIDTH, {0, 0, 0, 0}, false});
     return true;
 }
-bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, const std::string& name, bool consecutive_proof)
+bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, const std::string& name)
 {
     int idx = getGameObject(obj_1), jdx = getGameObject(obj_2), kdx = getGameObject(obj_name);
     if (idx == -1 || jdx == -1 || kdx == -1) return false;
 
-    collision_events[{obj_1, obj_2, consecutive_proof}].push_back({action, obj_name, name, 0.0, ObjectAttribute::WIDTH, {0, 0, 0, 0}, false});
+    collision_events[{obj_1, obj_2}].push_back({action, obj_name, name, 0.0, ObjectAttribute::WIDTH, {0, 0, 0, 0}, false});
     return true;
 }
-bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, double value, bool consecutive_proof)
+bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, double value)
 {
     int idx = getGameObject(obj_1), jdx = getGameObject(obj_2), kdx = getGameObject(obj_name);
     if (idx == -1 || jdx == -1 || kdx == -1) return false;
 
-    collision_events[{obj_1, obj_2, consecutive_proof}].push_back({action, obj_name, "NULL", value, ObjectAttribute::WIDTH, {0, 0, 0, 0}, false});
+    collision_events[{obj_1, obj_2}].push_back({action, obj_name, "NULL", value, ObjectAttribute::WIDTH, {0, 0, 0, 0}, false});
     return true;
 }
-bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, const std::string& name, double value, bool consecutive_proof)
+bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, const std::string& name, double value)
 {
     int idx = getGameObject(obj_1), jdx = getGameObject(obj_2), kdx = getGameObject(obj_name);
     if (idx == -1 || jdx == -1 || kdx == -1) return false;
 
-    collision_events[{obj_1, obj_2, consecutive_proof}].push_back({action, obj_name, name, value, ObjectAttribute::WIDTH, {0, 0, 0, 0}, false});
+    collision_events[{obj_1, obj_2}].push_back({action, obj_name, name, value, ObjectAttribute::WIDTH, {0, 0, 0, 0}, false});
     return true;
 }
-bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, ObjectAttribute att, double value, bool consecutive_proof)
+bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, ObjectAttribute att, double value)
 {
     int idx = getGameObject(obj_1), jdx = getGameObject(obj_2), kdx = getGameObject(obj_name);
     if (idx == -1 || jdx == -1 || kdx == -1) return false;
 
-    collision_events[{obj_1, obj_2, consecutive_proof}].push_back({action, obj_name, "NULL", value, att, {0, 0, 0, 0}, false});
+    collision_events[{obj_1, obj_2}].push_back({action, obj_name, "NULL", value, att, {0, 0, 0, 0}, false});
     return true;
 }
-bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, ObjectAttribute att, Color value, bool consecutive_proof)
+bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, ObjectAttribute att, Color value)
 {
     int idx = getGameObject(obj_1), jdx = getGameObject(obj_2), kdx = getGameObject(obj_name);
     if (idx == -1 || jdx == -1 || kdx == -1) return false;
 
-    collision_events[{obj_1, obj_2, consecutive_proof}].push_back({action, obj_name, "NULL", 0.0, att, value, false});
+    collision_events[{obj_1, obj_2}].push_back({action, obj_name, "NULL", 0.0, att, value, false});
     return true;
 }
 
@@ -577,19 +577,12 @@ void CApp::runKeyEvents(std::vector<KeyActionList>& events)
         }
     }
 }
-void CApp::runCollisionEvents(std::vector<KeyActionList>& events, bool consecutive_proof)
+void CApp::runCollisionEvents(std::vector<KeyActionList>& events)
 {
     // Step 2: take the actions listed
     for (unsigned idx = 0; idx < events.size(); ++idx)
     {
         KeyActionList* action = &events[idx];
-        if (consecutive_proof && action->ran_last_frame)
-        {
-            //std::cout << "Skipping action on " << action->object_name << std::endl;
-            continue;
-        }
-        if (consecutive_proof)
-            action->ran_last_frame = true;
         
         // Get pointer to object if relevant
         int obj_idx = getGameObject(events[idx].object_name);
@@ -647,9 +640,17 @@ void CApp::runCollisionEvents(std::vector<KeyActionList>& events, bool consecuti
     }
 }
 
-void CApp::mapEdges(const std::string& obj_name, bool edgeMap[])
+bool CApp::collisionOccurred(const StrPair& colliders)
 {
-    GameObject* GOptr = &obj_list[getGameObject(obj_name)];
+    // explore this idea in the actual rendering phase
+    bool edges[window_width][window_height];
+    for (int i = 0; i < window_width; ++i)
+    {
+        for (int j = 0; j < window_height; ++j)
+            edges[i][j] = false;
+    }
+
+    GameObject* GOptr = &obj_list[getGameObject(colliders.first)];
     switch(GOptr->getShape())
     {
         case Shape::RECTANGLE:
@@ -662,36 +663,36 @@ void CApp::mapEdges(const std::string& obj_name, bool edgeMap[])
                 convX = GOptr->pos_x + (x*std::cos(convAngle)) - ((GOptr->dim_y/2-1)*std::sin(convAngle));
                 convY = GOptr->pos_y + (x*std::sin(convAngle)) + ((GOptr->dim_y/2-1)*std::cos(convAngle));
                 if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
-                    edgeMap[convX*window_height + convY] = true;
+                    edges[convX][convY] = true;
 
                 convX = GOptr->pos_x + (x*std::cos(convAngle)) - (-(GOptr->dim_y/2)*std::sin(convAngle));
                 convY = GOptr->pos_y + (x*std::sin(convAngle)) + (-(GOptr->dim_y/2)*std::cos(convAngle));
                 if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
-                    edgeMap[convX*window_height + convY] = true;
+                    edges[convX][convY] = true;
 
                 // Test adding another line in the center (to prevent small objects from hiding inside big ones)
                 convX = GOptr->pos_x + (x*std::cos(convAngle));
                 convY = GOptr->pos_y + (x*std::sin(convAngle));
                 if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
-                    edgeMap[convX*window_height + convY] = true;
+                    edges[convX][convY] = true;
             }
             for (int y = (GOptr->dim_y / 2) * -1; y < GOptr->dim_y / 2; y++)
             {
                 convX = GOptr->pos_x + ((GOptr->dim_x/2-1)*std::cos(convAngle)) - (y*std::sin(convAngle));
                 convY = GOptr->pos_y + ((GOptr->dim_x/2-1)*std::sin(convAngle)) + (y*std::cos(convAngle));
                 if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
-                    edgeMap[convX*window_height + convY] = true;
+                    edges[convX][convY] = true;
 
                 convX = GOptr->pos_x + (-(GOptr->dim_x/2)*std::cos(convAngle)) - (y*std::sin(convAngle));
                 convY = GOptr->pos_y + (-(GOptr->dim_x/2)*std::sin(convAngle)) + (y*std::cos(convAngle));
                 if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
-                    edgeMap[convX*window_height + convY] = true;
+                    edges[convX][convY] = true;
 
                 // Test adding another line in the center (to prevent small objects from hiding inside big ones)
                 convX = GOptr->pos_x - (y*std::sin(convAngle));
                 convY = GOptr->pos_y + (y*std::cos(convAngle));
                 if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
-                    edgeMap[convX*window_height + convY] = true;
+                    edges[convX][convY] = true;
             }
             break;
         }
@@ -715,26 +716,15 @@ void CApp::mapEdges(const std::string& obj_name, bool edgeMap[])
                 convX = GOptr->pos_x + (x*std::cos(convAngle));
                 convY = GOptr->pos_y + (x*std::sin(convAngle));
                 if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
-                    edgeMap[convX*window_height + convY] = true;
+                    edges[convX][convY] = true;
             }
             for (int y = -c_dim_y/2; y < c_dim_y/2; ++y)
             {
                 convX = GOptr->pos_x - (y*std::sin(convAngle));
                 convY = GOptr->pos_y + (y*std::cos(convAngle));
                 if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
-                    edgeMap[convX*window_height + convY] = true;
+                    edges[convX][convY] = true;
             }
-
-            // // Add points at [-c_dim_x, 0] and [c_dim_x, 0]
-            // int convX = GOptr->pos_x + (-c_dim_x*std::cos(convAngle));
-            // int convY = GOptr->pos_y + (-c_dim_x*std::sin(convAngle));
-            // if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
-            //     edgeMap[convX*window_height + convY] = true;
-
-            // convX = GOptr->pos_x + (c_dim_x*std::cos(convAngle));
-            // convY = GOptr->pos_y + (c_dim_x*std::sin(convAngle));
-            // if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
-            //     edgeMap[convX*window_height + convY] = true;
 
             for (int y = 1; y <= c_dim_y; ++y)
             {
@@ -750,12 +740,12 @@ void CApp::mapEdges(const std::string& obj_name, bool edgeMap[])
                     convX = GOptr->pos_x + (x*std::cos(convAngle)) - (y*std::sin(convAngle));
                     convY = GOptr->pos_y + (x*std::sin(convAngle)) + (y*std::cos(convAngle));
                     if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
-                        edgeMap[convX*window_height + convY] = true;
+                        edges[convX][convY] = true;
 
                     convX = GOptr->pos_x + (x*std::cos(convAngle)) - (-y*std::sin(convAngle));
                     convY = GOptr->pos_y + (x*std::sin(convAngle)) + (-y*std::cos(convAngle));
                     if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
-                        edgeMap[convX*window_height + convY] = true;
+                        edges[convX][convY] = true;
                 }
             }
             break;
@@ -775,18 +765,18 @@ void CApp::mapEdges(const std::string& obj_name, bool edgeMap[])
                 convX = GOptr->pos_x + ((x_width/2*-1)*std::cos(convAngle)) - (y*std::sin(convAngle));
                 convY = GOptr->pos_y + ((x_width/2*-1)*std::sin(convAngle)) + (y*std::cos(convAngle));
                 if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
-                    edgeMap[convX*window_height + convY] = true;
+                    edges[convX][convY] = true;
 
                 convX = GOptr->pos_x + ((x_width/2)*std::cos(convAngle)) - (y*std::sin(convAngle));
                 convY = GOptr->pos_y + ((x_width/2)*std::sin(convAngle)) + (y*std::cos(convAngle));
                 if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
-                    edgeMap[convX*window_height + convY] = true;
+                    edges[convX][convY] = true;
 
                 // Test adding another line in the center (to prevent small objects from hiding inside big ones)
                 convX = GOptr->pos_x - (y*std::sin(convAngle));
                 convY = GOptr->pos_y + (y*std::cos(convAngle));
                 if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
-                    edgeMap[convX*window_height + convY] = true;
+                    edges[convX][convY] = true;
                 
                 x_width -= aspectRatio;
             }
@@ -794,33 +784,199 @@ void CApp::mapEdges(const std::string& obj_name, bool edgeMap[])
         }
         default:
         {
-            std::cerr << "YOU FOOL! YOU'VE DOOMED US ALL!!!\n";
+            std::cerr << "YOU FOOL! YOU'VE DOOMED US ALL!!!n";
             exit(1);
         }
     }
-}
-bool CApp::collisionOccurred(const StrPair& colliders)
-{
-    // explore this idea in the actual rendering phase
-    bool edges1[window_width*window_height];
-    bool edges2[window_width*window_height];
-    for (int i = 0; i < window_width; ++i)
+
+    GOptr = &obj_list[getGameObject(colliders.second)];
+    switch(GOptr->getShape())
     {
-        for (int j = 0; j < window_height; ++j)
+        case Shape::RECTANGLE:
         {
-            edges1[(i*window_height) + j] = false;
-            edges2[(i*window_height) + j] = false;
+            double convAngle = GOptr->angle * PI / 180.0;
+            int convX, convY;
+            
+            for (int x = (GOptr->dim_x / 2) * -1; x < GOptr->dim_x / 2; x++)
+            {
+                convX = GOptr->pos_x + (x*std::cos(convAngle)) - ((GOptr->dim_y/2-1)*std::sin(convAngle));
+                convY = GOptr->pos_y + (x*std::sin(convAngle)) + ((GOptr->dim_y/2-1)*std::cos(convAngle));
+                if (convX >= 0 && convX < window_width
+                    && convY >= 0 && convY < window_height
+                    && edges[convX][convY])
+                {
+                    return true;
+                }
+
+                convX = GOptr->pos_x + (x*std::cos(convAngle)) - (-(GOptr->dim_y/2)*std::sin(convAngle));
+                convY = GOptr->pos_y + (x*std::sin(convAngle)) + (-(GOptr->dim_y/2)*std::cos(convAngle));
+                if (convX >= 0 && convX < window_width
+                    && convY >= 0 && convY < window_height
+                    && edges[convX][convY])
+                {
+                    return true;
+                }
+
+                // Test adding another line in the center (to prevent small objects from hiding inside big ones)
+                convX = GOptr->pos_x + (x*std::cos(convAngle));
+                convY = GOptr->pos_y + (x*std::sin(convAngle));
+                if (convX >= 0 && convX < window_width
+                    && convY >= 0 && convY < window_height
+                    && edges[convX][convY])
+                {
+                    return true;
+                }
+            }
+            for (int y = (GOptr->dim_y / 2) * -1; y < GOptr->dim_y / 2; y++)
+            {
+                convX = GOptr->pos_x + ((GOptr->dim_x/2-1)*std::cos(convAngle)) - (y*std::sin(convAngle));
+                convY = GOptr->pos_y + ((GOptr->dim_x/2-1)*std::sin(convAngle)) + (y*std::cos(convAngle));
+                if (convX >= 0 && convX < window_width
+                    && convY >= 0 && convY < window_height
+                    && edges[convX][convY])
+                {
+                    return true;
+                }
+
+                convX = GOptr->pos_x + (-(GOptr->dim_x/2)*std::cos(convAngle)) - (y*std::sin(convAngle));
+                convY = GOptr->pos_y + (-(GOptr->dim_x/2)*std::sin(convAngle)) + (y*std::cos(convAngle));
+                if (convX >= 0 && convX < window_width
+                    && convY >= 0 && convY < window_height
+                    && edges[convX][convY])
+                {
+                    return true;
+                }
+
+                // Test adding another line in the center (to prevent small objects from hiding inside big ones)
+                convX = GOptr->pos_x - (y*std::sin(convAngle));
+                convY = GOptr->pos_y + (y*std::cos(convAngle));
+                if (convX >= 0 && convX < window_width
+                    && convY >= 0 && convY < window_height
+                    && edges[convX][convY])
+                {
+                    return true;
+                }
+            }
+            break;
         }
-    }
-    mapEdges(colliders.first, edges1);
-    mapEdges(colliders.second, edges2);
-    
-    for (int i = 0; i < window_width; ++i)
-    {
-        for (int j = 0; j < window_height; ++j)
+        case Shape::CIRCLE:
         {
-            if (edges1[i*window_height + j] && edges2[i*window_height + j])
-                return true;
+            int c_dim_x = GOptr->dim_x / 2;
+            int c_dim_y = GOptr->dim_y / 2;
+
+            // Be careful of overflow here
+            long hh = c_dim_y*c_dim_y;
+            long ww = c_dim_x*c_dim_x;
+            long hhww = hh*ww;
+            int x0 = c_dim_x;
+            int dx = 0;
+            double convAngle = GOptr->angle * PI / 180.0;
+
+            int convX, convY;
+            // Test adding lines in the center (to prevent small objects from hiding inside big ones)
+            for (int x = -c_dim_x/2; x < c_dim_x/2; ++x)
+            {
+                convX = GOptr->pos_x + (x*std::cos(convAngle));
+                convY = GOptr->pos_y + (x*std::sin(convAngle));
+                if (convX >= 0 && convX < window_width
+                    && convY >= 0 && convY < window_height
+                    && edges[convX][convY])
+                {
+                    return true;
+                }
+            }
+            for (int y = -c_dim_y/2; y < c_dim_y/2; ++y)
+            {
+                convX = GOptr->pos_x - (y*std::sin(convAngle));
+                convY = GOptr->pos_y + (y*std::cos(convAngle));
+                if (convX >= 0 && convX < window_width
+                    && convY >= 0 && convY < window_height
+                    && edges[convX][convY])
+                {
+                    return true;
+                }
+            }
+
+            for (int y = 1; y <= c_dim_y; ++y)
+            {
+                int x1 = x0 - (dx - 1);
+                for ( ; x1 > 0; --x1)
+                    if (x1*x1*hh + y*y*ww <= hhww) break;
+                
+                dx = x0 - x1;
+                x0 = x1;
+
+                for (int x = -x0; x <= x0; ++x)
+                {
+                    convX = GOptr->pos_x + (x*std::cos(convAngle)) - (y*std::sin(convAngle));
+                    convY = GOptr->pos_y + (x*std::sin(convAngle)) + (y*std::cos(convAngle));
+                    if (convX >= 0 && convX < window_width
+                        && convY >= 0 && convY < window_height
+                        && edges[convX][convY])
+                    {
+                        return true;
+                    }
+
+                    convX = GOptr->pos_x + (x*std::cos(convAngle)) - (-y*std::sin(convAngle));
+                    convY = GOptr->pos_y + (x*std::sin(convAngle)) + (-y*std::cos(convAngle));
+                    if (convX >= 0 && convX < window_width
+                        && convY >= 0 && convY < window_height
+                        && edges[convX][convY])
+                    {
+                        return true;
+                    }
+                }
+            }
+            break;
+        }
+        case Shape::TRIANGLE:
+        {
+            int c_dim_x = GOptr->dim_x;
+            int c_dim_y = GOptr->dim_y;
+            double convAngle = GOptr->angle * PI / 180.0;
+
+            double aspectRatio = (double)c_dim_x / c_dim_y;
+            double x_width = c_dim_x;
+
+            int convX, convY;
+            for (int y = (c_dim_y/2); y >= (c_dim_y/2) * -1; --y)
+            {
+                convX = GOptr->pos_x + ((x_width/2*-1)*std::cos(convAngle)) - (y*std::sin(convAngle));
+                convY = GOptr->pos_y + ((x_width/2*-1)*std::sin(convAngle)) + (y*std::cos(convAngle));
+                if (convX >= 0 && convX < window_width
+                    && convY >= 0 && convY < window_height
+                    && edges[convX][convY])
+                {
+                    return true;
+                }
+
+                convX = GOptr->pos_x + ((x_width/2)*std::cos(convAngle)) - (y*std::sin(convAngle));
+                convY = GOptr->pos_y + ((x_width/2)*std::sin(convAngle)) + (y*std::cos(convAngle));
+                if (convX >= 0 && convX < window_width
+                    && convY >= 0 && convY < window_height
+                    && edges[convX][convY])
+                {
+                    return true;
+                }
+
+                // Test adding another line in the center (to prevent small objects from hiding inside big ones)
+                convX = GOptr->pos_x - (y*std::sin(convAngle));
+                convY = GOptr->pos_y + (y*std::cos(convAngle));
+                if (convX >= 0 && convX < window_width
+                    && convY >= 0 && convY < window_height
+                    && edges[convX][convY])
+                {
+                    return true;
+                }
+                
+                x_width -= aspectRatio;
+            }
+            break;
+        }
+        default:
+        {
+            std::cerr << "YOU FOOL! YOU'VE DOOMED US ALL!!!n";
+            exit(1);
         }
     }
 
@@ -951,9 +1107,7 @@ void CApp::OnLoop()
     for (std::map<StrPair, std::vector<KeyActionList>, StrPairComp>::iterator it = collision_events.begin(); it != collision_events.end(); ++it)
     {
         if (collisionOccurred(it->first))
-        {
-            runCollisionEvents(it->second, it->first.consecutive_proof);
-        }
+            runCollisionEvents(it->second);
     }
 }
 

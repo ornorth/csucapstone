@@ -43,55 +43,55 @@ int main(int argc, char* argv[])
     app.addObjectEvent("ball5", GameEvent::X_BORDERCOLLISION, GameAction::BOUNCE_X);
     app.addObjectEvent("ball5", GameEvent::Y_BORDERCOLLISION, GameAction::BOUNCE_Y);
     
-    app.addCollisionEvent("ball1", "ball2", GameAction::BOUNCE_X, "ball1", false);
-    app.addCollisionEvent("ball1", "ball2", GameAction::BOUNCE_Y, "ball1", false);
-    app.addCollisionEvent("ball1", "ball2", GameAction::BOUNCE_X, "ball2", false);
-    app.addCollisionEvent("ball1", "ball2", GameAction::BOUNCE_Y, "ball2", false);
+    app.addCollisionEvent("ball1", "ball2", GameAction::BOUNCE_X, "ball1");
+    app.addCollisionEvent("ball1", "ball2", GameAction::BOUNCE_Y, "ball1");
+    app.addCollisionEvent("ball1", "ball2", GameAction::BOUNCE_X, "ball2");
+    app.addCollisionEvent("ball1", "ball2", GameAction::BOUNCE_Y, "ball2");
 
-    app.addCollisionEvent("ball1", "ball3", GameAction::BOUNCE_X, "ball1", false);
-    app.addCollisionEvent("ball1", "ball3", GameAction::BOUNCE_Y, "ball1", false);
-    app.addCollisionEvent("ball1", "ball3", GameAction::BOUNCE_X, "ball3", false);
-    app.addCollisionEvent("ball1", "ball3", GameAction::BOUNCE_Y, "ball3", false);
+    app.addCollisionEvent("ball1", "ball3", GameAction::BOUNCE_X, "ball1");
+    app.addCollisionEvent("ball1", "ball3", GameAction::BOUNCE_Y, "ball1");
+    app.addCollisionEvent("ball1", "ball3", GameAction::BOUNCE_X, "ball3");
+    app.addCollisionEvent("ball1", "ball3", GameAction::BOUNCE_Y, "ball3");
 
-    app.addCollisionEvent("ball1", "ball4", GameAction::BOUNCE_X, "ball1", false);
-    app.addCollisionEvent("ball1", "ball4", GameAction::BOUNCE_Y, "ball1", false);
-    app.addCollisionEvent("ball1", "ball4", GameAction::BOUNCE_X, "ball4", false);
-    app.addCollisionEvent("ball1", "ball4", GameAction::BOUNCE_Y, "ball4", false);
+    app.addCollisionEvent("ball1", "ball4", GameAction::BOUNCE_X, "ball1");
+    app.addCollisionEvent("ball1", "ball4", GameAction::BOUNCE_Y, "ball1");
+    app.addCollisionEvent("ball1", "ball4", GameAction::BOUNCE_X, "ball4");
+    app.addCollisionEvent("ball1", "ball4", GameAction::BOUNCE_Y, "ball4");
 
-    app.addCollisionEvent("ball1", "ball5", GameAction::BOUNCE_X, "ball1", false);
-    app.addCollisionEvent("ball1", "ball5", GameAction::BOUNCE_Y, "ball1", false);
-    app.addCollisionEvent("ball1", "ball5", GameAction::BOUNCE_X, "ball5", false);
-    app.addCollisionEvent("ball1", "ball5", GameAction::BOUNCE_Y, "ball5", false);
+    app.addCollisionEvent("ball1", "ball5", GameAction::BOUNCE_X, "ball1");
+    app.addCollisionEvent("ball1", "ball5", GameAction::BOUNCE_Y, "ball1");
+    app.addCollisionEvent("ball1", "ball5", GameAction::BOUNCE_X, "ball5");
+    app.addCollisionEvent("ball1", "ball5", GameAction::BOUNCE_Y, "ball5");
 
-    app.addCollisionEvent("ball2", "ball3", GameAction::BOUNCE_X, "ball2", false);
-    app.addCollisionEvent("ball2", "ball3", GameAction::BOUNCE_Y, "ball2", false);
-    app.addCollisionEvent("ball2", "ball3", GameAction::BOUNCE_X, "ball3", false);
-    app.addCollisionEvent("ball2", "ball3", GameAction::BOUNCE_Y, "ball3", false);
+    app.addCollisionEvent("ball2", "ball3", GameAction::BOUNCE_X, "ball2");
+    app.addCollisionEvent("ball2", "ball3", GameAction::BOUNCE_Y, "ball2");
+    app.addCollisionEvent("ball2", "ball3", GameAction::BOUNCE_X, "ball3");
+    app.addCollisionEvent("ball2", "ball3", GameAction::BOUNCE_Y, "ball3");
 
-    app.addCollisionEvent("ball2", "ball4", GameAction::BOUNCE_X, "ball2", false);
-    app.addCollisionEvent("ball2", "ball4", GameAction::BOUNCE_Y, "ball2", false);
-    app.addCollisionEvent("ball2", "ball4", GameAction::BOUNCE_X, "ball4", false);
-    app.addCollisionEvent("ball2", "ball4", GameAction::BOUNCE_Y, "ball4", false);
+    app.addCollisionEvent("ball2", "ball4", GameAction::BOUNCE_X, "ball2");
+    app.addCollisionEvent("ball2", "ball4", GameAction::BOUNCE_Y, "ball2");
+    app.addCollisionEvent("ball2", "ball4", GameAction::BOUNCE_X, "ball4");
+    app.addCollisionEvent("ball2", "ball4", GameAction::BOUNCE_Y, "ball4");
 
-    app.addCollisionEvent("ball2", "ball5", GameAction::BOUNCE_X, "ball2", false);
-    app.addCollisionEvent("ball2", "ball5", GameAction::BOUNCE_Y, "ball2", false);
-    app.addCollisionEvent("ball2", "ball5", GameAction::BOUNCE_X, "ball5", false);
-    app.addCollisionEvent("ball2", "ball5", GameAction::BOUNCE_Y, "ball5", false);
+    app.addCollisionEvent("ball2", "ball5", GameAction::BOUNCE_X, "ball2");
+    app.addCollisionEvent("ball2", "ball5", GameAction::BOUNCE_Y, "ball2");
+    app.addCollisionEvent("ball2", "ball5", GameAction::BOUNCE_X, "ball5");
+    app.addCollisionEvent("ball2", "ball5", GameAction::BOUNCE_Y, "ball5");
 
-    app.addCollisionEvent("ball3", "ball4", GameAction::BOUNCE_X, "ball3", false);
-    app.addCollisionEvent("ball3", "ball4", GameAction::BOUNCE_Y, "ball3", false);
-    app.addCollisionEvent("ball3", "ball4", GameAction::BOUNCE_X, "ball4", false);
-    app.addCollisionEvent("ball3", "ball4", GameAction::BOUNCE_Y, "ball4", false);
+    app.addCollisionEvent("ball3", "ball4", GameAction::BOUNCE_X, "ball3");
+    app.addCollisionEvent("ball3", "ball4", GameAction::BOUNCE_Y, "ball3");
+    app.addCollisionEvent("ball3", "ball4", GameAction::BOUNCE_X, "ball4");
+    app.addCollisionEvent("ball3", "ball4", GameAction::BOUNCE_Y, "ball4");
 
-    app.addCollisionEvent("ball3", "ball5", GameAction::BOUNCE_X, "ball3", false);
-    app.addCollisionEvent("ball3", "ball5", GameAction::BOUNCE_Y, "ball3", false);
-    app.addCollisionEvent("ball3", "ball5", GameAction::BOUNCE_X, "ball5", false);
-    app.addCollisionEvent("ball3", "ball5", GameAction::BOUNCE_Y, "ball5", false);
+    app.addCollisionEvent("ball3", "ball5", GameAction::BOUNCE_X, "ball3");
+    app.addCollisionEvent("ball3", "ball5", GameAction::BOUNCE_Y, "ball3");
+    app.addCollisionEvent("ball3", "ball5", GameAction::BOUNCE_X, "ball5");
+    app.addCollisionEvent("ball3", "ball5", GameAction::BOUNCE_Y, "ball5");
 
-    app.addCollisionEvent("ball4", "ball5", GameAction::BOUNCE_X, "ball4", false);
-    app.addCollisionEvent("ball4", "ball5", GameAction::BOUNCE_Y, "ball4", false);
-    app.addCollisionEvent("ball4", "ball5", GameAction::BOUNCE_X, "ball5", false);
-    app.addCollisionEvent("ball4", "ball5", GameAction::BOUNCE_Y, "ball5", false);
+    app.addCollisionEvent("ball4", "ball5", GameAction::BOUNCE_X, "ball4");
+    app.addCollisionEvent("ball4", "ball5", GameAction::BOUNCE_Y, "ball4");
+    app.addCollisionEvent("ball4", "ball5", GameAction::BOUNCE_X, "ball5");
+    app.addCollisionEvent("ball4", "ball5", GameAction::BOUNCE_Y, "ball5");
 
 
     app.addKeyEvent(KeyCode::ESCAPE, KeyPressType::DOWN, GameAction::QUIT);
