@@ -68,7 +68,7 @@ double* CApp::getObjectAttribute(GameObject* GOptr, ObjectAttribute attribute)
         case ObjectAttribute::USER_DOUBLE_3:
             return &GOptr->user_double3;
         default:
-            std::cerr << "DEFAULT TAKEN ON 'ObjectAttribute' SWITCH\n";
+            std::cerr << "DEFAULT TAKEN ON 'getObjectAttribute' SWITCH\n";
             exit(1);
     }
 }
@@ -142,6 +142,22 @@ bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameActi
     obj_list[idx].addEvent({event}, action, att, value);
     return true;
 }
+bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, ObjectFlag flag)
+{
+    int idx = getGameObject(obj_name);
+    if (idx == -1) return false;
+
+    obj_list[idx].addEvent({event}, action, flag);
+    return true;
+}
+bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, ObjectFlag flag, bool value)
+{
+    int idx = getGameObject(obj_name);
+    if (idx == -1) return false;
+
+    obj_list[idx].addEvent({event}, action, flag, value);
+    return true;
+}
 
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action)
 {
@@ -191,6 +207,23 @@ bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAt
     obj_list[idx].addEvent({event, effector_att, effector_value}, action, att, value);
     return true;
 }
+bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, ObjectFlag flag)
+{
+    int idx = getGameObject(obj_name);
+    if (idx == -1) return false;
+
+    obj_list[idx].addEvent({event, effector_att, effector_value}, action, flag);
+    return true;
+}
+bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, ObjectFlag flag, bool value)
+{
+    int idx = getGameObject(obj_name);
+    if (idx == -1) return false;
+
+    obj_list[idx].addEvent({event, effector_att, effector_value}, action, flag, value);
+    return true;
+}
+
 
 bool CApp::addKeyEvent(KeyCode key, KeyPressType type, GameAction action)
 {
@@ -322,13 +355,60 @@ bool CApp::addKeyEvent(KeyCode key, KeyPressType type, GameAction action, const 
     }
     return true;
 }
+bool CApp::addKeyEvent(KeyCode key, KeyPressType type, GameAction action, const std::string& obj_name, ObjectFlag flag)
+{
+    int idx = getGameObject(obj_name);
+    if (idx == -1) return false;
+
+    KeyActionList list;
+    list.type = action;
+    list.object_name = obj_name;
+    list.flag = flag;
+    switch(type)
+    {
+        case KeyPressType::DOWN:
+            keydown_events[key].push_back(list);
+            break;
+        case KeyPressType::UP:
+            keyup_events[key].push_back(list);
+            break;
+        case KeyPressType::HELD:
+            keyheld_events[key].push_back(list);
+            break;
+    }
+    return true;
+}
+bool CApp::addKeyEvent(KeyCode key, KeyPressType type, GameAction action, const std::string& obj_name, ObjectFlag flag, bool value)
+{
+    int idx = getGameObject(obj_name);
+    if (idx == -1) return false;
+
+    KeyActionList list;
+    list.type = action;
+    list.object_name = obj_name;
+    list.flag = flag;
+    list.value = (value ? 1.0 : 0.0);
+    switch(type)
+    {
+        case KeyPressType::DOWN:
+            keydown_events[key].push_back(list);
+            break;
+        case KeyPressType::UP:
+            keyup_events[key].push_back(list);
+            break;
+        case KeyPressType::HELD:
+            keyheld_events[key].push_back(list);
+            break;
+    }
+    return true;
+}
 
 bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action)
 {
     int idx = getGameObject(obj_1), jdx = getGameObject(obj_2);
     if (idx == -1 || jdx == -1) return false;
 
-    collision_events[{obj_1, obj_2}].push_back({action, "NULL", "NULL", 0.0, ObjectAttribute::WIDTH, {0, 0, 0, 0}, false});
+    collision_events[{obj_1, obj_2}].push_back({action, "NULL", "NULL", 0.0, ObjectAttribute::WIDTH, {0, 0, 0, 0}});
     return true;
 }
 bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name)
@@ -336,7 +416,7 @@ bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2,
     int idx = getGameObject(obj_1), jdx = getGameObject(obj_2), kdx = getGameObject(obj_name);
     if (idx == -1 || jdx == -1 || kdx == -1) return false;
 
-    collision_events[{obj_1, obj_2}].push_back({action, obj_name, "NULL", 0.0, ObjectAttribute::WIDTH, {0, 0, 0, 0}, false});
+    collision_events[{obj_1, obj_2}].push_back({action, obj_name, "NULL", 0.0, ObjectAttribute::WIDTH, {0, 0, 0, 0}});
     return true;
 }
 bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, const std::string& name)
@@ -344,7 +424,7 @@ bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2,
     int idx = getGameObject(obj_1), jdx = getGameObject(obj_2), kdx = getGameObject(obj_name);
     if (idx == -1 || jdx == -1 || kdx == -1) return false;
 
-    collision_events[{obj_1, obj_2}].push_back({action, obj_name, name, 0.0, ObjectAttribute::WIDTH, {0, 0, 0, 0}, false});
+    collision_events[{obj_1, obj_2}].push_back({action, obj_name, name, 0.0, ObjectAttribute::WIDTH, {0, 0, 0, 0}});
     return true;
 }
 bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, double value)
@@ -352,7 +432,7 @@ bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2,
     int idx = getGameObject(obj_1), jdx = getGameObject(obj_2), kdx = getGameObject(obj_name);
     if (idx == -1 || jdx == -1 || kdx == -1) return false;
 
-    collision_events[{obj_1, obj_2}].push_back({action, obj_name, "NULL", value, ObjectAttribute::WIDTH, {0, 0, 0, 0}, false});
+    collision_events[{obj_1, obj_2}].push_back({action, obj_name, "NULL", value, ObjectAttribute::WIDTH, {0, 0, 0, 0}});
     return true;
 }
 bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, const std::string& name, double value)
@@ -360,7 +440,7 @@ bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2,
     int idx = getGameObject(obj_1), jdx = getGameObject(obj_2), kdx = getGameObject(obj_name);
     if (idx == -1 || jdx == -1 || kdx == -1) return false;
 
-    collision_events[{obj_1, obj_2}].push_back({action, obj_name, name, value, ObjectAttribute::WIDTH, {0, 0, 0, 0}, false});
+    collision_events[{obj_1, obj_2}].push_back({action, obj_name, name, value, ObjectAttribute::WIDTH, {0, 0, 0, 0}});
     return true;
 }
 bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, ObjectAttribute att, double value)
@@ -368,7 +448,7 @@ bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2,
     int idx = getGameObject(obj_1), jdx = getGameObject(obj_2), kdx = getGameObject(obj_name);
     if (idx == -1 || jdx == -1 || kdx == -1) return false;
 
-    collision_events[{obj_1, obj_2}].push_back({action, obj_name, "NULL", value, att, {0, 0, 0, 0}, false});
+    collision_events[{obj_1, obj_2}].push_back({action, obj_name, "NULL", value, att, {0, 0, 0, 0}});
     return true;
 }
 bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, ObjectAttribute att, Color value)
@@ -376,7 +456,23 @@ bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2,
     int idx = getGameObject(obj_1), jdx = getGameObject(obj_2), kdx = getGameObject(obj_name);
     if (idx == -1 || jdx == -1 || kdx == -1) return false;
 
-    collision_events[{obj_1, obj_2}].push_back({action, obj_name, "NULL", 0.0, att, value, false});
+    collision_events[{obj_1, obj_2}].push_back({action, obj_name, "NULL", 0.0, att, value});
+    return true;
+}
+bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, ObjectFlag flag)
+{
+    int idx = getGameObject(obj_1), jdx = getGameObject(obj_2), kdx = getGameObject(obj_name);
+    if (idx == -1 || jdx == -1 || kdx == -1) return false;
+
+    collision_events[{obj_1, obj_2}].push_back({action, obj_name, "NULL", 0.0, ObjectAttribute::WIDTH, {0, 0, 0, 0}, flag});
+    return true;
+}
+bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, ObjectFlag flag, bool value)
+{
+    int idx = getGameObject(obj_1), jdx = getGameObject(obj_2), kdx = getGameObject(obj_name);
+    if (idx == -1 || jdx == -1 || kdx == -1) return false;
+
+    collision_events[{obj_1, obj_2}].push_back({action, obj_name, "NULL", (value ? 1.0 : 0.0), ObjectAttribute::WIDTH, {0, 0, 0, 0}, flag});
     return true;
 }
 
@@ -452,7 +548,7 @@ void CApp::checkObjectEvents(GameObject* GOptr)
             }
             default:
             {
-                std::cerr << "DEFAULT TAKEN ON 'Shape' SWITCH\n";
+                std::cerr << "DEFAULT TAKEN ON 'checkObjectEvents' SWITCH\n";
                 exit(1);
             }
         }
@@ -507,9 +603,25 @@ void CApp::runObjectEvent(GameObject* GOptr, std::vector<ActionList>& events)
                 *att_ptr *= events[idx].value;
                 break;
             }
+            case GameAction::SETFLAG:
+            {
+                if (events[idx].value)
+                    GOptr->setFlag(events[idx].flag);
+                else
+                    GOptr->clearFlag(events[idx].flag);
+                break;
+            }
+            case GameAction::TOGGLEFLAG:
+            {
+                if (GOptr->checkFlag(events[idx].flag))
+                    GOptr->clearFlag(events[idx].flag);
+                else
+                    GOptr->setFlag(events[idx].flag);
+                break;
+            }
             default:
             {
-                std::cerr << "DEFAULT TAKEN ON 'Shape' SWITCH\n";
+                std::cerr << "DEFAULT TAKEN ON 'runObjectEvent' SWITCH\n";
                 exit(1);
             }
         }
@@ -569,9 +681,25 @@ void CApp::runKeyEvents(std::vector<KeyActionList>& events)
                 *att_ptr *= events[idx].value;
                 break;
             }
+            case GameAction::SETFLAG:
+            {
+                if (events[idx].value)
+                    GOptr->setFlag(events[idx].flag);
+                else
+                    GOptr->clearFlag(events[idx].flag);
+                break;
+            }
+            case GameAction::TOGGLEFLAG:
+            {
+                if (GOptr->checkFlag(events[idx].flag))
+                    GOptr->clearFlag(events[idx].flag);
+                else
+                    GOptr->setFlag(events[idx].flag);
+                break;
+            }
             default:
             {
-                std::cerr << "DEFAULT TAKEN ON 'Shape' SWITCH\n";
+                std::cerr << "DEFAULT TAKEN ON 'runKeyEvents' SWITCH\n";
                 exit(1);
             }
         }
@@ -631,9 +759,25 @@ void CApp::runCollisionEvents(std::vector<KeyActionList>& events)
                 *att_ptr *= events[idx].value;
                 break;
             }
+            case GameAction::SETFLAG:
+            {
+                if (events[idx].value)
+                    GOptr->setFlag(events[idx].flag);
+                else
+                    GOptr->clearFlag(events[idx].flag);
+                break;
+            }
+            case GameAction::TOGGLEFLAG:
+            {
+                if (GOptr->checkFlag(events[idx].flag))
+                    GOptr->clearFlag(events[idx].flag);
+                else
+                    GOptr->setFlag(events[idx].flag);
+                break;
+            }
             default:
             {
-                std::cerr << "DEFAULT TAKEN ON 'Shape' SWITCH\n";
+                std::cerr << "DEFAULT TAKEN ON 'runCollisionEvents' SWITCH\n";
                 exit(1);
             }
         }
@@ -642,7 +786,13 @@ void CApp::runCollisionEvents(std::vector<KeyActionList>& events)
 
 bool CApp::collisionOccurred(const StrPair& colliders)
 {
-    // explore this idea in the actual rendering phase
+    // Ignore collision event if object is flagged as PHASED
+    GameObject* obj1 = &obj_list[getGameObject(colliders.first)];
+    GameObject* obj2 = &obj_list[getGameObject(colliders.second)];
+    if (obj1->checkFlag(ObjectFlag::PHASED) || obj2->checkFlag(ObjectFlag::PHASED))
+        return false;
+
+    // explore this idea in the actual rendering phase?
     bool edges[window_width][window_height];
     for (int i = 0; i < window_width; ++i)
     {
@@ -650,47 +800,47 @@ bool CApp::collisionOccurred(const StrPair& colliders)
             edges[i][j] = false;
     }
 
-    GameObject* GOptr = &obj_list[getGameObject(colliders.first)];
-    switch(GOptr->getShape())
+    // Store rendering state of the first object
+    switch(obj1->getShape())
     {
         case Shape::RECTANGLE:
         {
-            double convAngle = GOptr->angle * PI / 180.0;
+            double convAngle = obj1->angle * PI / 180.0;
             int convX, convY;
             
-            for (int x = (GOptr->dim_x / 2) * -1; x < GOptr->dim_x / 2; x++)
+            for (int x = (obj1->dim_x / 2) * -1; x < obj1->dim_x / 2; x++)
             {
-                convX = GOptr->pos_x + (x*std::cos(convAngle)) - ((GOptr->dim_y/2-1)*std::sin(convAngle));
-                convY = GOptr->pos_y + (x*std::sin(convAngle)) + ((GOptr->dim_y/2-1)*std::cos(convAngle));
+                convX = obj1->pos_x + (x*std::cos(convAngle)) - ((obj1->dim_y/2-1)*std::sin(convAngle));
+                convY = obj1->pos_y + (x*std::sin(convAngle)) + ((obj1->dim_y/2-1)*std::cos(convAngle));
                 if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
                     edges[convX][convY] = true;
 
-                convX = GOptr->pos_x + (x*std::cos(convAngle)) - (-(GOptr->dim_y/2)*std::sin(convAngle));
-                convY = GOptr->pos_y + (x*std::sin(convAngle)) + (-(GOptr->dim_y/2)*std::cos(convAngle));
+                convX = obj1->pos_x + (x*std::cos(convAngle)) - (-(obj1->dim_y/2)*std::sin(convAngle));
+                convY = obj1->pos_y + (x*std::sin(convAngle)) + (-(obj1->dim_y/2)*std::cos(convAngle));
                 if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
                     edges[convX][convY] = true;
 
                 // Test adding another line in the center (to prevent small objects from hiding inside big ones)
-                convX = GOptr->pos_x + (x*std::cos(convAngle));
-                convY = GOptr->pos_y + (x*std::sin(convAngle));
+                convX = obj1->pos_x + (x*std::cos(convAngle));
+                convY = obj1->pos_y + (x*std::sin(convAngle));
                 if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
                     edges[convX][convY] = true;
             }
-            for (int y = (GOptr->dim_y / 2) * -1; y < GOptr->dim_y / 2; y++)
+            for (int y = (obj1->dim_y / 2) * -1; y < obj1->dim_y / 2; y++)
             {
-                convX = GOptr->pos_x + ((GOptr->dim_x/2-1)*std::cos(convAngle)) - (y*std::sin(convAngle));
-                convY = GOptr->pos_y + ((GOptr->dim_x/2-1)*std::sin(convAngle)) + (y*std::cos(convAngle));
+                convX = obj1->pos_x + ((obj1->dim_x/2-1)*std::cos(convAngle)) - (y*std::sin(convAngle));
+                convY = obj1->pos_y + ((obj1->dim_x/2-1)*std::sin(convAngle)) + (y*std::cos(convAngle));
                 if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
                     edges[convX][convY] = true;
 
-                convX = GOptr->pos_x + (-(GOptr->dim_x/2)*std::cos(convAngle)) - (y*std::sin(convAngle));
-                convY = GOptr->pos_y + (-(GOptr->dim_x/2)*std::sin(convAngle)) + (y*std::cos(convAngle));
+                convX = obj1->pos_x + (-(obj1->dim_x/2)*std::cos(convAngle)) - (y*std::sin(convAngle));
+                convY = obj1->pos_y + (-(obj1->dim_x/2)*std::sin(convAngle)) + (y*std::cos(convAngle));
                 if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
                     edges[convX][convY] = true;
 
                 // Test adding another line in the center (to prevent small objects from hiding inside big ones)
-                convX = GOptr->pos_x - (y*std::sin(convAngle));
-                convY = GOptr->pos_y + (y*std::cos(convAngle));
+                convX = obj1->pos_x - (y*std::sin(convAngle));
+                convY = obj1->pos_y + (y*std::cos(convAngle));
                 if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
                     edges[convX][convY] = true;
             }
@@ -698,8 +848,8 @@ bool CApp::collisionOccurred(const StrPair& colliders)
         }
         case Shape::CIRCLE:
         {
-            int c_dim_x = GOptr->dim_x / 2;
-            int c_dim_y = GOptr->dim_y / 2;
+            int c_dim_x = obj1->dim_x / 2;
+            int c_dim_y = obj1->dim_y / 2;
 
             // Be careful of overflow here
             long hh = c_dim_y*c_dim_y;
@@ -707,21 +857,21 @@ bool CApp::collisionOccurred(const StrPair& colliders)
             long hhww = hh*ww;
             int x0 = c_dim_x;
             int dx = 0;
-            double convAngle = GOptr->angle * PI / 180.0;
+            double convAngle = obj1->angle * PI / 180.0;
 
             int convX, convY;
             // Test adding lines in the center (to prevent small objects from hiding inside big ones)
             for (int x = -c_dim_x/2; x < c_dim_x/2; ++x)
             {
-                convX = GOptr->pos_x + (x*std::cos(convAngle));
-                convY = GOptr->pos_y + (x*std::sin(convAngle));
+                convX = obj1->pos_x + (x*std::cos(convAngle));
+                convY = obj1->pos_y + (x*std::sin(convAngle));
                 if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
                     edges[convX][convY] = true;
             }
             for (int y = -c_dim_y/2; y < c_dim_y/2; ++y)
             {
-                convX = GOptr->pos_x - (y*std::sin(convAngle));
-                convY = GOptr->pos_y + (y*std::cos(convAngle));
+                convX = obj1->pos_x - (y*std::sin(convAngle));
+                convY = obj1->pos_y + (y*std::cos(convAngle));
                 if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
                     edges[convX][convY] = true;
             }
@@ -737,13 +887,13 @@ bool CApp::collisionOccurred(const StrPair& colliders)
 
                 for (int x = -x0; x <= x0; ++x)
                 {
-                    convX = GOptr->pos_x + (x*std::cos(convAngle)) - (y*std::sin(convAngle));
-                    convY = GOptr->pos_y + (x*std::sin(convAngle)) + (y*std::cos(convAngle));
+                    convX = obj1->pos_x + (x*std::cos(convAngle)) - (y*std::sin(convAngle));
+                    convY = obj1->pos_y + (x*std::sin(convAngle)) + (y*std::cos(convAngle));
                     if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
                         edges[convX][convY] = true;
 
-                    convX = GOptr->pos_x + (x*std::cos(convAngle)) - (-y*std::sin(convAngle));
-                    convY = GOptr->pos_y + (x*std::sin(convAngle)) + (-y*std::cos(convAngle));
+                    convX = obj1->pos_x + (x*std::cos(convAngle)) - (-y*std::sin(convAngle));
+                    convY = obj1->pos_y + (x*std::sin(convAngle)) + (-y*std::cos(convAngle));
                     if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
                         edges[convX][convY] = true;
                 }
@@ -752,9 +902,9 @@ bool CApp::collisionOccurred(const StrPair& colliders)
         }
         case Shape::TRIANGLE:
         {
-            int c_dim_x = GOptr->dim_x;
-            int c_dim_y = GOptr->dim_y;
-            double convAngle = GOptr->angle * PI / 180.0;
+            int c_dim_x = obj1->dim_x;
+            int c_dim_y = obj1->dim_y;
+            double convAngle = obj1->angle * PI / 180.0;
 
             double aspectRatio = (double)c_dim_x / c_dim_y;
             double x_width = c_dim_x;
@@ -762,19 +912,19 @@ bool CApp::collisionOccurred(const StrPair& colliders)
             int convX, convY;
             for (int y = (c_dim_y/2); y >= (c_dim_y/2) * -1; --y)
             {
-                convX = GOptr->pos_x + ((x_width/2*-1)*std::cos(convAngle)) - (y*std::sin(convAngle));
-                convY = GOptr->pos_y + ((x_width/2*-1)*std::sin(convAngle)) + (y*std::cos(convAngle));
+                convX = obj1->pos_x + ((x_width/2*-1)*std::cos(convAngle)) - (y*std::sin(convAngle));
+                convY = obj1->pos_y + ((x_width/2*-1)*std::sin(convAngle)) + (y*std::cos(convAngle));
                 if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
                     edges[convX][convY] = true;
 
-                convX = GOptr->pos_x + ((x_width/2)*std::cos(convAngle)) - (y*std::sin(convAngle));
-                convY = GOptr->pos_y + ((x_width/2)*std::sin(convAngle)) + (y*std::cos(convAngle));
+                convX = obj1->pos_x + ((x_width/2)*std::cos(convAngle)) - (y*std::sin(convAngle));
+                convY = obj1->pos_y + ((x_width/2)*std::sin(convAngle)) + (y*std::cos(convAngle));
                 if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
                     edges[convX][convY] = true;
 
                 // Test adding another line in the center (to prevent small objects from hiding inside big ones)
-                convX = GOptr->pos_x - (y*std::sin(convAngle));
-                convY = GOptr->pos_y + (y*std::cos(convAngle));
+                convX = obj1->pos_x - (y*std::sin(convAngle));
+                convY = obj1->pos_y + (y*std::cos(convAngle));
                 if (convX >= 0 && convX < window_width && convY >= 0 && convY < window_height)
                     edges[convX][convY] = true;
                 
@@ -789,18 +939,19 @@ bool CApp::collisionOccurred(const StrPair& colliders)
         }
     }
 
-    GOptr = &obj_list[getGameObject(colliders.second)];
-    switch(GOptr->getShape())
+    // Short-circuit the logic
+    // If any pixel drawn was also drawn on obj1, we say they are colliding
+    switch(obj2->getShape())
     {
         case Shape::RECTANGLE:
         {
-            double convAngle = GOptr->angle * PI / 180.0;
+            double convAngle = obj2->angle * PI / 180.0;
             int convX, convY;
             
-            for (int x = (GOptr->dim_x / 2) * -1; x < GOptr->dim_x / 2; x++)
+            for (int x = (obj2->dim_x / 2) * -1; x < obj2->dim_x / 2; x++)
             {
-                convX = GOptr->pos_x + (x*std::cos(convAngle)) - ((GOptr->dim_y/2-1)*std::sin(convAngle));
-                convY = GOptr->pos_y + (x*std::sin(convAngle)) + ((GOptr->dim_y/2-1)*std::cos(convAngle));
+                convX = obj2->pos_x + (x*std::cos(convAngle)) - ((obj2->dim_y/2-1)*std::sin(convAngle));
+                convY = obj2->pos_y + (x*std::sin(convAngle)) + ((obj2->dim_y/2-1)*std::cos(convAngle));
                 if (convX >= 0 && convX < window_width
                     && convY >= 0 && convY < window_height
                     && edges[convX][convY])
@@ -808,8 +959,8 @@ bool CApp::collisionOccurred(const StrPair& colliders)
                     return true;
                 }
 
-                convX = GOptr->pos_x + (x*std::cos(convAngle)) - (-(GOptr->dim_y/2)*std::sin(convAngle));
-                convY = GOptr->pos_y + (x*std::sin(convAngle)) + (-(GOptr->dim_y/2)*std::cos(convAngle));
+                convX = obj2->pos_x + (x*std::cos(convAngle)) - (-(obj2->dim_y/2)*std::sin(convAngle));
+                convY = obj2->pos_y + (x*std::sin(convAngle)) + (-(obj2->dim_y/2)*std::cos(convAngle));
                 if (convX >= 0 && convX < window_width
                     && convY >= 0 && convY < window_height
                     && edges[convX][convY])
@@ -818,8 +969,8 @@ bool CApp::collisionOccurred(const StrPair& colliders)
                 }
 
                 // Test adding another line in the center (to prevent small objects from hiding inside big ones)
-                convX = GOptr->pos_x + (x*std::cos(convAngle));
-                convY = GOptr->pos_y + (x*std::sin(convAngle));
+                convX = obj2->pos_x + (x*std::cos(convAngle));
+                convY = obj2->pos_y + (x*std::sin(convAngle));
                 if (convX >= 0 && convX < window_width
                     && convY >= 0 && convY < window_height
                     && edges[convX][convY])
@@ -827,10 +978,10 @@ bool CApp::collisionOccurred(const StrPair& colliders)
                     return true;
                 }
             }
-            for (int y = (GOptr->dim_y / 2) * -1; y < GOptr->dim_y / 2; y++)
+            for (int y = (obj2->dim_y / 2) * -1; y < obj2->dim_y / 2; y++)
             {
-                convX = GOptr->pos_x + ((GOptr->dim_x/2-1)*std::cos(convAngle)) - (y*std::sin(convAngle));
-                convY = GOptr->pos_y + ((GOptr->dim_x/2-1)*std::sin(convAngle)) + (y*std::cos(convAngle));
+                convX = obj2->pos_x + ((obj2->dim_x/2-1)*std::cos(convAngle)) - (y*std::sin(convAngle));
+                convY = obj2->pos_y + ((obj2->dim_x/2-1)*std::sin(convAngle)) + (y*std::cos(convAngle));
                 if (convX >= 0 && convX < window_width
                     && convY >= 0 && convY < window_height
                     && edges[convX][convY])
@@ -838,8 +989,8 @@ bool CApp::collisionOccurred(const StrPair& colliders)
                     return true;
                 }
 
-                convX = GOptr->pos_x + (-(GOptr->dim_x/2)*std::cos(convAngle)) - (y*std::sin(convAngle));
-                convY = GOptr->pos_y + (-(GOptr->dim_x/2)*std::sin(convAngle)) + (y*std::cos(convAngle));
+                convX = obj2->pos_x + (-(obj2->dim_x/2)*std::cos(convAngle)) - (y*std::sin(convAngle));
+                convY = obj2->pos_y + (-(obj2->dim_x/2)*std::sin(convAngle)) + (y*std::cos(convAngle));
                 if (convX >= 0 && convX < window_width
                     && convY >= 0 && convY < window_height
                     && edges[convX][convY])
@@ -848,8 +999,8 @@ bool CApp::collisionOccurred(const StrPair& colliders)
                 }
 
                 // Test adding another line in the center (to prevent small objects from hiding inside big ones)
-                convX = GOptr->pos_x - (y*std::sin(convAngle));
-                convY = GOptr->pos_y + (y*std::cos(convAngle));
+                convX = obj2->pos_x - (y*std::sin(convAngle));
+                convY = obj2->pos_y + (y*std::cos(convAngle));
                 if (convX >= 0 && convX < window_width
                     && convY >= 0 && convY < window_height
                     && edges[convX][convY])
@@ -861,8 +1012,8 @@ bool CApp::collisionOccurred(const StrPair& colliders)
         }
         case Shape::CIRCLE:
         {
-            int c_dim_x = GOptr->dim_x / 2;
-            int c_dim_y = GOptr->dim_y / 2;
+            int c_dim_x = obj2->dim_x / 2;
+            int c_dim_y = obj2->dim_y / 2;
 
             // Be careful of overflow here
             long hh = c_dim_y*c_dim_y;
@@ -870,14 +1021,14 @@ bool CApp::collisionOccurred(const StrPair& colliders)
             long hhww = hh*ww;
             int x0 = c_dim_x;
             int dx = 0;
-            double convAngle = GOptr->angle * PI / 180.0;
+            double convAngle = obj2->angle * PI / 180.0;
 
             int convX, convY;
             // Test adding lines in the center (to prevent small objects from hiding inside big ones)
             for (int x = -c_dim_x/2; x < c_dim_x/2; ++x)
             {
-                convX = GOptr->pos_x + (x*std::cos(convAngle));
-                convY = GOptr->pos_y + (x*std::sin(convAngle));
+                convX = obj2->pos_x + (x*std::cos(convAngle));
+                convY = obj2->pos_y + (x*std::sin(convAngle));
                 if (convX >= 0 && convX < window_width
                     && convY >= 0 && convY < window_height
                     && edges[convX][convY])
@@ -887,8 +1038,8 @@ bool CApp::collisionOccurred(const StrPair& colliders)
             }
             for (int y = -c_dim_y/2; y < c_dim_y/2; ++y)
             {
-                convX = GOptr->pos_x - (y*std::sin(convAngle));
-                convY = GOptr->pos_y + (y*std::cos(convAngle));
+                convX = obj2->pos_x - (y*std::sin(convAngle));
+                convY = obj2->pos_y + (y*std::cos(convAngle));
                 if (convX >= 0 && convX < window_width
                     && convY >= 0 && convY < window_height
                     && edges[convX][convY])
@@ -908,8 +1059,8 @@ bool CApp::collisionOccurred(const StrPair& colliders)
 
                 for (int x = -x0; x <= x0; ++x)
                 {
-                    convX = GOptr->pos_x + (x*std::cos(convAngle)) - (y*std::sin(convAngle));
-                    convY = GOptr->pos_y + (x*std::sin(convAngle)) + (y*std::cos(convAngle));
+                    convX = obj2->pos_x + (x*std::cos(convAngle)) - (y*std::sin(convAngle));
+                    convY = obj2->pos_y + (x*std::sin(convAngle)) + (y*std::cos(convAngle));
                     if (convX >= 0 && convX < window_width
                         && convY >= 0 && convY < window_height
                         && edges[convX][convY])
@@ -917,8 +1068,8 @@ bool CApp::collisionOccurred(const StrPair& colliders)
                         return true;
                     }
 
-                    convX = GOptr->pos_x + (x*std::cos(convAngle)) - (-y*std::sin(convAngle));
-                    convY = GOptr->pos_y + (x*std::sin(convAngle)) + (-y*std::cos(convAngle));
+                    convX = obj2->pos_x + (x*std::cos(convAngle)) - (-y*std::sin(convAngle));
+                    convY = obj2->pos_y + (x*std::sin(convAngle)) + (-y*std::cos(convAngle));
                     if (convX >= 0 && convX < window_width
                         && convY >= 0 && convY < window_height
                         && edges[convX][convY])
@@ -931,9 +1082,9 @@ bool CApp::collisionOccurred(const StrPair& colliders)
         }
         case Shape::TRIANGLE:
         {
-            int c_dim_x = GOptr->dim_x;
-            int c_dim_y = GOptr->dim_y;
-            double convAngle = GOptr->angle * PI / 180.0;
+            int c_dim_x = obj2->dim_x;
+            int c_dim_y = obj2->dim_y;
+            double convAngle = obj2->angle * PI / 180.0;
 
             double aspectRatio = (double)c_dim_x / c_dim_y;
             double x_width = c_dim_x;
@@ -941,8 +1092,8 @@ bool CApp::collisionOccurred(const StrPair& colliders)
             int convX, convY;
             for (int y = (c_dim_y/2); y >= (c_dim_y/2) * -1; --y)
             {
-                convX = GOptr->pos_x + ((x_width/2*-1)*std::cos(convAngle)) - (y*std::sin(convAngle));
-                convY = GOptr->pos_y + ((x_width/2*-1)*std::sin(convAngle)) + (y*std::cos(convAngle));
+                convX = obj2->pos_x + ((x_width/2*-1)*std::cos(convAngle)) - (y*std::sin(convAngle));
+                convY = obj2->pos_y + ((x_width/2*-1)*std::sin(convAngle)) + (y*std::cos(convAngle));
                 if (convX >= 0 && convX < window_width
                     && convY >= 0 && convY < window_height
                     && edges[convX][convY])
@@ -950,8 +1101,8 @@ bool CApp::collisionOccurred(const StrPair& colliders)
                     return true;
                 }
 
-                convX = GOptr->pos_x + ((x_width/2)*std::cos(convAngle)) - (y*std::sin(convAngle));
-                convY = GOptr->pos_y + ((x_width/2)*std::sin(convAngle)) + (y*std::cos(convAngle));
+                convX = obj2->pos_x + ((x_width/2)*std::cos(convAngle)) - (y*std::sin(convAngle));
+                convY = obj2->pos_y + ((x_width/2)*std::sin(convAngle)) + (y*std::cos(convAngle));
                 if (convX >= 0 && convX < window_width
                     && convY >= 0 && convY < window_height
                     && edges[convX][convY])
@@ -960,8 +1111,8 @@ bool CApp::collisionOccurred(const StrPair& colliders)
                 }
 
                 // Test adding another line in the center (to prevent small objects from hiding inside big ones)
-                convX = GOptr->pos_x - (y*std::sin(convAngle));
-                convY = GOptr->pos_y + (y*std::cos(convAngle));
+                convX = obj2->pos_x - (y*std::sin(convAngle));
+                convY = obj2->pos_y + (y*std::cos(convAngle));
                 if (convX >= 0 && convX < window_width
                     && convY >= 0 && convY < window_height
                     && edges[convX][convY])
@@ -1084,12 +1235,11 @@ void CApp::OnLoop()
 {
     for (unsigned i = 0; i < obj_list.size(); ++i)
     {
-        // Skip object if STATIC flag is set
         GameObject* GOptr = &obj_list[i];
-        if (GOptr->checkFlag(ObjectFlag::STATIC)) continue;
 
-        // Check event list
-        checkObjectEvents(GOptr);
+        // Skip object events if STATIC flag is set
+        if (!GOptr->checkFlag(ObjectFlag::STATIC))
+            checkObjectEvents(GOptr);
 
         // Update position and velocity
         GOptr->vel_x += GOptr->acc_x;
@@ -1099,7 +1249,6 @@ void CApp::OnLoop()
         GOptr->pos_y += GOptr->vel_y;
 
         GOptr->vel_ang += GOptr->acc_ang;
-        //if (GOptr->vel_ang >= 360) GOptr->vel_ang -= 360;
         GOptr->angle += GOptr->vel_ang;
         while (GOptr->angle >= 360) GOptr->angle -= 360;
     }
@@ -1120,6 +1269,10 @@ void CApp::OnRender()
     // Render Game Objects
     for (unsigned curObj = 0; curObj < obj_list.size(); curObj++)
     {
+        // Don't draw the object if it's flagged INVISIBLE
+        if (obj_list[curObj].checkFlag(ObjectFlag::INVISIBLE))
+            continue;
+
         Color c = obj_list[curObj].color;
         SDL_SetRenderDrawColor(Renderer, c.r, c.g, c.b, c.a);
         switch(obj_list[curObj].getShape())
@@ -1199,7 +1352,7 @@ void CApp::OnRender()
             }
             default:
             {
-                std::cerr << "DEFAULT TAKEN ON 'Shape' SWITCH\n";
+                std::cerr << "DEFAULT TAKEN ON 'OnRender' SWITCH\n";
                 exit(1);
             }
         }

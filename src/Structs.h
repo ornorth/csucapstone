@@ -41,7 +41,9 @@ enum ObjectAttribute {
 
 enum ObjectFlag {
     // User-relevant flags
-    STATIC = 1,                 // Update loop ignores this game object
+    STATIC      = 1,    // Object Events will not run
+    PHASED      = 2,    // Collision events with this object will not run
+    INVISIBLE   = 4,    // This object will not be rendered
 
     // Internal use flags
     X_BORDER_COLLIDED = 256,    // Object collided with the X border on the previous frame
@@ -160,10 +162,10 @@ enum GameAction {
     SCALEVAR,       // scale a variable
                     //  - variable name
                     //  - value by which to scale: name *= var
-    TOGGLE,         // toggle a flag
-                    //  - name of the flag
     BOUNCE_X,       // reverse X velocity, as if the object "bounced" off a surface
     BOUNCE_Y,       // reverse Y velocity, as if the object "bounced" off a surface
+    SETFLAG,        // set the value of an object's flag (see struct ObjectFlag)
+    TOGGLEFLAG,     // toggle the value of an object's flag (see struct ObjectFlag)
 };
 
 struct EventList {
@@ -218,6 +220,7 @@ struct ActionList {
     double value;
     ObjectAttribute attribute;
     Color color;
+    ObjectFlag flag;
 };
 
 // Collision events also use this action list
@@ -229,7 +232,7 @@ struct KeyActionList {
     double value;
     ObjectAttribute attribute;
     Color color;
-    bool ran_last_frame; // Used for Collision events to prevent multiple consecutive collisions
+    ObjectFlag flag;
 };
 
 #endif
