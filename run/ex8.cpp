@@ -22,15 +22,15 @@ int main(int argc, char* argv[])
     app.addKeyEvent(KeyCode::LEFTARROW,  KeyPressType::HELD, GameAction::INCVAR, "obj2", ObjectAttribute::X_POSITION, -5);
     app.addKeyEvent(KeyCode::DOWNARROW,  KeyPressType::HELD, GameAction::INCVAR, "obj2", ObjectAttribute::Y_POSITION,  5);
     app.addKeyEvent(KeyCode::RIGHTARROW, KeyPressType::HELD, GameAction::INCVAR, "obj2", ObjectAttribute::X_POSITION,  5);
-    app.addKeyEvent(KeyCode::COMMA,  KeyPressType::HELD, GameAction::INCVAR, "obj2", ObjectAttribute::ANGLE, -3);
-    app.addKeyEvent(KeyCode::PERIOD, KeyPressType::HELD, GameAction::INCVAR, "obj2", ObjectAttribute::ANGLE,  3);
+    app.addKeyEvent(KeyCode::COMMA,      KeyPressType::HELD, GameAction::INCVAR, "obj2", ObjectAttribute::ANGLE, -3);
+    app.addKeyEvent(KeyCode::PERIOD,     KeyPressType::HELD, GameAction::INCVAR, "obj2", ObjectAttribute::ANGLE,  3);
 
     app.addGameObject("obj3", Shape::TRIANGLE, {0, 0, 0, 255}, 125, 80, 600, 200);
-    app.addKeyEvent(KeyCode::I,    KeyPressType::HELD, GameAction::INCVAR, "obj3", ObjectAttribute::Y_POSITION, -5);
-    app.addKeyEvent(KeyCode::J,  KeyPressType::HELD, GameAction::INCVAR, "obj3", ObjectAttribute::X_POSITION, -5);
-    app.addKeyEvent(KeyCode::K,  KeyPressType::HELD, GameAction::INCVAR, "obj3", ObjectAttribute::Y_POSITION,  5);
+    app.addKeyEvent(KeyCode::I, KeyPressType::HELD, GameAction::INCVAR, "obj3", ObjectAttribute::Y_POSITION, -5);
+    app.addKeyEvent(KeyCode::J, KeyPressType::HELD, GameAction::INCVAR, "obj3", ObjectAttribute::X_POSITION, -5);
+    app.addKeyEvent(KeyCode::K, KeyPressType::HELD, GameAction::INCVAR, "obj3", ObjectAttribute::Y_POSITION,  5);
     app.addKeyEvent(KeyCode::L, KeyPressType::HELD, GameAction::INCVAR, "obj3", ObjectAttribute::X_POSITION,  5);
-    app.addKeyEvent(KeyCode::U,  KeyPressType::HELD, GameAction::INCVAR, "obj3", ObjectAttribute::ANGLE, -3);
+    app.addKeyEvent(KeyCode::U, KeyPressType::HELD, GameAction::INCVAR, "obj3", ObjectAttribute::ANGLE, -3);
     app.addKeyEvent(KeyCode::O, KeyPressType::HELD, GameAction::INCVAR, "obj3", ObjectAttribute::ANGLE,  3);
 
     // Color changing

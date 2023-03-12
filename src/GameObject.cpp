@@ -51,24 +51,3 @@ bool GameObject::checkFlag(ObjectFlag flag)
 {
     return flags & flag;
 }
-
-void GameObject::addEvent(EventList event, GameAction action, const std::string& name, double value)
-{
-    event_list[event].push_back({action, name, value});
-}
-void GameObject::addEvent(EventList event, GameAction action, ObjectAttribute att, double value)
-{
-    event_list[event].push_back({action, "NULL", value, att});
-}
-void GameObject::addEvent(EventList event, GameAction action, ObjectAttribute att, Color value)
-{
-    event_list[event].push_back({action, "NULL", 0.0, att, value});
-}
-void GameObject::addEvent(EventList event, GameAction action, ObjectFlag flag, bool value)
-{
-    ActionList list;
-    list.type = action;
-    list.value = (value ? 1.0 : 0.0);
-    list.flag = flag;
-    event_list[event].push_back(list);
-}

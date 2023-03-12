@@ -215,20 +215,8 @@ struct StrPairComp
 // };
 
 struct ActionList {
-    GameAction type;
-    std::string id;
-    double value;
-    ObjectAttribute attribute;
-    Color color;
-    ObjectFlag flag;
-};
-
-// Collision events also use this action list
-// This will likely have to be changed at some point
-struct KeyActionList {
-    GameAction type;
+    GameAction action;
     std::string object_name;
-    std::string id;
     double value;
     ObjectAttribute attribute;
     Color color;

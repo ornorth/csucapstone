@@ -99,15 +99,7 @@ bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameActi
     int idx = getGameObject(obj_name);
     if (idx == -1) return false;
 
-    obj_list[idx].addEvent({event}, action, "NULL", 0.0);
-    return true;
-}
-bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, const std::string& name)
-{
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
-    obj_list[idx].addEvent({event}, action, name, 0.0);
+    obj_list[idx].event_list[{event}].push_back({action});
     return true;
 }
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, double value)
@@ -115,15 +107,7 @@ bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameActi
     int idx = getGameObject(obj_name);
     if (idx == -1) return false;
 
-    obj_list[idx].addEvent({event}, action, "NULL", value);
-    return true;
-}
-bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, const std::string& name, double value)
-{
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
-    obj_list[idx].addEvent({event}, action, name, value);
+    obj_list[idx].event_list[{event}].push_back({action, "NULL", value});
     return true;
 }
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, ObjectAttribute att, double value)
@@ -131,15 +115,15 @@ bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameActi
     int idx = getGameObject(obj_name);
     if (idx == -1) return false;
 
-    obj_list[idx].addEvent({event}, action, att, value);
+    obj_list[idx].event_list[{event}].push_back({action, "NULL", value, att});
     return true;
 }
-bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, ObjectAttribute att, Color value)
+bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, ObjectAttribute att, Color color)
 {
     int idx = getGameObject(obj_name);
     if (idx == -1) return false;
 
-    obj_list[idx].addEvent({event}, action, att, value);
+    obj_list[idx].event_list[{event}].push_back({action, "NULL", 0.0, att, color});
     return true;
 }
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, ObjectFlag flag)
@@ -147,7 +131,10 @@ bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameActi
     int idx = getGameObject(obj_name);
     if (idx == -1) return false;
 
-    obj_list[idx].addEvent({event}, action, flag);
+    ActionList list;
+    list.action = action;
+    list.flag = flag;
+    obj_list[idx].event_list[{event}].push_back(list);
     return true;
 }
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, ObjectFlag flag, bool value)
@@ -155,7 +142,11 @@ bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameActi
     int idx = getGameObject(obj_name);
     if (idx == -1) return false;
 
-    obj_list[idx].addEvent({event}, action, flag, value);
+    ActionList list;
+    list.action = action;
+    list.flag = flag;
+    list.value = (value ? 1.0 : 0.0);
+    obj_list[idx].event_list[{event}].push_back(list);
     return true;
 }
 
@@ -164,15 +155,7 @@ bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAt
     int idx = getGameObject(obj_name);
     if (idx == -1) return false;
 
-    obj_list[idx].addEvent({event, effector_att, effector_value}, action, "NULL", 0.0);
-    return true;
-}
-bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, const std::string& name)
-{
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
-    obj_list[idx].addEvent({event, effector_att, effector_value}, action, name, 0.0);
+    obj_list[idx].event_list[{event, effector_att, effector_value}].push_back({action});
     return true;
 }
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, double value)
@@ -180,15 +163,7 @@ bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAt
     int idx = getGameObject(obj_name);
     if (idx == -1) return false;
 
-    obj_list[idx].addEvent({event, effector_att, effector_value}, action, "NULL", value);
-    return true;
-}
-bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, const std::string& name, double value)
-{
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
-    obj_list[idx].addEvent({event, effector_att, effector_value}, action, name, value);
+    obj_list[idx].event_list[{event, effector_att, effector_value}].push_back({action, "NULL", value});
     return true;
 }
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, ObjectAttribute att, double value)
@@ -196,15 +171,15 @@ bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAt
     int idx = getGameObject(obj_name);
     if (idx == -1) return false;
 
-    obj_list[idx].addEvent({event, effector_att, effector_value}, action, att, value);
+    obj_list[idx].event_list[{event, effector_att, effector_value}].push_back({action, "NULL", value, att});
     return true;
 }
-bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, ObjectAttribute att, Color value)
+bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, ObjectAttribute att, Color color)
 {
     int idx = getGameObject(obj_name);
     if (idx == -1) return false;
 
-    obj_list[idx].addEvent({event, effector_att, effector_value}, action, att, value);
+    obj_list[idx].event_list[{event, effector_att, effector_value}].push_back({action, "NULL", 0.0, att, color});
     return true;
 }
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, ObjectFlag flag)
@@ -212,7 +187,10 @@ bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAt
     int idx = getGameObject(obj_name);
     if (idx == -1) return false;
 
-    obj_list[idx].addEvent({event, effector_att, effector_value}, action, flag);
+    ActionList list;
+    list.action = action;
+    list.flag = flag;
+    obj_list[idx].event_list[{event, effector_att, effector_value}].push_back(list);
     return true;
 }
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, ObjectFlag flag, bool value)
@@ -220,7 +198,11 @@ bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAt
     int idx = getGameObject(obj_name);
     if (idx == -1) return false;
 
-    obj_list[idx].addEvent({event, effector_att, effector_value}, action, flag, value);
+    ActionList list;
+    list.action = action;
+    list.flag = flag;
+    list.value = (value ? 1.0 : 0.0);
+    obj_list[idx].event_list[{event, effector_att, effector_value}].push_back(list);
     return true;
 }
 
@@ -230,13 +212,13 @@ bool CApp::addKeyEvent(KeyCode key, KeyPressType type, GameAction action)
     switch(type)
     {
         case KeyPressType::DOWN:
-            keydown_events[key].push_back({action, "NULL", "NULL", 0.0, ObjectAttribute::WIDTH});
+            keydown_events[key].push_back({action});
             break;
         case KeyPressType::UP:
-            keyup_events[key].push_back({action, nullptr, "NULL", 0.0, ObjectAttribute::WIDTH});
+            keyup_events[key].push_back({action});
             break;
         case KeyPressType::HELD:
-            keyheld_events[key].push_back({action, nullptr, "NULL", 0.0, ObjectAttribute::WIDTH});
+            keyheld_events[key].push_back({action});
             break;
     }
     return true;
@@ -249,32 +231,13 @@ bool CApp::addKeyEvent(KeyCode key, KeyPressType type, GameAction action, const 
     switch(type)
     {
         case KeyPressType::DOWN:
-            keydown_events[key].push_back({action, obj_name, "NULL", 0.0, ObjectAttribute::WIDTH});
+            keydown_events[key].push_back({action, obj_name});
             break;
         case KeyPressType::UP:
-            keyup_events[key].push_back({action, obj_name, "NULL", 0.0, ObjectAttribute::WIDTH});
+            keyup_events[key].push_back({action, obj_name});
             break;
         case KeyPressType::HELD:
-            keyheld_events[key].push_back({action, obj_name, "NULL", 0.0, ObjectAttribute::WIDTH});
-            break;
-    }
-    return true;
-}
-bool CApp::addKeyEvent(KeyCode key, KeyPressType type, GameAction action, const std::string& obj_name, const std::string& name)
-{
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
-    switch(type)
-    {
-        case KeyPressType::DOWN:
-            keydown_events[key].push_back({action, obj_name, name, 0.0, ObjectAttribute::WIDTH});
-            break;
-        case KeyPressType::UP:
-            keyup_events[key].push_back({action, obj_name, name, 0.0, ObjectAttribute::WIDTH});
-            break;
-        case KeyPressType::HELD:
-            keyheld_events[key].push_back({action, obj_name, name, 0.0, ObjectAttribute::WIDTH});
+            keyheld_events[key].push_back({action, obj_name});
             break;
     }
     return true;
@@ -287,32 +250,13 @@ bool CApp::addKeyEvent(KeyCode key, KeyPressType type, GameAction action, const 
     switch(type)
     {
         case KeyPressType::DOWN:
-            keydown_events[key].push_back({action, obj_name, "NULL", value, ObjectAttribute::WIDTH});
+            keydown_events[key].push_back({action, obj_name, value});
             break;
         case KeyPressType::UP:
-            keyup_events[key].push_back({action, obj_name, "NULL", value, ObjectAttribute::WIDTH});
+            keyup_events[key].push_back({action, obj_name, value});
             break;
         case KeyPressType::HELD:
-            keyheld_events[key].push_back({action, obj_name, "NULL", value, ObjectAttribute::WIDTH});
-            break;
-    }
-    return true;
-}
-bool CApp::addKeyEvent(KeyCode key, KeyPressType type, GameAction action, const std::string& obj_name, const std::string& name, double value)
-{
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
-    switch(type)
-    {
-        case KeyPressType::DOWN:
-            keydown_events[key].push_back({action, obj_name, name, value, ObjectAttribute::WIDTH});
-            break;
-        case KeyPressType::UP:
-            keyup_events[key].push_back({action, obj_name, name, value, ObjectAttribute::WIDTH});
-            break;
-        case KeyPressType::HELD:
-            keyheld_events[key].push_back({action, obj_name, name, value, ObjectAttribute::WIDTH});
+            keyheld_events[key].push_back({action, obj_name, value});
             break;
     }
     return true;
@@ -325,18 +269,18 @@ bool CApp::addKeyEvent(KeyCode key, KeyPressType type, GameAction action, const 
     switch(type)
     {
         case KeyPressType::DOWN:
-            keydown_events[key].push_back({action, obj_name, "NULL", value, att});
+            keydown_events[key].push_back({action, obj_name, value, att});
             break;
         case KeyPressType::UP:
-            keyup_events[key].push_back({action, obj_name, "NULL", value, att});
+            keyup_events[key].push_back({action, obj_name, value, att});
             break;
         case KeyPressType::HELD:
-            keyheld_events[key].push_back({action, obj_name, "NULL", value, att});
+            keyheld_events[key].push_back({action, obj_name, value, att});
             break;
     }
     return true;
 }
-bool CApp::addKeyEvent(KeyCode key, KeyPressType type, GameAction action, const std::string& obj_name, ObjectAttribute att, Color value)
+bool CApp::addKeyEvent(KeyCode key, KeyPressType type, GameAction action, const std::string& obj_name, ObjectAttribute att, Color color)
 {
     int idx = getGameObject(obj_name);
     if (idx == -1) return false;
@@ -344,13 +288,13 @@ bool CApp::addKeyEvent(KeyCode key, KeyPressType type, GameAction action, const 
     switch(type)
     {
         case KeyPressType::DOWN:
-            keydown_events[key].push_back({action, obj_name, "NULL", 0.0, att, value});
+            keydown_events[key].push_back({action, obj_name, 0.0, att, color});
             break;
         case KeyPressType::UP:
-            keyup_events[key].push_back({action, obj_name, "NULL", 0.0, att, value});
+            keyup_events[key].push_back({action, obj_name, 0.0, att, color});
             break;
         case KeyPressType::HELD:
-            keyheld_events[key].push_back({action, obj_name, "NULL", 0.0, att, value});
+            keyheld_events[key].push_back({action, obj_name, 0.0, att, color});
             break;
     }
     return true;
@@ -360,8 +304,8 @@ bool CApp::addKeyEvent(KeyCode key, KeyPressType type, GameAction action, const 
     int idx = getGameObject(obj_name);
     if (idx == -1) return false;
 
-    KeyActionList list;
-    list.type = action;
+    ActionList list;
+    list.action = action;
     list.object_name = obj_name;
     list.flag = flag;
     switch(type)
@@ -383,8 +327,8 @@ bool CApp::addKeyEvent(KeyCode key, KeyPressType type, GameAction action, const 
     int idx = getGameObject(obj_name);
     if (idx == -1) return false;
 
-    KeyActionList list;
-    list.type = action;
+    ActionList list;
+    list.action = action;
     list.object_name = obj_name;
     list.flag = flag;
     list.value = (value ? 1.0 : 0.0);
@@ -408,7 +352,7 @@ bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2,
     int idx = getGameObject(obj_1), jdx = getGameObject(obj_2);
     if (idx == -1 || jdx == -1) return false;
 
-    collision_events[{obj_1, obj_2}].push_back({action, "NULL", "NULL", 0.0, ObjectAttribute::WIDTH, {0, 0, 0, 0}});
+    collision_events[{obj_1, obj_2}].push_back({action});
     return true;
 }
 bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name)
@@ -416,15 +360,7 @@ bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2,
     int idx = getGameObject(obj_1), jdx = getGameObject(obj_2), kdx = getGameObject(obj_name);
     if (idx == -1 || jdx == -1 || kdx == -1) return false;
 
-    collision_events[{obj_1, obj_2}].push_back({action, obj_name, "NULL", 0.0, ObjectAttribute::WIDTH, {0, 0, 0, 0}});
-    return true;
-}
-bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, const std::string& name)
-{
-    int idx = getGameObject(obj_1), jdx = getGameObject(obj_2), kdx = getGameObject(obj_name);
-    if (idx == -1 || jdx == -1 || kdx == -1) return false;
-
-    collision_events[{obj_1, obj_2}].push_back({action, obj_name, name, 0.0, ObjectAttribute::WIDTH, {0, 0, 0, 0}});
+    collision_events[{obj_1, obj_2}].push_back({action, obj_name});
     return true;
 }
 bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, double value)
@@ -432,15 +368,7 @@ bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2,
     int idx = getGameObject(obj_1), jdx = getGameObject(obj_2), kdx = getGameObject(obj_name);
     if (idx == -1 || jdx == -1 || kdx == -1) return false;
 
-    collision_events[{obj_1, obj_2}].push_back({action, obj_name, "NULL", value, ObjectAttribute::WIDTH, {0, 0, 0, 0}});
-    return true;
-}
-bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, const std::string& name, double value)
-{
-    int idx = getGameObject(obj_1), jdx = getGameObject(obj_2), kdx = getGameObject(obj_name);
-    if (idx == -1 || jdx == -1 || kdx == -1) return false;
-
-    collision_events[{obj_1, obj_2}].push_back({action, obj_name, name, value, ObjectAttribute::WIDTH, {0, 0, 0, 0}});
+    collision_events[{obj_1, obj_2}].push_back({action, obj_name, value});
     return true;
 }
 bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, ObjectAttribute att, double value)
@@ -448,15 +376,15 @@ bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2,
     int idx = getGameObject(obj_1), jdx = getGameObject(obj_2), kdx = getGameObject(obj_name);
     if (idx == -1 || jdx == -1 || kdx == -1) return false;
 
-    collision_events[{obj_1, obj_2}].push_back({action, obj_name, "NULL", value, att, {0, 0, 0, 0}});
+    collision_events[{obj_1, obj_2}].push_back({action, obj_name, value, att});
     return true;
 }
-bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, ObjectAttribute att, Color value)
+bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, ObjectAttribute att, Color color)
 {
     int idx = getGameObject(obj_1), jdx = getGameObject(obj_2), kdx = getGameObject(obj_name);
     if (idx == -1 || jdx == -1 || kdx == -1) return false;
 
-    collision_events[{obj_1, obj_2}].push_back({action, obj_name, "NULL", 0.0, att, value});
+    collision_events[{obj_1, obj_2}].push_back({action, obj_name, 0.0, att, color});
     return true;
 }
 bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, ObjectFlag flag)
@@ -464,7 +392,7 @@ bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2,
     int idx = getGameObject(obj_1), jdx = getGameObject(obj_2), kdx = getGameObject(obj_name);
     if (idx == -1 || jdx == -1 || kdx == -1) return false;
 
-    collision_events[{obj_1, obj_2}].push_back({action, obj_name, "NULL", 0.0, ObjectAttribute::WIDTH, {0, 0, 0, 0}, flag});
+    collision_events[{obj_1, obj_2}].push_back({action, obj_name, 0.0, ObjectAttribute::WIDTH, {0, 0, 0, 0}, flag});
     return true;
 }
 bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, ObjectFlag flag, bool value)
@@ -472,7 +400,7 @@ bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2,
     int idx = getGameObject(obj_1), jdx = getGameObject(obj_2), kdx = getGameObject(obj_name);
     if (idx == -1 || jdx == -1 || kdx == -1) return false;
 
-    collision_events[{obj_1, obj_2}].push_back({action, obj_name, "NULL", (value ? 1.0 : 0.0), ObjectAttribute::WIDTH, {0, 0, 0, 0}, flag});
+    collision_events[{obj_1, obj_2}].push_back({action, obj_name, (value ? 1.0 : 0.0), ObjectAttribute::WIDTH, {0, 0, 0, 0}, flag});
     return true;
 }
 
@@ -554,14 +482,25 @@ void CApp::checkObjectEvents(GameObject* GOptr)
         }
 
         if (flag)
-            runObjectEvent(GOptr, it.second);
+            runEvents(it.second, GOptr);
     }
 }
-void CApp::runObjectEvent(GameObject* GOptr, std::vector<ActionList>& events)
+void CApp::runEvents(std::vector<ActionList>& events, GameObject* GOptr)
 {
+    GameObject* tmpGO;
     for (unsigned idx = 0; idx < events.size(); ++idx)
     {
-        switch(events[idx].type)
+        ActionList* list = &events[idx];
+
+        // If an object is specified in the action list, use it
+        // Otherwise, use the provided object
+        int id = getGameObject(list->object_name);
+        if (id != -1)
+            tmpGO = &obj_list[id];
+        else
+            tmpGO = GOptr;
+
+        switch(list->action)
         {
             case GameAction::QUIT:
             {
@@ -571,213 +510,57 @@ void CApp::runObjectEvent(GameObject* GOptr, std::vector<ActionList>& events)
             case GameAction::BOUNCE_X:
             {
                 // Swap the velocity
-                GOptr->vel_x *= -1;
+                tmpGO->vel_x *= -1;
                 break;
             }
             case GameAction::BOUNCE_Y:
             {
                 // Swap the velocity
-                GOptr->vel_y *= -1;
+                tmpGO->vel_y *= -1;
                 break;
             }
             case GameAction::SETVAR:
             {
-                if (events[idx].attribute == ObjectAttribute::COLOR)
+                if (list->attribute == ObjectAttribute::COLOR)
                 {
-                    GOptr->color = events[idx].color;
+                    tmpGO->color = events[idx].color;
                     break;
                 }
-                double* att_ptr = (double*)getObjectAttribute(GOptr, events[idx].attribute);
-                *att_ptr = events[idx].value;
+                double* att_ptr = (double*)getObjectAttribute(tmpGO, list->attribute);
+                *att_ptr = list->value;
                 break;
             }
             case GameAction::INCVAR:
             {
-                double* att_ptr = (double*)getObjectAttribute(GOptr, events[idx].attribute);
-                *att_ptr += events[idx].value;
+                double* att_ptr = (double*)getObjectAttribute(tmpGO, list->attribute);
+                *att_ptr += list->value;
                 break;
             }
             case GameAction::SCALEVAR:
             {
-                double* att_ptr = (double*)getObjectAttribute(GOptr, events[idx].attribute);
-                *att_ptr *= events[idx].value;
+                double* att_ptr = (double*)getObjectAttribute(tmpGO, list->attribute);
+                *att_ptr *= list->value;
                 break;
             }
             case GameAction::SETFLAG:
             {
-                if (events[idx].value)
-                    GOptr->setFlag(events[idx].flag);
+                if (list->value)
+                    tmpGO->setFlag(list->flag);
                 else
-                    GOptr->clearFlag(events[idx].flag);
+                    tmpGO->clearFlag(list->flag);
                 break;
             }
             case GameAction::TOGGLEFLAG:
             {
-                if (GOptr->checkFlag(events[idx].flag))
-                    GOptr->clearFlag(events[idx].flag);
+                if (tmpGO->checkFlag(list->flag))
+                    tmpGO->clearFlag(list->flag);
                 else
-                    GOptr->setFlag(events[idx].flag);
+                    tmpGO->setFlag(list->flag);
                 break;
             }
             default:
             {
                 std::cerr << "DEFAULT TAKEN ON 'runObjectEvent' SWITCH\n";
-                exit(1);
-            }
-        }
-    }
-}
-void CApp::runKeyEvents(std::vector<KeyActionList>& events)
-{
-    // Step 2: take the actions listed
-    for (unsigned idx = 0; idx < events.size(); ++idx)
-    {
-        KeyActionList* action = &events[idx];
-
-        // Get pointer to object if relevant
-        int obj_idx = getGameObject(events[idx].object_name);
-        GameObject* GOptr = nullptr;
-        if (obj_idx != -1) GOptr = &obj_list[obj_idx];
-
-        switch(action->type)
-        {
-            case GameAction::QUIT:
-            {
-                running = false;
-                break;
-            }
-            case GameAction::BOUNCE_X:
-            {
-                // Swap the velocity
-                GOptr->vel_x *= -1;
-                break;
-            }
-            case GameAction::BOUNCE_Y:
-            {
-                // Swap the velocity
-                GOptr->vel_y *= -1;
-                break;
-            }
-            case GameAction::SETVAR:
-            {
-                if (events[idx].attribute == ObjectAttribute::COLOR)
-                {
-                    GOptr->color = events[idx].color;
-                    break;
-                }
-                double* att_ptr = (double*)getObjectAttribute(GOptr, events[idx].attribute);
-                *att_ptr = events[idx].value;
-                break;
-            }
-            case GameAction::INCVAR:
-            {
-                double* att_ptr = (double*)getObjectAttribute(GOptr, events[idx].attribute);
-                *att_ptr += events[idx].value;
-                break;
-            }
-            case GameAction::SCALEVAR:
-            {
-                double* att_ptr = (double*)getObjectAttribute(GOptr, events[idx].attribute);
-                *att_ptr *= events[idx].value;
-                break;
-            }
-            case GameAction::SETFLAG:
-            {
-                if (events[idx].value)
-                    GOptr->setFlag(events[idx].flag);
-                else
-                    GOptr->clearFlag(events[idx].flag);
-                break;
-            }
-            case GameAction::TOGGLEFLAG:
-            {
-                if (GOptr->checkFlag(events[idx].flag))
-                    GOptr->clearFlag(events[idx].flag);
-                else
-                    GOptr->setFlag(events[idx].flag);
-                break;
-            }
-            default:
-            {
-                std::cerr << "DEFAULT TAKEN ON 'runKeyEvents' SWITCH\n";
-                exit(1);
-            }
-        }
-    }
-}
-void CApp::runCollisionEvents(std::vector<KeyActionList>& events)
-{
-    // Step 2: take the actions listed
-    for (unsigned idx = 0; idx < events.size(); ++idx)
-    {
-        KeyActionList* action = &events[idx];
-        
-        // Get pointer to object if relevant
-        int obj_idx = getGameObject(events[idx].object_name);
-        GameObject* GOptr = nullptr;
-        if (obj_idx != -1) GOptr = &obj_list[obj_idx];
-
-        switch(action->type)
-        {
-            case GameAction::QUIT:
-            {
-                running = false;
-                break;
-            }
-            case GameAction::BOUNCE_X:
-            {
-                // Swap the velocity
-                GOptr->vel_x *= -1;
-                break;
-            }
-            case GameAction::BOUNCE_Y:
-            {
-                // Swap the velocity
-                GOptr->vel_y *= -1;
-                break;
-            }
-            case GameAction::SETVAR:
-            {
-                if (events[idx].attribute == ObjectAttribute::COLOR)
-                {
-                    GOptr->color = events[idx].color;
-                    break;
-                }
-                double* att_ptr = (double*)getObjectAttribute(GOptr, events[idx].attribute);
-                *att_ptr = events[idx].value;
-                break;
-            }
-            case GameAction::INCVAR:
-            {
-                double* att_ptr = (double*)getObjectAttribute(GOptr, events[idx].attribute);
-                *att_ptr += events[idx].value;
-                break;
-            }
-            case GameAction::SCALEVAR:
-            {
-                double* att_ptr = (double*)getObjectAttribute(GOptr, events[idx].attribute);
-                *att_ptr *= events[idx].value;
-                break;
-            }
-            case GameAction::SETFLAG:
-            {
-                if (events[idx].value)
-                    GOptr->setFlag(events[idx].flag);
-                else
-                    GOptr->clearFlag(events[idx].flag);
-                break;
-            }
-            case GameAction::TOGGLEFLAG:
-            {
-                if (GOptr->checkFlag(events[idx].flag))
-                    GOptr->clearFlag(events[idx].flag);
-                else
-                    GOptr->setFlag(events[idx].flag);
-                break;
-            }
-            default:
-            {
-                std::cerr << "DEFAULT TAKEN ON 'runCollisionEvents' SWITCH\n";
                 exit(1);
             }
         }
@@ -1192,18 +975,18 @@ void CApp::OnEvent()
         if (boardState[idx] && !keyStates[idx])
         {
             keyStates[idx] = 1;
-            runKeyEvents(keydown_events[(KeyCode)idx]);
+            runEvents(keydown_events[(KeyCode)idx]);
         }
         // Key was just released
         else if (!boardState[idx] && keyStates[idx])
         {
             keyStates[idx] = 0;
-            runKeyEvents(keyup_events[(KeyCode)idx]);
+            runEvents(keyup_events[(KeyCode)idx]);
         }
         // Key is being held ()
         if (keyStates[idx])
         {
-            runKeyEvents(keyheld_events[(KeyCode)idx]);
+            runEvents(keyheld_events[(KeyCode)idx]);
         }
     }
 }
@@ -1253,10 +1036,10 @@ void CApp::OnLoop()
         while (GOptr->angle >= 360) GOptr->angle -= 360;
     }
     // Using auto here makes the object immutable. Use an iterator instead
-    for (std::map<StrPair, std::vector<KeyActionList>, StrPairComp>::iterator it = collision_events.begin(); it != collision_events.end(); ++it)
+    for (std::map<StrPair, std::vector<ActionList>, StrPairComp>::iterator it = collision_events.begin(); it != collision_events.end(); ++it)
     {
         if (collisionOccurred(it->first))
-            runCollisionEvents(it->second);
+            runEvents(it->second);
     }
 }
 

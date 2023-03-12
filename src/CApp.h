@@ -26,14 +26,14 @@ class CApp {
         int window_height;
         std::vector<GameObject> obj_list;
 
-        std::unordered_map<KeyCode, std::vector<KeyActionList>> keydown_events;
-        std::unordered_map<KeyCode, std::vector<KeyActionList>> keyup_events;
-        std::unordered_map<KeyCode, std::vector<KeyActionList>> keyheld_events;
+        std::unordered_map<KeyCode, std::vector<ActionList>> keydown_events;
+        std::unordered_map<KeyCode, std::vector<ActionList>> keyup_events;
+        std::unordered_map<KeyCode, std::vector<ActionList>> keyheld_events;
         //index using enum KeyCode: true=pressed, false=not
         bool keyStates[KeyCode::MAX_KEYCODE];
 
         // Collision stuff (oh boy)
-        std::map<StrPair, std::vector<KeyActionList>, StrPairComp> collision_events;
+        std::map<StrPair, std::vector<ActionList>, StrPairComp> collision_events;
 
         // Colors
         Color bg_color;
@@ -54,40 +54,32 @@ class CApp {
 
         // EVENTS
         bool addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action);
-        bool addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, const std::string& name);
         bool addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, double value);
-        bool addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, const std::string& name, double value);
         bool addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, ObjectAttribute att, double value);
-        bool addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, ObjectAttribute att, Color value);
+        bool addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, ObjectAttribute att, Color color);
         bool addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, ObjectFlag flag);
         bool addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, ObjectFlag flag, bool value);
 
         bool addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action);
-        bool addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, const std::string& name);
         bool addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, double value);
-        bool addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, const std::string& name, double value);
         bool addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, ObjectAttribute att, double value);
-        bool addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, ObjectAttribute att, Color value);
+        bool addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, ObjectAttribute att, Color color);
         bool addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, ObjectFlag flag);
         bool addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, ObjectFlag flag, bool value);
 
         bool addKeyEvent(KeyCode key, KeyPressType type, GameAction action); // for generic events: quit, pause(?)
         bool addKeyEvent(KeyCode key, KeyPressType type, GameAction action, const std::string& obj_name);
-        bool addKeyEvent(KeyCode key, KeyPressType type, GameAction action, const std::string& obj_name, const std::string& name);
         bool addKeyEvent(KeyCode key, KeyPressType type, GameAction action, const std::string& obj_name, double value);
-        bool addKeyEvent(KeyCode key, KeyPressType type, GameAction action, const std::string& obj_name, const std::string& name, double value);
         bool addKeyEvent(KeyCode key, KeyPressType type, GameAction action, const std::string& obj_name, ObjectAttribute att, double value);
-        bool addKeyEvent(KeyCode key, KeyPressType type, GameAction action, const std::string& obj_name, ObjectAttribute att, Color value);
+        bool addKeyEvent(KeyCode key, KeyPressType type, GameAction action, const std::string& obj_name, ObjectAttribute att, Color color);
         bool addKeyEvent(KeyCode key, KeyPressType type, GameAction action, const std::string& obj_name, ObjectFlag flag);
         bool addKeyEvent(KeyCode key, KeyPressType type, GameAction action, const std::string& obj_name, ObjectFlag flag, bool value);
 
         bool addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action);
         bool addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name);
-        bool addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, const std::string& name);
         bool addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, double value);
-        bool addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, const std::string& name, double value);
         bool addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, ObjectAttribute att, double value);
-        bool addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, ObjectAttribute att, Color value);
+        bool addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, ObjectAttribute att, Color color);
         bool addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, ObjectFlag flag);
         bool addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, ObjectFlag flag, bool value);
 
@@ -96,12 +88,9 @@ class CApp {
         double* getObjectAttribute(GameObject* GOptr, ObjectAttribute attribute);
 
         void checkObjectEvents(GameObject* GOptr);
-        void runObjectEvent(GameObject* GOptr, std::vector<ActionList>& events);
-        
-        void runKeyEvents(std::vector<KeyActionList>& events);
+        void runEvents(std::vector<ActionList>& events, GameObject* GOptr = nullptr);
 
         bool collisionOccurred(const StrPair& colliders);
-        void runCollisionEvents(std::vector<KeyActionList>& events);
         
         bool OnInit(const std::string& window_name);
         void OnEvent();

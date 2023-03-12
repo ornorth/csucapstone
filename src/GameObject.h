@@ -63,13 +63,6 @@ class GameObject {
         bool checkFlag(ObjectFlag flag);
 
         std::map<EventList, std::vector<ActionList>, EventListCompare> event_list;
-
-        void addEvent(EventList event, GameAction action, const std::string& name, double value);
-        void addEvent(EventList event, GameAction action, ObjectAttribute att, double value);
-        void addEvent(EventList event, GameAction action, ObjectAttribute att, Color value);
-        void addEvent(EventList event, GameAction action, ObjectFlag flag, bool value = false);
-
-        //void runEventList();
 };
 
 

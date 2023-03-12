@@ -9,14 +9,14 @@ int main(int argc, char* argv[])
 
     app.addGameObject("Player", Shape::RECTANGLE, {200, 0, 150, 255}, 100, 100, 540, 360, 0);
 
-    app.addKeyEvent("Player", KeyCode::W, KeyPressType::DOWN, GameAction::INCVAR, ObjectAttribute::USER_DOUBLE_2, -1);
-    app.addKeyEvent("Player", KeyCode::W, KeyPressType::UP, GameAction::INCVAR, ObjectAttribute::USER_DOUBLE_2,  1);
-    app.addKeyEvent("Player", KeyCode::A, KeyPressType::DOWN, GameAction::INCVAR, ObjectAttribute::USER_DOUBLE_1, -1);
-    app.addKeyEvent("Player", KeyCode::A, KeyPressType::UP, GameAction::INCVAR, ObjectAttribute::USER_DOUBLE_1,  1);
-    app.addKeyEvent("Player", KeyCode::S, KeyPressType::DOWN, GameAction::INCVAR, ObjectAttribute::USER_DOUBLE_2,  1);
-    app.addKeyEvent("Player", KeyCode::S, KeyPressType::UP, GameAction::INCVAR, ObjectAttribute::USER_DOUBLE_2, -1);
-    app.addKeyEvent("Player", KeyCode::D, KeyPressType::DOWN, GameAction::INCVAR, ObjectAttribute::USER_DOUBLE_1,  1);
-    app.addKeyEvent("Player", KeyCode::D, KeyPressType::UP, GameAction::INCVAR, ObjectAttribute::USER_DOUBLE_1, -1);
+    app.addKeyEvent(KeyCode::W, KeyPressType::DOWN, GameAction::INCVAR, "Player", ObjectAttribute::USER_DOUBLE_2, -1);
+    app.addKeyEvent(KeyCode::W, KeyPressType::UP,   GameAction::INCVAR, "Player", ObjectAttribute::USER_DOUBLE_2,  1);
+    app.addKeyEvent(KeyCode::A, KeyPressType::DOWN, GameAction::INCVAR, "Player", ObjectAttribute::USER_DOUBLE_1, -1);
+    app.addKeyEvent(KeyCode::A, KeyPressType::UP,   GameAction::INCVAR, "Player", ObjectAttribute::USER_DOUBLE_1,  1);
+    app.addKeyEvent(KeyCode::S, KeyPressType::DOWN, GameAction::INCVAR, "Player", ObjectAttribute::USER_DOUBLE_2,  1);
+    app.addKeyEvent(KeyCode::S, KeyPressType::UP,   GameAction::INCVAR, "Player", ObjectAttribute::USER_DOUBLE_2, -1);
+    app.addKeyEvent(KeyCode::D, KeyPressType::DOWN, GameAction::INCVAR, "Player", ObjectAttribute::USER_DOUBLE_1,  1);
+    app.addKeyEvent(KeyCode::D, KeyPressType::UP,   GameAction::INCVAR, "Player", ObjectAttribute::USER_DOUBLE_1, -1);
 
     app.addObjectEvent("Player", GameEvent::OBJ_VAR_IS_GREATER, ObjectAttribute::USER_DOUBLE_1, 0, GameAction::SETVAR, ObjectAttribute::X_VELOCITY,  7);
     app.addObjectEvent("Player", GameEvent::OBJ_VAR_IS_LESS,    ObjectAttribute::USER_DOUBLE_1, 0, GameAction::SETVAR, ObjectAttribute::X_VELOCITY, -7);
