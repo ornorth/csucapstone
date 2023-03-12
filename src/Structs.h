@@ -173,6 +173,12 @@ struct EventList {
     ObjectAttribute attribute;
     double value;
 
+    // EventList(GameEvent event) :
+    //     event(event), attribute((ObjectAttribute)0), value(0)
+    // {}
+    // EventList(GameEvent event, ObjectAttribute attribute, double value) :
+    //     event(event), attribute(attribute), value(value)
+    // {}
     bool operator==(const EventList& e) const {
         return (e.event == event) && (e.attribute == attribute) && (e.value == value);
     }
@@ -216,11 +222,24 @@ struct StrPairComp
 
 struct ActionList {
     GameAction action;
-    std::string object_name;
+    std::string affected_obj_name;
+    std::string source_obj_name;
     double value;
-    ObjectAttribute attribute;
+    ObjectAttribute affected_attribute;
+    ObjectAttribute source_attribute;
     Color color;
     ObjectFlag flag;
+
+    ActionList() :
+        action((GameAction)0),
+        affected_obj_name("NULL"),
+        source_obj_name("NULL"),
+        value(0),
+        affected_attribute((ObjectAttribute)0),
+        source_attribute((ObjectAttribute)0),
+        color({0, 0, 0, 0}),
+        flag((ObjectFlag)0)
+    {}
 };
 
 #endif
