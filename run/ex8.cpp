@@ -34,18 +34,20 @@ int main(int argc, char* argv[])
     app.addKeyEvent(KeyCode::O, KeyPressType::HELD, GameAction::INCVAR, "obj3", ObjectAttribute::ANGLE,  3);
 
     // Color changing
-    app.addObjectEvent("obj1", GameEvent::ALWAYS, GameAction::SETVAR, ObjectAttribute::COLOR, {0, 0, 0, 255});
-    app.addObjectEvent("obj2", GameEvent::ALWAYS, GameAction::SETVAR, ObjectAttribute::COLOR, {0, 0, 0, 255});
-    app.addObjectEvent("obj3", GameEvent::ALWAYS, GameAction::SETVAR, ObjectAttribute::COLOR, {0, 0, 0, 255});
+    Color black = {0, 0, 0, 255};
+    Color red = {255, 0, 0, 255};
+    app.addObjectEvent("obj1", GameEvent::ALWAYS, GameAction::SETVAR, ObjectAttribute::COLOR, black);
+    app.addObjectEvent("obj2", GameEvent::ALWAYS, GameAction::SETVAR, ObjectAttribute::COLOR, black);
+    app.addObjectEvent("obj3", GameEvent::ALWAYS, GameAction::SETVAR, ObjectAttribute::COLOR, black);
 
-    app.addCollisionEvent("obj1", "obj2", GameAction::SETVAR, "obj1", ObjectAttribute::COLOR, {255, 0, 0, 255});
-    app.addCollisionEvent("obj1", "obj2", GameAction::SETVAR, "obj2", ObjectAttribute::COLOR, {255, 0, 0, 255});    
+    app.addCollisionEvent("obj1", "obj2", GameAction::SETVAR, "obj1", ObjectAttribute::COLOR, red);
+    app.addCollisionEvent("obj1", "obj2", GameAction::SETVAR, "obj2", ObjectAttribute::COLOR, red);    
 
-    app.addCollisionEvent("obj1", "obj3", GameAction::SETVAR, "obj1", ObjectAttribute::COLOR, {255, 0, 0, 255});
-    app.addCollisionEvent("obj1", "obj3", GameAction::SETVAR, "obj3", ObjectAttribute::COLOR, {255, 0, 0, 255});    
+    app.addCollisionEvent("obj1", "obj3", GameAction::SETVAR, "obj1", ObjectAttribute::COLOR, red);
+    app.addCollisionEvent("obj1", "obj3", GameAction::SETVAR, "obj3", ObjectAttribute::COLOR, red);    
 
-    app.addCollisionEvent("obj2", "obj3", GameAction::SETVAR, "obj2", ObjectAttribute::COLOR, {255, 0, 0, 255});
-    app.addCollisionEvent("obj2", "obj3", GameAction::SETVAR, "obj3", ObjectAttribute::COLOR, {255, 0, 0, 255});    
+    app.addCollisionEvent("obj2", "obj3", GameAction::SETVAR, "obj2", ObjectAttribute::COLOR, red);
+    app.addCollisionEvent("obj2", "obj3", GameAction::SETVAR, "obj3", ObjectAttribute::COLOR, red);    
 
     app.addKeyEvent(KeyCode::ESCAPE, KeyPressType::DOWN, GameAction::QUIT);
     return app.Execute("Milestone 8: Collision Detection (Testing Environment)");

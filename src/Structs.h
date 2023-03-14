@@ -166,32 +166,35 @@ enum GameAction {
     BOUNCE_Y,       // reverse Y velocity, as if the object "bounced" off a surface
     SETFLAG,        // set the value of an object's flag (see struct ObjectFlag)
     TOGGLEFLAG,     // toggle the value of an object's flag (see struct ObjectFlag)
+
+    CREATE_GAME_OBJECT,     // creates a new GameObject with the specified attributes
+    DESTROY_GAME_OBJECT,    // removes the GameObject with the given name
+    COPY_GAME_OBJECT,       // copies the GameObject with the given name (must give it a new name)
 };
 
 struct EventList {
+    std::string obj_name;
     GameEvent event;
     ObjectAttribute attribute;
     double value;
-
-    // EventList(GameEvent event) :
-    //     event(event), attribute((ObjectAttribute)0), value(0)
-    // {}
-    // EventList(GameEvent event, ObjectAttribute attribute, double value) :
-    //     event(event), attribute(attribute), value(value)
-    // {}
-    bool operator==(const EventList& e) const {
-        return (e.event == event) && (e.attribute == attribute) && (e.value == value);
-    }
-    bool operator<(const EventList& e) const {
-        if (event < e.event) return true;
-        if (attribute < e.attribute) return true;
-        return (value < e.value);
-    }
 };
-struct EventListCompare {
-    bool operator() (const EventList& lhs, const EventList& rhs) const
+struct EventListComp {
+    template<typename T>
+    bool operator()(const T &l, const T &r) const
     {
-        return lhs < rhs;
+        if (l.obj_name == r.obj_name)
+        {
+            if (l.event == r.event)
+            {
+                if (l.attribute == r.attribute)
+                {
+                    return l.value < r.value;
+                }
+                return l.attribute < r.attribute;
+            }
+            return l.event < r.event;
+        }
+        return l.obj_name < r.obj_name;
     }
 };
 
@@ -205,7 +208,7 @@ struct StrPairComp
     bool operator()(const T &l, const T &r) const
     {
         if (l.first == r.first)
-            return l.second > r.second;
+            return l.second < r.second;
         return l.first < r.first;
     }
 };

@@ -22,7 +22,16 @@ CApp::CApp(int window_width, int window_height, const Color& color)
 /////////////////////////////////////////////////////////////////////////////
 
 // Helper function
-int CApp::getGameObject(const std::string& name)
+GameObject* CApp::getGameObject(const std::string& name)
+{
+    for (unsigned i = 0; i < obj_list.size(); ++i)
+    {
+        if (obj_list[i].getName() == name)
+            return &obj_list[i];
+    }
+    return nullptr;
+}
+int CApp::getGameObjectIndex(const std::string& name)
 {
     for (unsigned i = 0; i < obj_list.size(); ++i)
     {
@@ -76,17 +85,17 @@ double* CApp::getObjectAttribute(GameObject* GOptr, ObjectAttribute attribute)
 bool CApp::addGameObject(const std::string& name, Shape shape, const Color& color,
                          int dim_x, int dim_y, int pos_x, int pos_y, double angle)
 {
-    if (getGameObject(name) != -1) return false;
+    if (getGameObject(name)) return false;
     obj_list.push_back(GameObject(name, shape, color, dim_x, dim_y, pos_x, pos_y, angle));
     return true;
 }
 
 bool CApp::setObjectValue(const std::string& obj_name, ObjectAttribute attribute, double value)
 {
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
+    GameObject* GOptr = getGameObject(obj_name);
+    if (!GOptr) return false;
     
-    *(getObjectAttribute(&obj_list[idx], attribute)) = value;
+    *(getObjectAttribute(GOptr, attribute)) = value;
 
     return true;
 }
@@ -98,401 +107,305 @@ bool CApp::setObjectValue(const std::string& obj_name, ObjectAttribute attribute
 // OBJECT EVENTS
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action)
 {
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
     ActionList list;
     list.action = action;
-    obj_list[idx].event_list[{event}].push_back(list);
+    object_events[{obj_name, event}].push_back(list);
     return true;
 }
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, const std::string& affected_obj)
 {
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.affected_obj_name = affected_obj;
-    obj_list[idx].event_list[{event}].push_back(list);
+    object_events[{obj_name, event}].push_back(list);
     return true;
 }
 
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, double value)
 {
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.value = value;
-    obj_list[idx].event_list[{event}].push_back(list);
+    object_events[{obj_name, event}].push_back(list);
     return true;
 }
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, ObjectAttribute source_att, const std::string& source_obj)
 {
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.source_attribute = source_att;
     list.source_obj_name = source_obj;
-    obj_list[idx].event_list[{event}].push_back(list);
+    object_events[{obj_name, event}].push_back(list);
     return true;
 }
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, const std::string& affected_obj, double value)
 {
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.affected_obj_name = affected_obj;
     list.value = value;
-    obj_list[idx].event_list[{event}].push_back(list);
+    object_events[{obj_name, event}].push_back(list);
     return true;
 }
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, const std::string& affected_obj, ObjectAttribute source_att, const std::string& source_obj)
 {
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.affected_obj_name = affected_obj;
     list.source_attribute = source_att;
     list.source_obj_name = source_obj;
-    obj_list[idx].event_list[{event}].push_back(list);
+    object_events[{obj_name, event}].push_back(list);
     return true;
 }
 
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, ObjectAttribute affected_att, double value)
 {
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.affected_attribute = affected_att;
     list.value = value;
-    obj_list[idx].event_list[{event}].push_back(list);
+    object_events[{obj_name, event}].push_back(list);
     return true;
 }
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, ObjectAttribute affected_att, ObjectAttribute source_att, const std::string& source_obj)
 {
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.affected_attribute = affected_att;
     list.source_attribute = source_att;
     list.source_obj_name = source_obj;
-    obj_list[idx].event_list[{event}].push_back(list);
+    object_events[{obj_name, event}].push_back(list);
     return true;
 }
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, const std::string& affected_obj, ObjectAttribute affected_att, double value)
 {
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.affected_obj_name = affected_obj;
     list.affected_attribute = affected_att;
     list.value = value;
-    obj_list[idx].event_list[{event}].push_back(list);
+    object_events[{obj_name, event}].push_back(list);
     return true;
 }
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, const std::string& affected_obj, ObjectAttribute affected_att, ObjectAttribute source_att, const std::string& source_obj)
 {
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.affected_obj_name = affected_obj;
     list.affected_attribute = affected_att;
     list.source_attribute = source_att;
     list.source_obj_name = source_obj;
-    obj_list[idx].event_list[{event}].push_back(list);
+    object_events[{obj_name, event}].push_back(list);
     return true;
 }
 
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, ObjectAttribute affected_att, Color color)
 {
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
- 
     ActionList list;
     list.action = action;
     list.affected_attribute = affected_att;
     list.color = color;
-    obj_list[idx].event_list[{event}].push_back(list);
+    object_events[{obj_name, event}].push_back(list);
     return true;
 }
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, const std::string& affected_obj, ObjectAttribute affected_att, Color color)
 {
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
- 
     ActionList list;
     list.action = action;
     list.affected_obj_name = affected_obj;
     list.affected_attribute = affected_att;
     list.color = color;
-    obj_list[idx].event_list[{event}].push_back(list);
+    object_events[{obj_name, event}].push_back(list);
     return true;
 }
 
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, ObjectFlag flag)
 {
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.flag = flag;
-    obj_list[idx].event_list[{event}].push_back(list);
+    object_events[{obj_name, event}].push_back(list);
     return true;
 }
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, const std::string& affected_obj, ObjectFlag flag)
 {
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.affected_obj_name = affected_obj;
     list.flag = flag;
-    obj_list[idx].event_list[{event}].push_back(list);
+    object_events[{obj_name, event}].push_back(list);
     return true;
 }
 
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, ObjectFlag flag, bool value)
 {
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.flag = flag;
     list.value = (value ? 1.0 : 0.0);
-    obj_list[idx].event_list[{event}].push_back(list);
+    object_events[{obj_name, event}].push_back(list);
     return true;
 }
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, GameAction action, const std::string& affected_obj, ObjectFlag flag, bool value)
 {
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.affected_obj_name = affected_obj;
     list.flag = flag;
     list.value = (value ? 1.0 : 0.0);
-    obj_list[idx].event_list[{event}].push_back(list);
+    object_events[{obj_name, event}].push_back(list);
     return true;
 }
 
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action)
 {
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
     ActionList list;
     list.action = action;
-    obj_list[idx].event_list[{event, effector_att, effector_value}].push_back(list);
+    object_events[{obj_name, event, effector_att, effector_value}].push_back(list);
     return true;
 }
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, const std::string& affected_obj)
 {
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.affected_obj_name = affected_obj;
-    obj_list[idx].event_list[{event, effector_att, effector_value}].push_back(list);
+    object_events[{obj_name, event, effector_att, effector_value}].push_back(list);
     return true;
 }
 
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, double value)
 {
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.value = value;
-    obj_list[idx].event_list[{event, effector_att, effector_value}].push_back(list);
+    object_events[{obj_name, event, effector_att, effector_value}].push_back(list);
     return true;
 }
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, ObjectAttribute source_att, const std::string& source_obj)
 {
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.source_attribute = source_att;
     list.source_obj_name = source_obj;
-    obj_list[idx].event_list[{event, effector_att, effector_value}].push_back(list);
+    object_events[{obj_name, event, effector_att, effector_value}].push_back(list);
     return true;
 }
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, const std::string& affected_obj, double value)
 {
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.affected_obj_name = affected_obj;
     list.value = value;
-    obj_list[idx].event_list[{event, effector_att, effector_value}].push_back(list);
+    object_events[{obj_name, event, effector_att, effector_value}].push_back(list);
     return true;
 }
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, const std::string& affected_obj, ObjectAttribute source_att, const std::string& source_obj)
 {
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.affected_obj_name = affected_obj;
     list.source_attribute = source_att;
     list.source_obj_name = source_obj;
-    obj_list[idx].event_list[{event, effector_att, effector_value}].push_back(list);
+    object_events[{obj_name, event, effector_att, effector_value}].push_back(list);
     return true;
 }
 
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, ObjectAttribute affected_att, double value)
 {
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.affected_attribute = affected_att;
     list.value = value;
-    obj_list[idx].event_list[{event, effector_att, effector_value}].push_back(list);
+    object_events[{obj_name, event, effector_att, effector_value}].push_back(list);
     return true;
 }
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, ObjectAttribute affected_att, ObjectAttribute source_att, const std::string& source_obj)
 {
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.affected_attribute = affected_att;
     list.source_attribute = source_att;
     list.source_obj_name = source_obj;
-    obj_list[idx].event_list[{event, effector_att, effector_value}].push_back(list);
+    object_events[{obj_name, event, effector_att, effector_value}].push_back(list);
     return true;
 }
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, const std::string& affected_obj, ObjectAttribute affected_att, double value)
 {
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.affected_obj_name = affected_obj;
     list.affected_attribute = affected_att;
     list.value = value;
-    obj_list[idx].event_list[{event, effector_att, effector_value}].push_back(list);
+    object_events[{obj_name, event, effector_att, effector_value}].push_back(list);
     return true;
 }
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, const std::string& affected_obj, ObjectAttribute affected_att, ObjectAttribute source_att, const std::string& source_obj)
 {
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.affected_obj_name = affected_obj;
     list.affected_attribute = affected_att;
     list.source_attribute = source_att;
     list.source_obj_name = source_obj;
-    obj_list[idx].event_list[{event, effector_att, effector_value}].push_back(list);
+    object_events[{obj_name, event, effector_att, effector_value}].push_back(list);
     return true;
 }
 
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, ObjectAttribute affected_att, Color color)
 {
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.affected_attribute = affected_att;
     list.color = color;
-    obj_list[idx].event_list[{event, effector_att, effector_value}].push_back(list);
+    object_events[{obj_name, event, effector_att, effector_value}].push_back(list);
     return true;
 }
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, const std::string& affected_obj, ObjectAttribute affected_att, Color color)
 {
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.affected_obj_name = affected_obj;
     list.affected_attribute = affected_att;
     list.color = color;
-    obj_list[idx].event_list[{event, effector_att, effector_value}].push_back(list);
+    object_events[{obj_name, event, effector_att, effector_value}].push_back(list);
     return true;
 }
 
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, ObjectFlag flag)
 {
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.flag = flag;
-    obj_list[idx].event_list[{event, effector_att, effector_value}].push_back(list);
+    object_events[{obj_name, event, effector_att, effector_value}].push_back(list);
     return true;
 }
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, const std::string& affected_obj, ObjectFlag flag)
 {
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.affected_obj_name = affected_obj;
     list.flag = flag;
-    obj_list[idx].event_list[{event, effector_att, effector_value}].push_back(list);
+    object_events[{obj_name, event, effector_att, effector_value}].push_back(list);
     return true;
 }
 
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, ObjectFlag flag, bool value)
 {
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.flag = flag;
     list.value = (value ? 1.0 : 0.0);
-    obj_list[idx].event_list[{event, effector_att, effector_value}].push_back(list);
+    object_events[{obj_name, event, effector_att, effector_value}].push_back(list);
     return true;
 }
 bool CApp::addObjectEvent(const std::string& obj_name, GameEvent event, ObjectAttribute effector_att, double effector_value, GameAction action, const std::string& affected_obj, ObjectFlag flag, bool value)
 {
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.affected_obj_name = affected_obj;
     list.flag = flag;
     list.value = (value ? 1.0 : 0.0);
-    obj_list[idx].event_list[{event, effector_att, effector_value}].push_back(list);
+    object_events[{obj_name, event, effector_att, effector_value}].push_back(list);
     return true;
 }
 
@@ -517,9 +430,6 @@ bool CApp::addKeyEvent(KeyCode key, KeyPressType type, GameAction action)
 }
 bool CApp::addKeyEvent(KeyCode key, KeyPressType type, GameAction action, const std::string& obj_name)
 {
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.affected_obj_name = obj_name;
@@ -540,9 +450,6 @@ bool CApp::addKeyEvent(KeyCode key, KeyPressType type, GameAction action, const 
 
 bool CApp::addKeyEvent(KeyCode key, KeyPressType type, GameAction action, const std::string& obj_name, double value)
 {
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.affected_obj_name = obj_name;
@@ -563,9 +470,6 @@ bool CApp::addKeyEvent(KeyCode key, KeyPressType type, GameAction action, const 
 }
 bool CApp::addKeyEvent(KeyCode key, KeyPressType type, GameAction action, const std::string& obj_name, ObjectAttribute source_att, const std::string& source_obj)
 {
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.affected_obj_name = obj_name;
@@ -588,9 +492,6 @@ bool CApp::addKeyEvent(KeyCode key, KeyPressType type, GameAction action, const 
 
 bool CApp::addKeyEvent(KeyCode key, KeyPressType type, GameAction action, const std::string& obj_name, ObjectAttribute affected_att, double value)
 {
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.affected_obj_name = obj_name;
@@ -612,9 +513,6 @@ bool CApp::addKeyEvent(KeyCode key, KeyPressType type, GameAction action, const 
 }
 bool CApp::addKeyEvent(KeyCode key, KeyPressType type, GameAction action, const std::string& obj_name, ObjectAttribute affected_att, ObjectAttribute source_att, const std::string& source_obj)
 {
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.affected_obj_name = obj_name;
@@ -638,9 +536,6 @@ bool CApp::addKeyEvent(KeyCode key, KeyPressType type, GameAction action, const 
 
 bool CApp::addKeyEvent(KeyCode key, KeyPressType type, GameAction action, const std::string& obj_name, ObjectAttribute affected_att, Color color)
 {
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.affected_obj_name = obj_name;
@@ -662,9 +557,6 @@ bool CApp::addKeyEvent(KeyCode key, KeyPressType type, GameAction action, const 
 }
 bool CApp::addKeyEvent(KeyCode key, KeyPressType type, GameAction action, const std::string& obj_name, ObjectFlag flag)
 {
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.affected_obj_name = obj_name;
@@ -685,9 +577,6 @@ bool CApp::addKeyEvent(KeyCode key, KeyPressType type, GameAction action, const 
 }
 bool CApp::addKeyEvent(KeyCode key, KeyPressType type, GameAction action, const std::string& obj_name, ObjectFlag flag, bool value)
 {
-    int idx = getGameObject(obj_name);
-    if (idx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.affected_obj_name = obj_name;
@@ -711,9 +600,6 @@ bool CApp::addKeyEvent(KeyCode key, KeyPressType type, GameAction action, const 
 // COLLISION EVENTS
 bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action)
 {
-    int idx = getGameObject(obj_1), jdx = getGameObject(obj_2);
-    if (idx == -1 || jdx == -1) return false;
-
     ActionList list;
     list.action = action;
     collision_events[{obj_1, obj_2}].push_back(list);
@@ -721,9 +607,6 @@ bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2,
 }
 bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name)
 {
-    int idx = getGameObject(obj_1), jdx = getGameObject(obj_2), kdx = getGameObject(obj_name);
-    if (idx == -1 || jdx == -1 || kdx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.affected_obj_name = obj_name;
@@ -733,9 +616,6 @@ bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2,
 
 bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, double value)
 {
-    int idx = getGameObject(obj_1), jdx = getGameObject(obj_2), kdx = getGameObject(obj_name);
-    if (idx == -1 || jdx == -1 || kdx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.affected_obj_name = obj_name;
@@ -745,9 +625,6 @@ bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2,
 }
 bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, ObjectAttribute source_att, const std::string& source_obj)
 {
-    int idx = getGameObject(obj_1), jdx = getGameObject(obj_2), kdx = getGameObject(obj_name);
-    if (idx == -1 || jdx == -1 || kdx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.affected_obj_name = obj_name;
@@ -759,9 +636,6 @@ bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2,
 
 bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, ObjectAttribute affected_att, double value)
 {
-    int idx = getGameObject(obj_1), jdx = getGameObject(obj_2), kdx = getGameObject(obj_name);
-    if (idx == -1 || jdx == -1 || kdx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.affected_obj_name = obj_name;
@@ -772,9 +646,6 @@ bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2,
 }
 bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, ObjectAttribute affected_att, ObjectAttribute source_att, const std::string& source_obj)
 {
-    int idx = getGameObject(obj_1), jdx = getGameObject(obj_2), kdx = getGameObject(obj_name);
-    if (idx == -1 || jdx == -1 || kdx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.affected_obj_name = obj_name;
@@ -787,9 +658,6 @@ bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2,
 
 bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, ObjectAttribute affected_att, Color color)
 {
-    int idx = getGameObject(obj_1), jdx = getGameObject(obj_2), kdx = getGameObject(obj_name);
-    if (idx == -1 || jdx == -1 || kdx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.affected_obj_name = obj_name;
@@ -800,9 +668,6 @@ bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2,
 }
 bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, ObjectFlag flag)
 {
-    int idx = getGameObject(obj_1), jdx = getGameObject(obj_2), kdx = getGameObject(obj_name);
-    if (idx == -1 || jdx == -1 || kdx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.affected_obj_name = obj_name;
@@ -812,9 +677,6 @@ bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2,
 }
 bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, ObjectFlag flag, bool value)
 {
-    int idx = getGameObject(obj_1), jdx = getGameObject(obj_2), kdx = getGameObject(obj_name);
-    if (idx == -1 || jdx == -1 || kdx == -1) return false;
-
     ActionList list;
     list.action = action;
     list.affected_obj_name = obj_name;
@@ -824,10 +686,15 @@ bool CApp::addCollisionEvent(const std::string& obj_1, const std::string& obj_2,
     return true;
 }
 
-void CApp::checkObjectEvents(GameObject* GOptr)
+void CApp::checkObjectEvents()
 {
-    for (auto& it: GOptr->event_list)
+    GameObject* GOptr;
+    for (auto it : object_events)
     {
+        GOptr = getGameObject(it.first.obj_name);
+        if (GOptr == nullptr || GOptr->checkFlag(ObjectFlag::STATIC))
+            continue;
+
         bool flag = false;
         switch(it.first.event)
         {
@@ -902,15 +769,17 @@ void CApp::checkObjectEvents(GameObject* GOptr)
         }
 
         if (flag)
+        {
             runEvents(it.second, GOptr);
+        }
     }
 }
 bool CApp::collisionOccurred(const StrPair& colliders)
 {
     // Ignore collision event if object is flagged as PHASED
-    GameObject* obj1 = &obj_list[getGameObject(colliders.first)];
-    GameObject* obj2 = &obj_list[getGameObject(colliders.second)];
-    if (obj1->checkFlag(ObjectFlag::PHASED) || obj2->checkFlag(ObjectFlag::PHASED))
+    GameObject* obj1 = getGameObject(colliders.first);
+    GameObject* obj2 = getGameObject(colliders.second);
+    if (!obj1 || obj1->checkFlag(ObjectFlag::PHASED) || !obj2 || obj2->checkFlag(ObjectFlag::PHASED))
         return false;
 
     // explore this idea in the actual rendering phase?
@@ -1264,11 +1133,16 @@ void CApp::runEvents(std::vector<ActionList>& events, GameObject* GOptr)
 
         // If an object is specified in the action list, use it
         // Otherwise, use the provided object
-        int id = getGameObject(list->affected_obj_name);
-        if (id != -1)
-            tmpGO = &obj_list[id];
-        else
-            tmpGO = GOptr;
+        // But only if the provided object was intended for the action
+        // (That is, if the affected_object was deleted, make sure to skip the event)
+        tmpGO = getGameObject(list->affected_obj_name);
+        if (!tmpGO)
+        {
+            if (list->affected_obj_name == "NULL")
+                tmpGO = GOptr;
+            else
+                continue;
+        }
 
         switch(list->action)
         {
@@ -1293,17 +1167,17 @@ void CApp::runEvents(std::vector<ActionList>& events, GameObject* GOptr)
             {
                 if (list->affected_attribute == ObjectAttribute::COLOR)
                 {
-                    int src_id = getGameObject(list->source_obj_name);
-                    if (src_id != -1)
-                        tmpGO->color = obj_list[src_id].color;
+                    GameObject* srcGO = getGameObject(list->source_obj_name);
+                    if (srcGO)
+                        tmpGO->color = srcGO->color;
                     else
                         tmpGO->color = list->color;
                     break;
                 }
                 double* att_ptr = getObjectAttribute(tmpGO, list->affected_attribute);
-                int src_id = getGameObject(list->source_obj_name);
-                if (src_id != -1)
-                    *att_ptr = *(getObjectAttribute(&obj_list[src_id], list->source_attribute));
+                GameObject* srcGO = getGameObject(list->source_obj_name);
+                if (srcGO)
+                    *att_ptr = *(getObjectAttribute(srcGO, list->source_attribute));
                 else
                     *att_ptr = list->value;
                 break;
@@ -1311,9 +1185,9 @@ void CApp::runEvents(std::vector<ActionList>& events, GameObject* GOptr)
             case GameAction::INCVAR:
             {
                 double* att_ptr = getObjectAttribute(tmpGO, list->affected_attribute);
-                int src_id = getGameObject(list->source_obj_name);
-                if (src_id != -1)
-                    *att_ptr += *(getObjectAttribute(&obj_list[src_id], list->source_attribute));
+                GameObject* srcGO = getGameObject(list->source_obj_name);
+                if (srcGO)
+                    *att_ptr += *(getObjectAttribute(srcGO, list->source_attribute));
                 else
                     *att_ptr += list->value;
                 break;
@@ -1321,9 +1195,9 @@ void CApp::runEvents(std::vector<ActionList>& events, GameObject* GOptr)
             case GameAction::SCALEVAR:
             {
                 double* att_ptr = getObjectAttribute(tmpGO, list->affected_attribute);
-                int src_id = getGameObject(list->source_obj_name);
-                if (src_id != -1)
-                    *att_ptr -= *(getObjectAttribute(&obj_list[src_id], list->source_attribute));
+                GameObject* srcGO = getGameObject(list->source_obj_name);
+                if (srcGO)
+                    *att_ptr -= *(getObjectAttribute(srcGO, list->source_attribute));
                 else
                     *att_ptr -= list->value;
                 break;
@@ -1454,13 +1328,18 @@ void CApp::OnEvent()
  */
 void CApp::OnLoop()
 {
+    checkObjectEvents();
+
+    // Using auto here makes the object immutable. Use an iterator instead
+    for (std::map<StrPair, std::vector<ActionList>, StrPairComp>::iterator it = collision_events.begin(); it != collision_events.end(); ++it)
+    {
+        if (collisionOccurred(it->first))
+            runEvents(it->second);
+    }
+
     for (unsigned i = 0; i < obj_list.size(); ++i)
     {
         GameObject* GOptr = &obj_list[i];
-
-        // Skip object events if STATIC flag is set
-        if (!GOptr->checkFlag(ObjectFlag::STATIC))
-            checkObjectEvents(GOptr);
 
         // Update position and velocity
         GOptr->vel_x += GOptr->acc_x;
@@ -1472,12 +1351,6 @@ void CApp::OnLoop()
         GOptr->vel_ang += GOptr->acc_ang;
         GOptr->angle += GOptr->vel_ang;
         while (GOptr->angle >= 360) GOptr->angle -= 360;
-    }
-    // Using auto here makes the object immutable. Use an iterator instead
-    for (std::map<StrPair, std::vector<ActionList>, StrPairComp>::iterator it = collision_events.begin(); it != collision_events.end(); ++it)
-    {
-        if (collisionOccurred(it->first))
-            runEvents(it->second);
     }
 }
 

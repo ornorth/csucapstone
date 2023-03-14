@@ -61,8 +61,6 @@ class GameObject {
         void setFlag(ObjectFlag flag);
         void clearFlag(ObjectFlag flag);
         bool checkFlag(ObjectFlag flag);
-
-        std::map<EventList, std::vector<ActionList>, EventListCompare> event_list;
 };
 
 

@@ -23,9 +23,11 @@ int main(int argc, char* argv[])
     app.addKeyEvent(KeyCode::SPACE, KeyPressType::DOWN, GameAction::TOGGLEFLAG, "obj1", ObjectFlag::PHASED);
 
 
-    app.addGameObject("obj2", Shape::CIRCLE, {113, 175, 0, 255}, 100, 100, 500, 500);
-    app.addObjectEvent("obj2", GameEvent::ALWAYS, GameAction::SETVAR, ObjectAttribute::COLOR, {113, 175, 0, 255});
-    app.addCollisionEvent("obj1", "obj2", GameAction::SETVAR, "obj2", ObjectAttribute::COLOR, {255, 0, 0, 255});
+    Color yellowish = {113, 175, 0, 255};
+    Color red = {255, 0, 0, 255};
+    app.addGameObject("obj2", Shape::CIRCLE, yellowish, 100, 100, 500, 500);
+    app.addObjectEvent("obj2", GameEvent::ALWAYS, GameAction::SETVAR, ObjectAttribute::COLOR, yellowish);
+    app.addCollisionEvent("obj1", "obj2", GameAction::SETVAR, "obj2", ObjectAttribute::COLOR, red);
 
     app.addKeyEvent(KeyCode::ESCAPE, KeyPressType::DOWN, GameAction::QUIT);
     return app.Execute("Milestone 10: Objects can be made invisible, collision can be disabled");

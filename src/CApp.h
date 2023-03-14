@@ -26,6 +26,8 @@ class CApp {
         int window_height;
         std::vector<GameObject> obj_list;
 
+        std::map<EventList, std::vector<ActionList>, EventListComp> object_events;
+
         std::unordered_map<KeyCode, std::vector<ActionList>> keydown_events;
         std::unordered_map<KeyCode, std::vector<ActionList>> keyup_events;
         std::unordered_map<KeyCode, std::vector<ActionList>> keyheld_events;
@@ -127,10 +129,11 @@ class CApp {
         bool addCollisionEvent(const std::string& obj_1, const std::string& obj_2, GameAction action, const std::string& obj_name, ObjectFlag flag, bool value);
 
     private:
-        int getGameObject(const std::string& name);
+        GameObject* getGameObject(const std::string& name);
+        int getGameObjectIndex(const std::string& name);
         double* getObjectAttribute(GameObject* GOptr, ObjectAttribute attribute);
 
-        void checkObjectEvents(GameObject* GOptr);
+        void checkObjectEvents();
         bool collisionOccurred(const StrPair& colliders);
 
         void runEvents(std::vector<ActionList>& events, GameObject* GOptr = nullptr);
